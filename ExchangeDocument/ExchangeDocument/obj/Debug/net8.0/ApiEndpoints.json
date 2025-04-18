@@ -1,0 +1,18 @@
+[
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "Register",
+    "RelativePath": "api/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.RegisterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

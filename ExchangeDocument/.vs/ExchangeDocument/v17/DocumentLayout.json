@@ -1,0 +1,211 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\pbl3\\ExchangeDocument\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|e:\\pbl3\\exchangedocument\\exchangedocument\\presentationlayer\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\presentationlayer\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|e:\\pbl3\\exchangedocument\\exchangedocument\\businesslayer\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|e:\\pbl3\\exchangedocument\\exchangedocument\\dataaccesslayer\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\dataaccesslayer\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|e:\\pbl3\\exchangedocument\\exchangedocument\\dataaccesslayer\\interfaces\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\dataaccesslayer\\interfaces\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|e:\\pbl3\\exchangedocument\\exchangedocument\\businesslayer\\interfaces\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\interfaces\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|e:\\pbl3\\exchangedocument\\exchangedocument\\businesslayer\\dtos\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\dtos\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|e:\\pbl3\\exchangedocument\\exchangedocument\\presentationlayer\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\presentationlayer\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|e:\\pbl3\\exchangedocument\\exchangedocument\\presentationlayer\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\presentationlayer\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|e:\\pbl3\\exchangedocument\\exchangedocument\\dataaccesslayer\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\dataaccesslayer\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|e:\\pbl3\\exchangedocument\\exchangedocument\\dataaccesslayer\\data\\exchangedocument.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\dataaccesslayer\\data\\exchangedocument.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|e:\\pbl3\\exchangedocument\\exchangedocument\\exchangedocument.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{F09333D0-9656-400A-8C93-5684343AAAE7}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\exchangedocument.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserService.cs",
+              "DocumentMoniker": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\BusinessLayer\\Services\\UserService.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\Services\\UserService.cs",
+              "ToolTip": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\BusinessLayer\\Services\\UserService.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\Services\\UserService.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAQwB8AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T12:29:52.447Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IUserService.cs",
+              "DocumentMoniker": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\BusinessLayer\\Interfaces\\IUserService.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\Interfaces\\IUserService.cs",
+              "ToolTip": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\BusinessLayer\\Interfaces\\IUserService.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\Interfaces\\IUserService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T12:18:43.532Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Repositories\\UserRepository.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\DataAccessLayer\\Repositories\\UserRepository.cs",
+              "ToolTip": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Repositories\\UserRepository.cs",
+              "RelativeToolTip": "ExchangeDocument\\DataAccessLayer\\Repositories\\UserRepository.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAQwBoAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T12:15:20.144Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "RegisterRequest.cs",
+              "DocumentMoniker": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\RegisterRequest.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\DTOs\\RegisterRequest.cs",
+              "ToolTip": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\RegisterRequest.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\DTOs\\RegisterRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T12:07:17.158Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\PresentationLayer\\Controllers\\UserController.cs",
+              "ToolTip": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Controllers\\UserController.cs",
+              "RelativeToolTip": "ExchangeDocument\\PresentationLayer\\Controllers\\UserController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T12:03:57.939Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IUserRepository.cs",
+              "DocumentMoniker": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Interfaces\\IUserRepository.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\DataAccessLayer\\Interfaces\\IUserRepository.cs",
+              "ToolTip": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Interfaces\\IUserRepository.cs",
+              "RelativeToolTip": "ExchangeDocument\\DataAccessLayer\\Interfaces\\IUserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T12:10:27.37Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "exchangeDocument.cs",
+              "DocumentMoniker": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Data\\exchangeDocument.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\DataAccessLayer\\Data\\exchangeDocument.cs",
+              "ToolTip": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Data\\exchangeDocument.cs",
+              "RelativeToolTip": "ExchangeDocument\\DataAccessLayer\\Data\\exchangeDocument.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T12:27:08.125Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "User.cs",
+              "DocumentMoniker": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Entities\\User.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\DataAccessLayer\\Entities\\User.cs",
+              "ToolTip": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Entities\\User.cs",
+              "RelativeToolTip": "ExchangeDocument\\DataAccessLayer\\Entities\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T12:35:25.626Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "RelativeDocumentMoniker": "ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "ToolTip": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "RelativeToolTip": "ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-04-18T13:02:20.153Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Program.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\PresentationLayer\\Program.cs",
+              "ToolTip": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Program.cs",
+              "RelativeToolTip": "ExchangeDocument\\PresentationLayer\\Program.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAEwA8AAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T12:54:14.404Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ExchangeDocument.http",
+              "DocumentMoniker": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\ExchangeDocument.http",
+              "RelativeDocumentMoniker": "ExchangeDocument\\ExchangeDocument.http",
+              "ToolTip": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\ExchangeDocument.http",
+              "RelativeToolTip": "ExchangeDocument\\ExchangeDocument.http",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2025-04-18T12:26:26.353Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
