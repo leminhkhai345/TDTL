@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj": {}
+    "E:\\pbl3\\exchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj": {}
   },
   "projects": {
-    "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj": {
+    "E:\\pbl3\\exchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
+        "projectUniqueName": "E:\\pbl3\\exchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
         "projectName": "ExchangeDocument",
-        "projectPath": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
+        "projectPath": "E:\\pbl3\\exchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
         "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-        "outputPath": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\obj\\",
+        "outputPath": "E:\\pbl3\\exchangeDocument\\ExchangeDocument\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

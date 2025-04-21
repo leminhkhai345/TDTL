@@ -1,6 +1,6 @@
 ﻿namespace ExchangeDocument.BusinessLayer.DTOs
 {
-    public class RegisterRequest
+    public class RegisterDTO
     {
         public string FullName { get; set; }
         public string Email { get; set; }

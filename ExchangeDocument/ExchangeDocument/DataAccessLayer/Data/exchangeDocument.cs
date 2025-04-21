@@ -11,8 +11,6 @@ public partial class exchangeDocument : DbContext
     {
     }
 
-
-
     public exchangeDocument(DbContextOptions<exchangeDocument> options)
         : base(options)
     {

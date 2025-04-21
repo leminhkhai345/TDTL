@@ -138,3 +138,4 @@ E:\pbl3\ExchangeDocument\ExchangeDocument\obj\Debug\net8.0\ExchangeDocument.genr
 E:\pbl3\ExchangeDocument\ExchangeDocument\obj\Debug\net8.0\ref\ExchangeDocument.dll
 E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\PresentationLayer\appsettings.Development.json
 E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\PresentationLayer\appsettings.json
+E:\pbl3\exchangeDocument\ExchangeDocument\obj\Debug\net8.0\ExchangeDocument.sourcelink.json

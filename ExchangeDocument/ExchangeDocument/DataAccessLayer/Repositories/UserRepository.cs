@@ -12,7 +12,13 @@ namespace ExchangeDocument.DataAccessLayer.Repositories
             exchangeDoc = _exchangeDoc;
         }
 
-        
+        public User GetUserById(int id)
+        {
+            User user = exchangeDoc.Users.FirstOrDefault(s => s.UserId == id);
+            return user;
+        }
+
+
         public User GetUserByEmail(string email)
         {
             User user = exchangeDoc.Users.FirstOrDefault(s => s.Email == email);
@@ -27,6 +33,16 @@ namespace ExchangeDocument.DataAccessLayer.Repositories
         public void SaveChanges()
         {
             exchangeDoc.SaveChanges();
+        }
+
+        public Userprofile GetProfileById(int id)
+        {
+            Userprofile userprofile = exchangeDoc.Userprofiles.FirstOrDefault(s => s.UserId == id);
+            return userprofile;
+        }
+        public void AddUserprofile(Userprofile userprofile)
+        {
+            exchangeDoc.Userprofiles.Add(userprofile);
         }
     }
 }

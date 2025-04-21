@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Vap8ssM+hUI=",
+  "dgSpecHash": "dVBiI5BpznY=",
   "success": true,
-  "projectFilePath": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
+  "projectFilePath": "E:\\pbl3\\exchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ASUS\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\ASUS\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

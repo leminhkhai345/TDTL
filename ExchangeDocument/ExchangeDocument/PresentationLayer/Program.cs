@@ -15,13 +15,17 @@ namespace ExchangeDocument.PresentationLayer
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
-
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 
             builder.Services.AddDbContext<exchangeDocument>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             // Add services to the container.
+            builder.Services.AddMemoryCache();
+
+
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

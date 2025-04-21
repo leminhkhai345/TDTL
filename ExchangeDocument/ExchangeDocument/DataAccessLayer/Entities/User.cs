@@ -29,6 +29,13 @@ public partial class User
     [StringLength(255)]
     public string? Phone { get; set; }
 
+    [Column("role")]
+    [StringLength(50)]
+    public string? Role { get; set; }
+
+    [Column("isVerify")]
+    public bool? IsVerify { get; set; }
+
     [InverseProperty("User")]
     public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
 

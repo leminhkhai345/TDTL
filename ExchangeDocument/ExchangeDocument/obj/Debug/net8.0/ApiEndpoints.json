@@ -1,6 +1,64 @@
 [
   {
     "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/changePassword",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.ChangePasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "EditProfile",
+    "RelativePath": "api/editprofile",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.ProfileRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "Login",
+    "RelativePath": "api/Login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "Logout",
+    "RelativePath": "api/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
     "Method": "Register",
     "RelativePath": "api/register",
     "HttpMethod": "POST",
@@ -9,7 +67,23 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "ExchangeDocument.BusinessLayer.DTOs.RegisterRequest",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.RegisterDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "VerifyOtp",
+    "RelativePath": "api/verifyotp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.VerifyOtpRequest",
         "IsRequired": true
       }
     ],
