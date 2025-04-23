@@ -1,7 +1,7 @@
 ﻿using ExchangeDocument.BusinessLayer.DTOs;
 using ExchangeDocument.BusinessLayer.Interfaces;
 using ExchangeDocument.DataAccessLayer.Interfaces;
-using ExchangeDocument.DataAccessLayer.ModelFromDB;
+using ExchangeDocument.DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;

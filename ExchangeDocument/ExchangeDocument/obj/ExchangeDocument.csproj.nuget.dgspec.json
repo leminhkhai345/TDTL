@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\pbl3\\exchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj": {}
+    "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj": {}
   },
   "projects": {
-    "E:\\pbl3\\exchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj": {
+    "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\pbl3\\exchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
+        "projectUniqueName": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
         "projectName": "ExchangeDocument",
-        "projectPath": "E:\\pbl3\\exchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
+        "projectPath": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
         "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-        "outputPath": "E:\\pbl3\\exchangeDocument\\ExchangeDocument\\obj\\",
+        "outputPath": "E:\\pbl3\\ExchangeDocument\\ExchangeDocument\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -53,23 +53,23 @@
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[8.0.0, )"
+              "version": "[9.0.4, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.0, )"
+              "version": "[9.0.4, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[8.0.0, )"
+              "version": "[9.0.4, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.0, )"
+              "version": "[9.0.4, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

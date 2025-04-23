@@ -1,4 +1,4 @@
-﻿using ExchangeDocument.DataAccessLayer.ModelFromDB;
+﻿using ExchangeDocument.DataAccessLayer.Entities;
 
 namespace ExchangeDocument.DataAccessLayer.Interfaces
 {

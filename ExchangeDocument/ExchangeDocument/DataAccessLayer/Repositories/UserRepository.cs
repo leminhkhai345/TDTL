@@ -1,6 +1,6 @@
 ﻿using ExchangeDocument.DataAccessLayer.Data;
 using ExchangeDocument.DataAccessLayer.Interfaces;
-using ExchangeDocument.DataAccessLayer.ModelFromDB;
+using ExchangeDocument.DataAccessLayer.Entities;
 
 namespace ExchangeDocument.DataAccessLayer.Repositories
 {

@@ -1,5 +1,5 @@
 ﻿using ExchangeDocument.BusinessLayer.DTOs;
-using ExchangeDocument.DataAccessLayer.ModelFromDB;
+using ExchangeDocument.DataAccessLayer.Entities;
 
 namespace ExchangeDocument.BusinessLayer.Interfaces
 {

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExchangeDocument.DataAccessLayer.ModelFromDB;
+namespace ExchangeDocument.DataAccessLayer.Entities;
 
 [Table("orderDetails")]
 public partial class OrderDetail
@@ -14,22 +14,25 @@ public partial class OrderDetail
     public int OrderDetailId { get; set; }
 
     [Column("orderId")]
-    public int? OrderId { get; set; }
+    public int OrderId { get; set; }
 
     [Column("documentId")]
-    public int? DocumentId { get; set; }
+    public int DocumentId { get; set; }
 
-    [Column("quatity")]
-    public int? Quatity { get; set; }
+    [Column("quantity")]
+    public int Quantity { get; set; }
 
-    [Column("amount")]
-    public double? Amount { get; set; }
+    [Column("priceAtOrderTime", TypeName = "decimal(18, 2)")]
+    public decimal PriceAtOrderTime { get; set; }
+
+    [Column("amount", TypeName = "decimal(29, 2)")]
+    public decimal? Amount { get; set; }
 
     [ForeignKey("DocumentId")]
     [InverseProperty("OrderDetails")]
-    public virtual Document? Document { get; set; }
+    public virtual Document Document { get; set; } = null!;
 
     [ForeignKey("OrderId")]
     [InverseProperty("OrderDetails")]
-    public virtual Order? Order { get; set; }
+    public virtual Order Order { get; set; } = null!;
 }

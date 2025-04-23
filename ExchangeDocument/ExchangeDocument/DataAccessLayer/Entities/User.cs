@@ -4,9 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExchangeDocument.DataAccessLayer.ModelFromDB;
+namespace ExchangeDocument.DataAccessLayer.Entities;
 
 [Table("users")]
+[Index("Email", Name = "UQ__users__AB6E6164F1F6CF8D", IsUnique = true)]
 public partial class User
 {
     [Key]
@@ -15,26 +16,22 @@ public partial class User
 
     [Column("fullName")]
     [StringLength(255)]
-    public string? FullName { get; set; }
+    public string FullName { get; set; } = null!;
 
     [Column("email")]
     [StringLength(255)]
-    public string? Email { get; set; }
+    public string Email { get; set; } = null!;
 
     [Column("password")]
     [StringLength(255)]
-    public string? Password { get; set; }
+    public string Password { get; set; } = null!;
 
     [Column("phone")]
-    [StringLength(255)]
+    [StringLength(20)]
     public string? Phone { get; set; }
 
-    [Column("role")]
-    [StringLength(50)]
-    public string? Role { get; set; }
-
-    [Column("isVerify")]
-    public bool? IsVerify { get; set; }
+    [Column("roleId")]
+    public int RoleId { get; set; }
 
     [InverseProperty("User")]
     public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
@@ -43,5 +40,12 @@ public partial class User
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     [InverseProperty("User")]
-    public virtual ICollection<Userprofile> Userprofiles { get; set; } = new List<Userprofile>();
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    [ForeignKey("RoleId")]
+    [InverseProperty("Users")]
+    public virtual Role Role { get; set; } = null!;
+
+    [InverseProperty("User")]
+    public virtual Userprofile? Userprofile { get; set; }
 }

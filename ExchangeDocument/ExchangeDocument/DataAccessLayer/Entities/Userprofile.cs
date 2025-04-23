@@ -4,9 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace ExchangeDocument.DataAccessLayer.ModelFromDB;
+namespace ExchangeDocument.DataAccessLayer.Entities;
 
 [Table("userprofiles")]
+[Index("UserId", Name = "UQ__userprof__CB9A1CFE232306E5", IsUnique = true)]
 public partial class Userprofile
 {
     [Key]
@@ -17,13 +18,13 @@ public partial class Userprofile
     public DateTime? Birth { get; set; }
 
     [Column("address")]
-    [StringLength(255)]
+    [StringLength(500)]
     public string? Address { get; set; }
 
     [Column("userId")]
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
 
     [ForeignKey("UserId")]
-    [InverseProperty("Userprofiles")]
-    public virtual User? User { get; set; }
+    [InverseProperty("Userprofile")]
+    public virtual User User { get; set; } = null!;
 }
