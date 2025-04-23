@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace ExchangeDocument.BusinessLayer.Services
 {
@@ -27,6 +28,7 @@ namespace ExchangeDocument.BusinessLayer.Services
             if (u != null) return false;
 
             var otp = new Random().Next(100000, 999999).ToString();
+            Console.WriteLine($"[OTP] {otp} đã gửi đến {request.Email}\n");
 
             // Lưu thông tin đăng ký tạm thời (trừ OTP)
             cache.Set($"pending_user_{request.Email}", request, TimeSpan.FromMinutes(10));
@@ -38,6 +40,7 @@ namespace ExchangeDocument.BusinessLayer.Services
                 request.Email,
                 "Xác minh tài khoản",
                 $"Mã OTP của bạn là: <b>{otp}</b>");
+
             return true;
         }
 
@@ -57,8 +60,7 @@ namespace ExchangeDocument.BusinessLayer.Services
                 Email = userData.Email,
                 Password = hashedPassword,
                 Phone = userData.Phone,
-                Role = "user",
-                IsVerify = true
+                RoleId = 1
             };
 
             IUserRepo.AddUser(user);
@@ -93,8 +95,9 @@ namespace ExchangeDocument.BusinessLayer.Services
         {
             User user = IUserRepo.GetUserById(LoginId);
             var passwordHasher = new PasswordHasher<object>();
+            var result = passwordHasher.VerifyHashedPassword(null, user.Password, request.olePassword);
             string hashedPassword = passwordHasher.HashPassword(null, request.newPassword);
-            if (user != null && request.newPassword == request.confirmPassword)
+            if (user != null && request.newPassword == request.confirmPassword && result == PasswordVerificationResult.Success)
             {
                 user.Password = hashedPassword;
                 IUserRepo.SaveChanges();
@@ -123,6 +126,12 @@ namespace ExchangeDocument.BusinessLayer.Services
                 profile.Birth = request.birth;
                 IUserRepo.SaveChanges();
             }
+        }
+
+        public Userprofile GetProfile()
+        {
+            Userprofile profile = IUserRepo.GetProfileById(LoginId);
+            return profile;
         }
     }
 }
