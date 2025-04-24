@@ -1,17 +1,20 @@
-// src/components/Hero.jsx
+// src/Components/Hero.jsx
 import React from "react";
 
-const Hero = () => (
-  <section className="py-16 bg-white">
-    <div className="max-w-7xl mx-auto px-4 text-center">
-      <h2 className="text-3xl font-bold text-blue-800 mb-4">
-        Welcome to Textbook Library
-      </h2>
-      <p className="text-gray-700 text-lg">
-        A smart platform for exchanging and purchasing books. Save money, find rare titles, and connect with other book lovers!
-      </p>
-    </div>
-  </section>
-);
+const Hero = () => {
+  return (
+    <div className="relative w-full h-96 bg-blue-100 overflow-hidden">
+  <video
+    autoPlay
+    loop
+    muted
+    className="absolute top-0 left-0 w-full h-full object-cover "
+  >
+    <source src="../public/video/Hero.mp4" type="video/mp4" />
+  </video>
+  
+</div>
+  );
+};
 
 export default Hero;

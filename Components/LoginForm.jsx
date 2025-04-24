@@ -1,14 +1,31 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../src/contexts/AuthContext"; // Import useAuth
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { login } = useAuth(); // Lấy hàm login từ context
+
+  // Giả lập tài khoản
+  const fakeUser = {
+    email: "testuser@example.com",
+    password: "password123",
+    name: "Test User",
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
+
+    if (email === fakeUser.email && password === fakeUser.password) {
+      console.log("Login successful!");
+      login(fakeUser); // Gọi login trong context
+      navigate("/"); // Chuyển hướng về trang chủ
+    } else {
+      console.log("Invalid credentials.");
+      alert("Invalid email or password.");
+    }
   };
 
   return (

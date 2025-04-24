@@ -1,4 +1,3 @@
-// components/BookCarousel.jsx
 import { useEffect, useRef } from "react";
 
 const books = [
@@ -30,7 +29,7 @@ const BookCarousel = () => {
     clone();
 
     let animationFrame;
-    const scrollStep = 0.31;
+    const scrollStep = 0.5; // Tăng tốc độ cuộn để mượt mà hơn
 
     const scroll = () => {
       if (carousel.scrollLeft >= carousel.scrollWidth / 2) {
@@ -49,7 +48,6 @@ const BookCarousel = () => {
   return (
     <section className="py-12 bg-gray-100">
       <div className="max-w-7xl mx-auto px-4">
-        {/* <h3 className="text-2xl font-bold text-blue-700 mb-6">Featured Books</h3> */}
         <div
           ref={carouselRef}
           className="flex overflow-x-auto space-x-6 pb-4 scrollbar-hide"
@@ -57,12 +55,12 @@ const BookCarousel = () => {
           {books.map((book, index) => (
             <div
               key={index}
-              className="min-w-[200px] flex-shrink-0 bg-white rounded-xl shadow p-4 text-center"
+              className="min-w-[200px] flex-shrink-0 bg-white rounded-xl shadow p-4 text-center transition-transform transform hover:scale-105 hover:shadow-xl"
             >
               <img
                 src={book.image}
                 alt={book.title}
-                className="h-48 w-full object-cover rounded mb-4"
+                className="h-48 w-full object-cover rounded mb-4 transition-transform transform hover:scale-110"
               />
               <h4 className="font-semibold text-blue-800">{book.title}</h4>
               <p className="text-sm text-gray-600">by {book.author}</p>

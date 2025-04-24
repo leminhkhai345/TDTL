@@ -1,21 +1,28 @@
+// src/pages/BookDetailsPage.jsx
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
+// Giả sử bạn có một mảng sách như dưới đây, bạn có thể thay đổi hoặc lấy từ API nếu cần
 const books = [
-  { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", genre: "Classic", description: "A classic novel set in the Roaring Twenties.", price: 15, image: "/img/gatsby.jpg" },
-  { id: 2, title: "1984", author: "George Orwell", genre: "Dystopian", description: "A chilling dystopian novel about a totalitarian regime.", price: 18, image: "/img/1984.jpg" },
-  { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", genre: "Fiction", description: "A gripping story of racial injustice and loss of innocence.", price: 25, image: "/img/mockingbird.jpg" },
-  // Thêm các sách khác vào đây...
+  { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", genre: "Classic", price: 15, image: "/img/gatsby.jpg" },
+  { id: 2, title: "1984", author: "George Orwell", genre: "Dystopian", price: 18, image: "/img/1984.jpg" },
+  { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", genre: "Fiction", price: 25, image: "/img/mockingbird.jpg" },
+  { id: 4, title: "Pride and Prejudice", author: "Jane Austen", genre: "Romance", price: 22, image: "/img/pride.jpg" },
+  { id: 5, title: "The Hobbit", author: "J.R.R. Tolkien", genre: "Fantasy", price: 30, image: "/img/hobbit.jpg" },
+  { id: 6, title: "The Catcher in the Rye", author: "J.D. Salinger", genre: "Fiction", price: 17, image: "/img/catcher.jpg" },
+  { id: 7, title: "Brave New World", author: "Aldous Huxley", genre: "Sci-Fi", price: 20, image: "/img/brave.jpg" },
+  { id: 8, title: "Moby Dick", author: "Herman Melville", genre: "Adventure", price: 28, image: "/img/moby.jpg" },
 ];
 
 const BookDetailsPage = () => {
+  // Lấy bookId từ URL bằng useParams
   const { bookId } = useParams();
 
-  // Tìm cuốn sách từ mảng dữ liệu bằng bookId
+  // Tìm cuốn sách với bookId
   const book = books.find((b) => b.id.toString() === bookId);
 
   if (!book) {
-    return <div>Book not found</div>; // Nếu không tìm thấy sách, hiển thị thông báo lỗi
+    return <div>Book not found</div>;  // Nếu không tìm thấy sách, hiển thị thông báo lỗi
   }
 
   return (

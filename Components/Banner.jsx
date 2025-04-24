@@ -1,25 +1,31 @@
-// src/components/Banner.jsx
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; // Dẫn đến trang danh sách sách
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBookOpen } from "@fortawesome/free-solid-svg-icons"; // Biểu tượng sách
 
 const Banner = () => {
   return (
-    <section className="relative bg-blue-600 text-white">
-      <div className="max-w-7xl mx-auto py-16 px-6 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold sm:text-5xl">Buy and Exchange Books</h1>
-          <p className="mt-4 text-lg">A platform for book lovers to buy and exchange books</p>
-          <div className="mt-8 flex justify-center">
-            <Link
-              to="/login"
-              className="inline-block text-center bg-white text-blue-600 px-6 py-3 font-semibold rounded-lg hover:bg-gray-100"
-            >
-              Get Started
-            </Link>
-          </div>
-        </div>
+    <div className="relative w-full h-96 bg-white overflow-hidden">
+      {/* Nội dung Banner */}
+      <div className="relative z-10 text-center text-white py-16 px-4">
+        <h1 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-wide text-blue-900">
+          Welcome to BookStore
+        </h1>
+        <p className="text-lg md:text-xl mb-8 text-blue-700">
+          <FontAwesomeIcon icon={faBookOpen} className="mr-2 text-blue-700" />
+          Explore a world of books, from fiction to non-fiction, and enjoy a seamless shopping experience.
+        </p>
+
+        {/* Nút CTA với biểu tượng sách */}
+        <Link
+          to="/browse"
+          className="bg-blue-600 text-white text-lg px-8 py-4 rounded-lg hover:bg-blue-500 transition duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+        >
+          <FontAwesomeIcon icon={faBookOpen} className="mr-2" />
+          Explore Books
+        </Link>
       </div>
-    </section>
+    </div>
   );
 };
 
