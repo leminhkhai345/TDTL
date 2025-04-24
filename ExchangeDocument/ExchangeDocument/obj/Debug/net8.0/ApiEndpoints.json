@@ -1,5 +1,83 @@
 [
   {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserProfileController",
+    "Method": "GetUserProfile",
+    "RelativePath": "api/userprofile/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserProfileController",
+    "Method": "GetAllUserProfile",
+    "RelativePath": "api/userprofile/admin/getallprofile",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserProfileController",
+    "Method": "GetProfile",
+    "RelativePath": "api/userprofile/me",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserProfileController",
+    "Method": "EditProfile",
+    "RelativePath": "api/userprofile/me",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.ProfileRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "DeleteUser",
+    "RelativePath": "api/users/admin/{userId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "GetAllUser",
+    "RelativePath": "api/users/admin/getallusers",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
     "Method": "Login",
     "RelativePath": "api/users/login",
@@ -20,16 +98,6 @@
     "Method": "Logout",
     "RelativePath": "api/users/logout",
     "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
-    "Method": "GetProfile",
-    "RelativePath": "api/users/me",
-    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],

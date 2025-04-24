@@ -10,5 +10,8 @@ namespace ExchangeDocument.DataAccessLayer.Interfaces
         public User GetUserByEmail(string email);
         public User GetUserById(int id);
         public Userprofile GetProfileById(int id);
+        public List<Userprofile> GetAllUSerProfile();
+        public List<User> GetAllUser();
+        public void DeleteUser(User user);
     }
 }

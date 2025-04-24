@@ -106,32 +106,58 @@ namespace ExchangeDocument.BusinessLayer.Services
             else return false;
         }
 
-        public void EditProfile(ProfileRequest request)
-        {
-            Userprofile profile = IUserRepo.GetProfileById(LoginId);
-            if (profile == null)
-            {
-                profile = new Userprofile
-                {
-                    UserId = LoginId,
-                    Address = request.address,
-                    Birth = request.birth
-                };
-                IUserRepo.AddUserprofile(profile);
-                IUserRepo.SaveChanges();
-            }
-            else
-            {
-                profile.Address = request.address;
-                profile.Birth = request.birth;
-                IUserRepo.SaveChanges();
-            }
-        }
 
         public Userprofile GetProfile()
         {
             Userprofile profile = IUserRepo.GetProfileById(LoginId);
             return profile;
+        }
+
+        public Userprofile GetProfile(int id)
+        {
+            Userprofile profile = IUserRepo.GetProfileById(id);
+            return profile;
+        }
+
+        public List<Userprofile> GetAllUserProfile()
+        {
+            List<Userprofile> li = IUserRepo.GetAllUSerProfile();
+            return li;
+        }
+
+
+        public void EditProfile(ProfileRequest request)
+        {
+            Userprofile profile = IUserRepo.GetProfileById(LoginId);
+            if(profile == null)
+            {
+                profile = new Userprofile
+                {
+                    Address = request.address,
+                    Birth = request.birth,
+                    UserId = LoginId
+                };
+                IUserRepo.AddUserprofile(profile);
+            }
+            else
+            {
+                profile.Address = request.address;
+                profile.Birth = request.birth;
+            }
+            IUserRepo.SaveChanges();
+        }
+
+        public List<User> GetAllUser()
+        {
+            List<User> users = IUserRepo.GetAllUser();
+            return users;
+        }
+
+        public void DeleteUser(int id)
+        {
+            User user = IUserRepo.GetUserById(id);
+            IUserRepo.DeleteUser(user);
+            IUserRepo.SaveChanges();
         }
     }
 }

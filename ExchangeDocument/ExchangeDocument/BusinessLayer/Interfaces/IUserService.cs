@@ -12,5 +12,9 @@ namespace ExchangeDocument.BusinessLayer.Interfaces
         public bool ChangePassword(ChangePasswordRequest request);
         public void EditProfile(ProfileRequest request);
         public Userprofile GetProfile();
+        public Userprofile GetProfile(int id);
+        public List<Userprofile> GetAllUserProfile();
+        public List<User> GetAllUser();
+        public void DeleteUser(int id);
     }
 }

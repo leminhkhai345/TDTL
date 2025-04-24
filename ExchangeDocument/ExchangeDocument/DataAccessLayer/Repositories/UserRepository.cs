@@ -44,5 +44,23 @@ namespace ExchangeDocument.DataAccessLayer.Repositories
         {
             exchangeDoc.Userprofiles.Add(userprofile);
         }
+
+        public List<Userprofile> GetAllUSerProfile()
+        {
+            List<Userprofile> profiles = exchangeDoc.Userprofiles.Select(s => s).ToList();
+            return profiles;
+        }
+
+        public List<User> GetAllUser()
+        {
+            List<User> users = exchangeDoc.Users.Select(s => s).ToList();
+            return users;
+        }
+
+        public void DeleteUser(User user)
+        {
+            exchangeDoc.Users.Remove(user);
+        }
+
     }
 }

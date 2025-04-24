@@ -59,12 +59,20 @@ namespace ExchangeDocument.PresentationLayer.Controllers
             else return BadRequest("Đổi mật khẩu thất bại!!");
         }
 
-        [HttpGet]
-        [Route("me")]
-        public IActionResult GetProfile()
+        [HttpPost]
+        [Route("admin/getallusers")]
+        public IActionResult GetAllUser()
         {
-            Userprofile profile = iuserService.GetProfile();
-            return Ok(new { profile });
+            var users = iuserService.GetAllUser();
+            return Ok(new { users });
+        }
+
+        [HttpDelete]
+        [Route("admin/{userId}")]
+        public IActionResult DeleteUser(int userId)
+        {
+            iuserService.DeleteUser(userId);
+            return Ok("Đã xoá thành công");
         }
     }
 }
