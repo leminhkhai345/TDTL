@@ -1,23 +1,32 @@
+// src/pages/SignUpPage.jsx
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SignUpForm from "../Components/SignUpForm";
+import { useAuth } from "../src/contexts/AuthContext"; // Import useAuth từ context
 
 const SignUpPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
+  const { register } = useAuth(); // Lấy hàm register từ context
 
-  const handleSignUpSubmit = (name, email, password, confirmPassword) => {
+  const handleSignUpSubmit = async (name, email, phone, password, confirmPassword) => {
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match");
       return;
     }
 
-    // Xử lý đăng ký, có thể gửi dữ liệu lên server ở đây
-    console.log("Name:", name);
-    console.log("Email:", email);
-    console.log("Password:", password);
+    try {
+      const res = await register(name, email, phone, password); // Sử dụng register từ context
 
-    // Reset form fields sau khi đăng ký
-    setErrorMessage("");
+      if (res.success) {
+        navigate("/login"); // Nếu đăng ký thành công, chuyển đến trang đăng nhập
+      } else {
+        setErrorMessage(res.message || "Đăng ký thất bại");
+      }
+    } catch (err) {
+      console.error("Sign up error:", err);
+      setErrorMessage("An unexpected error occurred.");
+    }
   };
 
   return (

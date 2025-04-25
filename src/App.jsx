@@ -46,7 +46,7 @@ const App = () => {
           element={isLoggedIn ? <ExchangePage /> : <Navigate to="/login" />}
         />
 
-<Route path="/book-details/:bookId" element={<BookDetailsPage />} />
+        <Route path="/book-details/:bookId" element={<BookDetailsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/books/:bookId" element={<BookDetailsPage />} />

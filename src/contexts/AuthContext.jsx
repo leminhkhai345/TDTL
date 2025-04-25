@@ -9,7 +9,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Kiểm tra localStorage khi load lại trang
     const storedLogin = localStorage.getItem("isLoggedIn") === "true";
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedLogin && storedUser) {
@@ -18,13 +17,60 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (userData) => {
-    setIsLoggedIn(true);
-    setUser(userData);
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("user", JSON.stringify(userData));
+  // ✅ Hàm login gọi API thật
+  const login = async (email, password) => {
+    try {
+      //thêm API thật vào
+      const response = await fetch("https://your-api.com/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      console.log("Response:", response);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
+      }
+
+      const data = await response.json();
+      setIsLoggedIn(true);
+      setUser(data.user);
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("user", JSON.stringify(data.user));
+      return { success: true };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   };
 
+  // ✅ Hàm register 
+  const register = async (name, email, phone, password) => {
+    try {
+
+      //thêm API thật vào đây
+      const response = await fetch("https://your-api.com/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone, password }),
+      });
+      console.log("Response:", response);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
+      }
+
+      const data = await response.json();
+      setIsLoggedIn(true);
+      setUser(data.user);
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("user", JSON.stringify(data.user));
+      return { success: true };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  };
+
+  // Đăng xuất
   const logout = () => {
     setIsLoggedIn(false);
     setUser(null);
@@ -33,11 +79,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom hook để sử dụng context dễ dàng
+// Custom hook để dùng context dễ hơn
 export const useAuth = () => useContext(AuthContext);

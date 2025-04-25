@@ -1,30 +1,29 @@
+// src/Components/LoginForm.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../src/contexts/AuthContext"; // Import useAuth
+import { useAuth } from "../src/contexts/AuthContext"; // Import useAuth từ context
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth(); // Lấy hàm login từ context
 
-  // Giả lập tài khoản
-  const fakeUser = {
-    email: "testuser@example.com",
-    password: "password123",
-    name: "Test User",
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (email === fakeUser.email && password === fakeUser.password) {
-      console.log("Login successful!");
-      login(fakeUser); // Gọi login trong context
-      navigate("/"); // Chuyển hướng về trang chủ
-    } else {
-      console.log("Invalid credentials.");
-      alert("Invalid email or password.");
+    try {
+      const res = await login(email, password); // Sử dụng login từ context
+
+      if (res.success) {
+        navigate("/profile"); // Nếu đăng nhập thành công, chuyển đến trang Profile
+      } else {
+        setError(res.message || "Login failed");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("An unexpected error occurred.");
     }
   };
 
@@ -35,7 +34,6 @@ const LoginForm = () => {
         <input
           type="email"
           id="email"
-          name="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -48,7 +46,6 @@ const LoginForm = () => {
         <input
           type="password"
           id="password"
-          name="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -62,6 +59,8 @@ const LoginForm = () => {
       >
         Login
       </button>
+
+      {error && <p className="text-red-500 text-center mt-2">{error}</p>}
 
       <p className="mt-4 text-center text-sm text-gray-600">
         Don't have an account?{" "}
