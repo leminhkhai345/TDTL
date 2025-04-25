@@ -3,7 +3,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faPhone, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { faFacebook, faInstagram, faTwitter } from "@fortawesome/free-brands-svg-icons";
-import logo from "../src/assets/book-shop1.png"; // sửa nếu bạn dùng logo khác
+import logo from "../src/assets/book-shop.png";
 
 const Footer = () => {
   return (

@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       //thêm API thật vào
-      const response = await fetch("https://your-api.com/api/login", {
+      const response = await fetch("http://localhost:5041/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -44,14 +44,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ✅ Hàm register 
-  const register = async (name, email, phone, password) => {
+  const register = async (FullName, Email, Phone, Password ) => {
     try {
 
       //thêm API thật vào đây
-      const response = await fetch("https://your-api.com/api/signup", {
+      const response = await fetch("http://localhost:5041/api/users/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, password }),
+        body: JSON.stringify({ FullName, Email, Phone, Password }),
       });
       console.log("Response:", response);
       if (!response.ok) {

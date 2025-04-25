@@ -11,22 +11,33 @@ const BrowseBooksPage = () => {
   const [selectedGenre, setSelectedGenre] = useState("All Genres");
   const [selectedPrice, setSelectedPrice] = useState("All Prices");
   const [viewMode, setViewMode] = useState("grid"); // grid | list
+  const [loading, setLoading] = useState(true);  // Trạng thái loading
+  const [error, setError] = useState("");  // Thông báo lỗi nếu có
 
   const { addToCart } = useCart();  // Lấy hàm addToCart từ CartContext
 
-  const books = [
-    { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", genre: "Classic", price: 15, image: "/img/gatsby.jpg" },
-    { id: 2, title: "1984", author: "George Orwell", genre: "Dystopian", price: 18, image: "/img/1984.jpg" },
-    { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", genre: "Fiction", price: 25, image: "/img/mockingbird.jpg" },
-    { id: 4, title: "Pride and Prejudice", author: "Jane Austen", genre: "Romance", price: 22, image: "/img/pride.jpg" },
-    { id: 5, title: "The Hobbit", author: "J.R.R. Tolkien", genre: "Fantasy", price: 30, image: "/img/hobbit.jpg" },
-    { id: 6, title: "The Catcher in the Rye", author: "J.D. Salinger", genre: "Fiction", price: 17, image: "/img/catcher.jpg" },
-    { id: 7, title: "Brave New World", author: "Aldous Huxley", genre: "Sci-Fi", price: 20, image: "/img/brave.jpg" },
-    { id: 8, title: "Moby Dick", author: "Herman Melville", genre: "Adventure", price: 28, image: "/img/moby.jpg" },
-  ];
+  // Gọi API để lấy dữ liệu sách
+  const fetchBooks = async () => {
+    try {
 
+      //thêm API
+      const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+      console.log("Response:", response);
+      if (!response.ok) {
+        throw new Error("Failed to fetch books");
+      }
+      const data = await response.json();
+      setFilteredBooks(data);  // Giả sử API trả về mảng sách
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  // Lọc sách theo các điều kiện
   const filterBooks = () => {
-    return books.filter((book) => {
+    return filteredBooks.filter((book) => {
       const genreMatch = selectedGenre === "All Genres" || book.genre === selectedGenre;
       const priceMatch =
         selectedPrice === "All Prices" ||
@@ -41,9 +52,16 @@ const BrowseBooksPage = () => {
     });
   };
 
+  // Gọi fetchBooks khi component được render lần đầu tiên
   useEffect(() => {
-    setFilteredBooks(filterBooks());
-  }, [searchQuery, selectedGenre, selectedPrice]);
+    fetchBooks();
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setFilteredBooks(filterBooks());
+    }
+  }, [searchQuery, selectedGenre, selectedPrice, loading]);
 
   const handleSearch = (query) => setSearchQuery(query);
   const handleFilterChange = (genre, price) => {
@@ -55,6 +73,14 @@ const BrowseBooksPage = () => {
     addToCart(book);  // Thêm sách vào giỏ
     alert(`Added "${book.title}" to cart!`);
   };
+
+  if (loading) {
+    return <div className="text-center">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-600">Error: {error}</div>;
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
