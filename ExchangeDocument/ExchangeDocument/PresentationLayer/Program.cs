@@ -1,4 +1,4 @@
-using ExchangeDocument.BusinessLayer.DTOs;
+﻿using ExchangeDocument.BusinessLayer.DTOs;
 using ExchangeDocument.BusinessLayer.Interfaces;
 using ExchangeDocument.BusinessLayer.Services;
 using ExchangeDocument.DataAccessLayer.Data;
@@ -26,6 +26,30 @@ namespace ExchangeDocument.PresentationLayer
 
 
 
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowFrontend",
+            //        policy =>
+            //        {
+            //            policy.WithOrigins("http://localhost:5173")  // Cổng của frontend
+            //                  .AllowAnyHeader()
+            //                  .AllowAnyMethod()
+            //                  .AllowCredentials();  // Cho phép gửi cookie nếu cần
+            //        });
+            //});
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin()
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
+            });
+
+
             builder.Services.AddDbContext<exchangeDocument>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddMemoryCache();
@@ -37,6 +61,11 @@ namespace ExchangeDocument.PresentationLayer
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+
+
+            //app.UseCors("AllowFrontend");
+            app.UseCors("AllowAll");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
