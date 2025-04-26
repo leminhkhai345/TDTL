@@ -1,51 +1,56 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Khởi tạo CartContext
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
-  // Thêm sách vào giỏ
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
+
   const addToCart = (book) => {
-    setCart((prevCart) => {
-      const existingBook = prevCart.find((item) => item.id === book.id);
-      if (existingBook) {
-        return prevCart.map((item) =>
-          item.id === book.id
-            ? { ...item, quantity: item.quantity + 1 } // Tăng số lượng nếu sách đã có trong giỏ
+    setCartItems((prevItems) => {
+      const existingItem = prevItems.find((item) => item.bookId === book.bookId);
+      if (existingItem) {
+        return prevItems.map((item) =>
+          item.bookId === book.bookId
+            ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      return [...prevCart, { ...book, quantity: 1 }];
+      return [...prevItems, { ...book, quantity: 1 }];
     });
   };
 
-  // Xóa sách khỏi giỏ
-  const removeFromCart = (id) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+  const removeFromCart = (bookId) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.bookId !== bookId));
   };
 
-  // Cập nhật số lượng sách trong giỏ
-  const updateQuantity = (id, quantity) => {
-    if (quantity < 1) return;
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id ? { ...item, quantity } : item
-      )
-    );
+  const updateQuantity = (bookId, quantity) => {
+    if (quantity <= 0) {
+      removeFromCart(bookId);
+    } else {
+      setCartItems((prevItems) =>
+        prevItems.map((item) =>
+          item.bookId === bookId ? { ...item, quantity } : item
+        )
+      );
+    }
   };
 
-  // Tính tổng giá trị giỏ hàng
-  const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  const clearCart = () => {
+    setCartItems([]);
   };
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, updateQuantity, getTotalPrice }}
+      value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart }}
     >
       {children}
     </CartContext.Provider>

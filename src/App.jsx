@@ -19,7 +19,7 @@ import { CartProvider } from "../src/contexts/CartContext";
 import { Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify"; // Thêm ToastContainer
 import "react-toastify/dist/ReactToastify.css"; // Thêm CSS cho toast
-
+import CheckoutPage from "../Pages/CheckoutPage"; // Thêm CheckoutPage
 const ProtectedRoute = ({ children }) => {
   const { isLoggedIn } = useAuth();
   return isLoggedIn ? children : <Navigate to="/login" />;
@@ -46,8 +46,15 @@ const App = () => {
             <Route path="/books/:bookId" element={<BookDetailsPage />} />
             <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/" />} />
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute>
+                  <CheckoutPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
-          <Footer />
           <ToastContainer position="top-right" autoClose={3000} />
         </Router>
       </CartProvider>
