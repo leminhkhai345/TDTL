@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useAuth } from "../src/contexts/AuthContext";
+import { toast } from "react-toastify";
 
-const ExchangeForm = () => {
+const SellForm = () => {
   const [bookTitle, setBookTitle] = useState("");
   const [bookAuthor, setBookAuthor] = useState("");
   const [description, setDescription] = useState("");
   const [condition, setCondition] = useState("Good");
+  const [price, setPrice] = useState("");
   const [contactInfo, setContactInfo] = useState("");
   const [error, setError] = useState("");
   const { user } = useAuth();
@@ -13,41 +15,44 @@ const ExchangeForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      setError("Please log in to submit an exchange request.");
+      toast.error("Please log in to submit a sell request.");
       return;
     }
 
-    const exchangeData = {
-      userId: user.id, // Giả sử user có trường id từ AuthContext
+    const sellData = {
+      userId: user.id,
       title: bookTitle,
       author: bookAuthor,
       description,
       condition,
+      price: parseFloat(price),
       contactInfo,
-      status: "Pending", // Trạng thái mặc định
+      status: "Listed", // Trạng thái mặc định
       createdAt: new Date().toISOString(),
     };
 
     try {
-      const response = await fetch("http://localhost:5041/api/exchanges", {
+      const response = await fetch("https://680d2126c47cb8074d8fa188.mockapi.io/sell", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(exchangeData),
+        body: JSON.stringify(sellData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit exchange request");
+        throw new Error(errorData.message || "Failed to submit sell request");
       }
 
-      alert("Your exchange request has been submitted!");
+      toast.success("Sell request submitted successfully!");
       setBookTitle("");
       setBookAuthor("");
       setDescription("");
       setCondition("Good");
+      setPrice("");
       setContactInfo("");
       setError("");
     } catch (err) {
+      toast.error(err.message);
       setError(err.message);
     }
   };
@@ -65,7 +70,6 @@ const ExchangeForm = () => {
           required
         />
       </div>
-
       <div>
         <label className="block font-medium mb-1">Author</label>
         <input
@@ -76,17 +80,15 @@ const ExchangeForm = () => {
           required
         />
       </div>
-
       <div>
-        <label className="block font-medium mb-1">Book Description</label>
+        <label className="block font-medium mb-1">Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           rows={4}
-        ></textarea>
+        />
       </div>
-
       <div>
         <label className="block font-medium mb-1">Condition</label>
         <select
@@ -101,7 +103,18 @@ const ExchangeForm = () => {
           <option value="Poor">Poor</option>
         </select>
       </div>
-
+      <div>
+        <label className="block font-medium mb-1">Price ($)</label>
+        <input
+          type="number"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          min="0"
+          step="0.01"
+          required
+        />
+      </div>
       <div>
         <label className="block font-medium mb-1">Contact Information</label>
         <input
@@ -112,15 +125,14 @@ const ExchangeForm = () => {
           required
         />
       </div>
-
       <button
         type="submit"
         className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
       >
-        Submit Exchange
+        Submit Sell Request
       </button>
     </form>
   );
 };
 
-export default ExchangeForm;
+export default SellForm;

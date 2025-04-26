@@ -1,29 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import logo from "../src/assets/book-shop1.png"; // Đường dẫn tới logo
+import logo from "../src/assets/book-shop1.png";
 import {
   faHome,
   faBookOpen,
   faExchangeAlt,
   faDollarSign,
   faSignInAlt,
-  faUser, // Biểu tượng người dùng
-  faShoppingCart, // Thêm biểu tượng giỏ hàng
+  faUser,
+  faShoppingCart,
+  faHistory,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "../src/contexts/AuthContext"; // Import context
+import { useAuth } from "../src/contexts/AuthContext";
 
 const Navbar = () => {
-  const { isLoggedIn, user, logout } = useAuth(); // Lấy thông tin đăng nhập từ context
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State để theo dõi trạng thái dropdown
-  const dropdownRef = useRef(null); // Ref để tham chiếu đến dropdown menu
+  const { isLoggedIn, user, logout } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-  // Hàm để toggle trạng thái của dropdown
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  // Hàm để đóng dropdown khi click bên ngoài
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -39,7 +38,6 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-        {/* Logo + Brand name */}
         <div className="relative">
           <Link to="/" className="flex items-center space-x-2">
             <img src={logo} alt="Logo" className="w-8 h-8" />
@@ -47,7 +45,6 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Navigation Links with Icons */}
         <div className="space-x-6 text-sm font-medium text-gray-700 flex items-center">
           <Link to="/" className="hover:text-blue-600 flex items-center space-x-1">
             <FontAwesomeIcon icon={faHome} />
@@ -65,37 +62,37 @@ const Navbar = () => {
             <FontAwesomeIcon icon={faDollarSign} />
             <span>Sell</span>
           </Link>
-
-          {/* Hiển thị giỏ hàng khi đăng nhập */}
           {isLoggedIn && (
-            <Link
-              to="/cart"
-              className="hover:text-blue-600 flex items-center space-x-1"
-            >
-              <FontAwesomeIcon icon={faShoppingCart} />
-              <span>Cart</span>
-            </Link>
+            <>
+              <Link to="/cart" className="hover:text-blue-600 flex items-center space-x-1">
+                <FontAwesomeIcon icon={faShoppingCart} />
+                <span>Cart</span>
+              </Link>
+              <Link to="/exchange-history" className="hover:text-blue-600 flex items-center space-x-1">
+                <FontAwesomeIcon icon={faHistory} />
+                <span>Exchange History</span>
+              </Link>
+              <Link to="/sell-history" className="hover:text-blue-600 flex items-center space-x-1">
+                <FontAwesomeIcon icon={faHistory} />
+                <span>Sell History</span>
+              </Link>
+            </>
           )}
-
-          {/* Hiển thị avatar hoặc icon người dùng khi đã đăng nhập */}
           {isLoggedIn && (
             <div className="relative">
               <button
                 className="flex items-center space-x-2"
-                onClick={toggleDropdown} // Thêm sự kiện click để mở/đóng dropdown
+                onClick={toggleDropdown}
               >
-                {/* Hiển thị avatar của người dùng hoặc icon người dùng */}
                 <img
-                  src={user?.avatar || "https://via.placeholder.com/40"} // Nếu không có avatar, dùng hình placeholder
+                  src={user?.avatar || "https://via.placeholder.com/40"}
                   alt="Avatar"
                   className="w-8 h-8 rounded-full border"
                 />
               </button>
-
-              {/* Dropdown khi click vào avatar */}
               {isDropdownOpen && (
                 <div
-                  ref={dropdownRef} // Thêm ref cho dropdown menu
+                  ref={dropdownRef}
                   className="absolute top-full right-0 mt-2 bg-white border rounded-lg shadow-md w-48 z-50"
                 >
                   <div className="p-2">
@@ -112,8 +109,6 @@ const Navbar = () => {
               )}
             </div>
           )}
-
-          {/* Hiển thị nút login nếu chưa đăng nhập */}
           {!isLoggedIn && (
             <Link to="/login" className="hover:text-blue-600 flex items-center space-x-1">
               <FontAwesomeIcon icon={faSignInAlt} />

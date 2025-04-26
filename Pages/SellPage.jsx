@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import ExchangeForm from "../components/ExchangeForm";
+import SellForm from "../Components/SellForm";
 import Navbar from "../Components/Navbar";
 
-const ExchangePage = () => {
+const SellPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,21 +15,20 @@ const ExchangePage = () => {
 
   return (
     <>
-  
       <div className="max-w-3xl mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Exchange Your Book</h1>
+          <h1 className="text-2xl font-bold">Sell Your Book</h1>
           <Link
-            to="/exchange-history"
+            to="/sell-history"
             className="text-blue-600 hover:underline"
           >
-            View Exchange History
+            View Sell History
           </Link>
         </div>
-        <ExchangeForm />
+        <SellForm />
       </div>
     </>
   );
 };
 
-export default ExchangePage;
+export default SellPage;

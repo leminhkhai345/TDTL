@@ -6,7 +6,7 @@ import FeaturedBooks from "../Components/FeaturedBooks";
 import Footer from "../Components/Footer";
 import Hero from "../Components/Hero";
 import Features from "../Components/Features";
-import BenefitsSection from "../Components/Benifit";
+import BenefitsSection from "../Components/Benifits";
 const HomePage = () => {
   return (
     <div className="bg-gray-50">

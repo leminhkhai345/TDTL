@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Tạo context
 const AuthContext = createContext();
 
-// Tạo Provider
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
@@ -17,60 +15,64 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // ✅ Hàm login gọi API thật
   const login = async (email, password) => {
     try {
-      //thêm API thật vào
-      const response = await fetch("http://localhost:5041/api/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      console.log("Response:", response);
+      const response = await fetch(
+        `https://680d2126c47cb8074d8fa188.mockapi.io/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
+        throw new Error("Login failed");
       }
 
       const data = await response.json();
+      if (data.length === 0) {
+        throw new Error("Invalid email or password");
+      }
+
+      const userData = data[0];
       setIsLoggedIn(true);
-      setUser(data.user);
+      setUser(userData);
       localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("user", JSON.stringify(userData));
       return { success: true };
     } catch (err) {
       return { success: false, message: err.message };
     }
   };
 
-  // ✅ Hàm register 
-  const register = async (FullName, Email, Phone, Password ) => {
+  const register = async (fullName, email, phone, password) => {
     try {
-
-      //thêm API thật vào đây
-      const response = await fetch("http://localhost:5041/api/users/register", {
+      const response = await fetch("https://680d2126c47cb8074d8fa188.mockapi.io/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ FullName, Email, Phone, Password }),
+        body: JSON.stringify({
+          fullName,
+          email,
+          phone,
+          password,
+          createdAt: new Date().toISOString(),
+        }),
       });
-      console.log("Response:", response);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Registration failed");
       }
 
-      const data = await response.json();
+      const userData = await response.json();
       setIsLoggedIn(true);
-      setUser(data.user);
+      setUser(userData);
       localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("user", JSON.stringify(userData));
       return { success: true };
     } catch (err) {
       return { success: false, message: err.message };
     }
   };
 
-  // Đăng xuất
   const logout = () => {
     setIsLoggedIn(false);
     setUser(null);
@@ -85,5 +87,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Custom hook để dùng context dễ hơn
 export const useAuth = () => useContext(AuthContext);
