@@ -17,7 +17,7 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         }
 
         [HttpGet]
-        [Route("getallbydocid/{documentId}")]
+        [Route("all/{documentId}")]
         public IActionResult GetAllReviewByDocumentId(int documentId)
         {
             List<Review> reviews = idocService.GetAllReviewByDocumentId(documentId);
@@ -25,7 +25,7 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         }
 
         [HttpPost]
-        [Route("create")]
+        [Route("")]
         public IActionResult CreateNewReview([FromBody] CreateReviewRequest request)
         {
             ReviewResponse rs = idocService.createReview(request);
@@ -49,7 +49,7 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         }
 
         [HttpGet]
-        [Route("getallbyuserid/{UserId}")]
+        [Route("all/{UserId}")]
         public IActionResult GetAllReviewByUserId(int UserId)
         {
             var rs = idocService.GetAllReviewByUserId(UserId);

@@ -1,4 +1,5 @@
-﻿using ExchangeDocument.BusinessLayer.DTOs;
+﻿using System.Security.Claims;
+using ExchangeDocument.BusinessLayer.DTOs;
 using ExchangeDocument.BusinessLayer.Interfaces;
 using ExchangeDocument.DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,8 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         [Route("me")]
         public IActionResult GetProfile()
         {
-            Userprofile profile = iuserService.GetProfile();
+            var loginId = Convert.ToInt32(HttpContext.User.FindFirstValue("UserId"));
+            Userprofile profile = iuserService.GetProfile(loginId);
             return Ok(new { profile });
         }
 
@@ -28,12 +30,13 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         [Route("me")]
         public IActionResult EditProfile(ProfileRequest request)
         {
-            iuserService.EditProfile(request);
+            var loginId = Convert.ToInt32(HttpContext.User.FindFirstValue("UserId"));
+            iuserService.EditProfile(request, loginId);
             return Ok("thay đổi thông tin thành công");
         }
 
         [HttpGet]
-        [Route("{userId}")]
+        [Route("me/{userId}")]
         public IActionResult GetUserProfile(int userId)
         {
             Userprofile profile = iuserService.GetProfile(userId);
@@ -41,7 +44,7 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         }
 
         [HttpGet]
-        [Route("admin/getallprofile")]
+        [Route("admin/all")]
         public IActionResult GetAllUserProfile()
         {
             var profiles = iuserService.GetAllUserProfile();

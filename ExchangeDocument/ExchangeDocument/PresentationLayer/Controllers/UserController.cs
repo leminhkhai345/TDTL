@@ -1,78 +1,100 @@
-﻿using ExchangeDocument.BusinessLayer.DTOs;
+﻿using System.Security.Claims;
+using ExchangeDocument.BusinessLayer.DTOs;
 using ExchangeDocument.BusinessLayer.Interfaces;
+using ExchangeDocument.BusinessLayer.Services;
 using ExchangeDocument.DataAccessLayer.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExchangeDocument.PresentationLayer.Controllers
 {
-    [Route("api/users")]
+    [Route("api")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private readonly IUserService iuserService;
-        public UserController(IUserService _iuserService)
+        private readonly JwtService jwtService;
+
+        public UserController(IUserService _iuserService, JwtService _jwtService)
         {
             iuserService = _iuserService;
+            jwtService = _jwtService;
+
         }
 
         [HttpPost]
-        [Route("register")]
+        [Route("user/register")]
         public IActionResult Register([FromBody]RegisterDTO request)
         {
             bool check = iuserService.Register(request);
-            if (check == true) return Ok("Đẵ đăng ký");
-            else return BadRequest("Đăng ký thất bại!!!");
+            if (check == true) return Ok("OTP sent to email");
+            else return BadRequest("Fail register");
         }
 
         [HttpPost]
-        [Route("verify")]
+        [Route("user/verify")]
         public IActionResult Verify([FromBody]VerifyOtpRequest request)
         {
             String s = iuserService.VerifyOtp(request);
-            if (s == "Đăng ký thành công.") return Ok("Đăng ký thành công");
-            else return BadRequest("Đăng ký thất bại");
+            if (s == "Đăng ký thành công.") return Ok(new { status = "success", message = "Verified successfully" });
+            else return BadRequest(new { status = "failed", message = " Verification failed" });
         }
-
+       
         [HttpPost]
-        [Route("login")]
+        [Route("user/login")]
         public IActionResult Login([FromBody]LoginRequest request)
         {
-            bool check = iuserService.Login(request);
-            if (check == true) return Ok("Đăng nhập thành công");
-            else return BadRequest("Đăng nhập thất bại");
+
+            var user = iuserService.Login(request);
+            if (user != null && user.RoleId == 1)
+            {
+                var token = jwtService.GenerateToken(user.Email, "Admin");
+                return Ok(new { status = "success", message = "login successfully", data = user, Token = token });
+            }
+            else if (user != null && user.RoleId == 2) 
+            {
+                var token = jwtService.GenerateToken(user.Email, "User");
+                return Ok(new {status = "success", message = "login successfully", data = user , Token = token});
+            }
+            else return Unauthorized(new { status = "success", message = "Wrong account or password" });
         }
 
+        [Authorize]
         [HttpPost]
-        [Route("logout")]
+        [Route("userlogout")]
         public IActionResult Logout()
         {
-            return Ok("Đăng xuất thành công");
+            return Ok(new { status = "success", message = "Logout successful" });
         }
 
+        [Authorize]
         [HttpPost]
-        [Route("me/changepassword")]
+        [Route("user/me/changepassword")]
         public IActionResult ChangPassword([FromBody]ChangePasswordRequest request)
         {
-            bool check = iuserService.ChangePassword(request);
-            if (check == true) return Ok("Đổi mật khẩu thành công!!");
-            else return BadRequest("Đổi mật khẩu thất bại!!");
+            var email = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = HttpContext.User.FindFirstValue(ClaimTypes.Role);
+            bool check = iuserService.ChangePassword(request, email);
+            if (check) return Ok(new { status = "success", message = "Password changed successfully!" });
+            else return BadRequest(new { status = "error", message = "Password change failed!" });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("admin/getallusers")]
         public IActionResult GetAllUser()
         {
             var users = iuserService.GetAllUser();
-            return Ok(new { users });
+            return Ok(new { status = "success", data = users });
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("admin/{userId}")]
         public IActionResult DeleteUser(int userId)
         {
             iuserService.DeleteUser(userId);
-            return Ok("Đã xoá thành công");
+            return Ok(new {status = "success", message = "Deleted Successfully" });
         }
     }
 }

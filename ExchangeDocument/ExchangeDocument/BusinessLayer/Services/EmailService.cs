@@ -1,47 +1,46 @@
-﻿using ExchangeDocument.BusinessLayer.DTOs;
-using System.Net.Mail;
-using System.Net;
+﻿//using ExchangeDocument.BusinessLayer.DTOs;
+//using System.Net.Mail;
+//using System.Net;
+//using ExchangeDocument.BusinessLayer.Interfaces;
+//using Microsoft.Extensions.Options;
+
+
 using ExchangeDocument.BusinessLayer.Interfaces;
-using Microsoft.Extensions.Options;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
+using System.Threading.Tasks;
+
 
 namespace ExchangeDocument.BusinessLayer.Services
 {
+
+
     public class EmailService : IEmailService
     {
-        private readonly SmtpSettings _settings;
+        private readonly string _smtpServer = "smtp.gmail.com"; // Hoặc smtp.office365.com, v.v.
+        private readonly int _smtpPort = 587;
+        private readonly string _emailFrom = "khaile.03042005@gmail.com";
+        private readonly string _emailPassword = "ahjp iezs wynv xtff"; // Không dùng mật khẩu chính, dùng app password
 
-        public EmailService(IOptions<SmtpSettings> options)
+        public async Task SendOtpAsync(string emailTo, string otp)
         {
-            _settings = options.Value;
-        }
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse(_emailFrom));
+            email.To.Add(MailboxAddress.Parse(emailTo));
+            email.Subject = "Your OTP Code";
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body)
-        {
-            try
+            email.Body = new TextPart("plain")
             {
-                var message = new MailMessage
-                {
-                    From = new MailAddress(_settings.Username),
-                    Subject = subject,
-                    Body = body,
-                    IsBodyHtml = true
-                };
-                message.To.Add(new MailAddress(toEmail));
+                Text = $"Your OTP code is: {otp}"
+            };
 
-                using var client = new SmtpClient(_settings.Host, _settings.Port)
-                {
-                    Credentials = new NetworkCredential(_settings.Username, _settings.Password),
-                    EnableSsl = true
-                };
-
-                await client.SendMailAsync(message);
-            }
-            catch (Exception ex)
-            {
-                // Có thể ghi log hoặc ném lại
-                Console.WriteLine($"[EmailService] Gửi email thất bại: {ex.Message}");
-                throw; // hoặc xử lý tùy trường hợp
-            }
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(_smtpServer, _smtpPort, SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(_emailFrom, _emailPassword);
+            await smtp.SendAsync(email);
+            await smtp.DisconnectAsync(true);
         }
     }
+
 }

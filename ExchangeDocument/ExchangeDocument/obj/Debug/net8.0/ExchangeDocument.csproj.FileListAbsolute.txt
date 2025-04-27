@@ -287,3 +287,9 @@ E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\runtimes\win\lib\net7
 E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll
 E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Security.Cryptography.ProtectedData.dll
 E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
+E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\MailKit.dll
+E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\MimeKit.dll
+E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
+E:\pbl3\ExchangeDocument\ExchangeDocument\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

@@ -1,9 +1,9 @@
 [
   {
-    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserProfileController",
-    "Method": "GetUserProfile",
-    "RelativePath": "api/userprofile/{userId}",
-    "HttpMethod": "GET",
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "DeleteUser",
+    "RelativePath": "api/admin/{userId}",
+    "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -16,9 +16,178 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "GetAllUser",
+    "RelativePath": "api/admin/getallusers",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.ReviewController",
+    "Method": "CreateNewReview",
+    "RelativePath": "api/review",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.CreateReviewRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.ReviewController",
+    "Method": "GetAllReviewByDocumentId",
+    "RelativePath": "api/review/all/{documentId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "documentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.ReviewController",
+    "Method": "GetAllReviewByUserId",
+    "RelativePath": "api/review/all/{UserId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "UserId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.ReviewController",
+    "Method": "DeleteReview",
+    "RelativePath": "api/review/delete/{reviewId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reviewId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.ReviewController",
+    "Method": "UpdateReview",
+    "RelativePath": "api/review/update/{reviewId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reviewId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "content",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "Login",
+    "RelativePath": "api/user/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "ChangPassword",
+    "RelativePath": "api/user/me/changepassword",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.ChangePasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "Register",
+    "RelativePath": "api/user/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.RegisterDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "Verify",
+    "RelativePath": "api/user/verify",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "ExchangeDocument.BusinessLayer.DTOs.VerifyOtpRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "Logout",
+    "RelativePath": "api/userlogout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserProfileController",
     "Method": "GetAllUserProfile",
-    "RelativePath": "api/userprofile/admin/getallprofile",
+    "RelativePath": "api/userprofile/admin/all",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -52,100 +221,16 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
-    "Method": "DeleteUser",
-    "RelativePath": "api/users/admin/{userId}",
-    "HttpMethod": "DELETE",
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserProfileController",
+    "Method": "GetUserProfile",
+    "RelativePath": "api/userprofile/me/{userId}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "userId",
         "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
-    "Method": "GetAllUser",
-    "RelativePath": "api/users/admin/getallusers",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
-    "Method": "Login",
-    "RelativePath": "api/users/login",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "ExchangeDocument.BusinessLayer.DTOs.LoginRequest",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
-    "Method": "Logout",
-    "RelativePath": "api/users/logout",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
-    "Method": "ChangPassword",
-    "RelativePath": "api/users/me/changepassword",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "ExchangeDocument.BusinessLayer.DTOs.ChangePasswordRequest",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
-    "Method": "Register",
-    "RelativePath": "api/users/register",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "ExchangeDocument.BusinessLayer.DTOs.RegisterDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
-    "Method": "Verify",
-    "RelativePath": "api/users/verify",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "request",
-        "Type": "ExchangeDocument.BusinessLayer.DTOs.VerifyOtpRequest",
         "IsRequired": true
       }
     ],

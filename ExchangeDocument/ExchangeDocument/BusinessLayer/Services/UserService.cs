@@ -3,10 +3,9 @@ using ExchangeDocument.BusinessLayer.Interfaces;
 using ExchangeDocument.DataAccessLayer.Interfaces;
 using ExchangeDocument.DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Security.Claims;
+
 
 namespace ExchangeDocument.BusinessLayer.Services
 {
@@ -15,7 +14,6 @@ namespace ExchangeDocument.BusinessLayer.Services
         private readonly IUserRepository IUserRepo;
         private readonly IMemoryCache cache;
         private readonly IEmailService emailService;
-        public static int LoginId = 0;
         public UserService(IUserRepository _IUserRepo, IMemoryCache _cache, IEmailService _emailService)
         {
             IUserRepo = _IUserRepo;
@@ -36,10 +34,7 @@ namespace ExchangeDocument.BusinessLayer.Services
             // Lưu OTP tạm thời
             cache.Set($"otp_{request.Email}", otp, TimeSpan.FromMinutes(10));
 
-            emailService.SendEmailAsync(
-                request.Email,
-                "Xác minh tài khoản",
-                $"Mã OTP của bạn là: <b>{otp}</b>");
+            emailService.SendOtpAsync(request.Email, otp);
 
             return true;
         }
@@ -72,28 +67,26 @@ namespace ExchangeDocument.BusinessLayer.Services
             return ("Đăng ký thành công.");
         }
 
-        public bool Login(DTOs.LoginRequest request)
+        public User Login(DTOs.LoginRequest request)
         {
             User user = IUserRepo.GetUserByEmail(request.Email);
-            if (user == null) return false;
+            if (user == null) return null;
             var passwordHasher = new PasswordHasher<object>();
             var result = passwordHasher.VerifyHashedPassword(null, user.Password, request.Password);
 
             if (result == PasswordVerificationResult.Success)
             {
-                LoginId = user.UserId;
-                return true;
+                return IUserRepo.GetUserById(user.UserId);
             }
-            return false;
+            return null;
         }
         public void Logout()
         {
-            LoginId = 0;
         }
 
-        public bool ChangePassword(ChangePasswordRequest request)
+        public bool ChangePassword(ChangePasswordRequest request, string userId)
         {
-            User user = IUserRepo.GetUserById(LoginId);
+            User user = IUserRepo.GetUserByEmail(userId);
             var passwordHasher = new PasswordHasher<object>();
             var result = passwordHasher.VerifyHashedPassword(null, user.Password, request.olePassword);
             string hashedPassword = passwordHasher.HashPassword(null, request.newPassword);
@@ -107,11 +100,6 @@ namespace ExchangeDocument.BusinessLayer.Services
         }
 
 
-        public Userprofile GetProfile()
-        {
-            Userprofile profile = IUserRepo.GetProfileById(LoginId);
-            return profile;
-        }
 
         public Userprofile GetProfile(int id)
         {
@@ -126,16 +114,16 @@ namespace ExchangeDocument.BusinessLayer.Services
         }
 
 
-        public void EditProfile(ProfileRequest request)
+        public void EditProfile(ProfileRequest request, int loginId)
         {
-            Userprofile profile = IUserRepo.GetProfileById(LoginId);
+            Userprofile profile = IUserRepo.GetProfileById(loginId);
             if(profile == null)
             {
                 profile = new Userprofile
                 {
                     Address = request.address,
                     Birth = request.birth,
-                    UserId = LoginId
+                    UserId = loginId
                 };
                 IUserRepo.AddUserprofile(profile);
             }
@@ -154,10 +142,11 @@ namespace ExchangeDocument.BusinessLayer.Services
         }
 
         public void DeleteUser(int id)
-        {
+        {    
             User user = IUserRepo.GetUserById(id);
             IUserRepo.DeleteUser(user);
             IUserRepo.SaveChanges();
+            
         }
     }
 }

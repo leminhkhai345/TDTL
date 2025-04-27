@@ -47,7 +47,7 @@ namespace ExchangeDocument.BusinessLayer.Services
         public void DeleteReview(int reviewId)
         {
             Review rv = idocReppo.GetReviewById(reviewId);
-            if(rv != null)
+            if(rv != null && rv.UserId == UserService.LoginId)
             {
                 idocReppo.RemoveReview(rv);
                 idocReppo.SaveChanges();

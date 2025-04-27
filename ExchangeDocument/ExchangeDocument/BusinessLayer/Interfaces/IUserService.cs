@@ -7,11 +7,10 @@ namespace ExchangeDocument.BusinessLayer.Interfaces
     {
         public  bool Register(RegisterDTO request);
         public string VerifyOtp(VerifyOtpRequest request);
-        public bool Login(DTOs.LoginRequest request);
+        public User Login(DTOs.LoginRequest request);
         public void Logout();
-        public bool ChangePassword(ChangePasswordRequest request);
-        public void EditProfile(ProfileRequest request);
-        public Userprofile GetProfile();
+        public bool ChangePassword(ChangePasswordRequest request, string email);
+        public void EditProfile(ProfileRequest request, int loginId);
         public Userprofile GetProfile(int id);
         public List<Userprofile> GetAllUserProfile();
         public List<User> GetAllUser();
