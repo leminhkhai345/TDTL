@@ -13,34 +13,13 @@ const ExchangeForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      setError("Please log in to submit an exchange request.");
+      setError("Vui lòng đăng nhập để gửi yêu cầu trao đổi.");
       return;
     }
-
-    const exchangeData = {
-      userId: user.id, // Giả sử user có trường id từ AuthContext
-      title: bookTitle,
-      author: bookAuthor,
-      description,
-      condition,
-      contactInfo,
-      status: "Pending", // Trạng thái mặc định
-      createdAt: new Date().toISOString(),
-    };
-
+    const exchangeData = { userId: user.id, title: bookTitle, author: bookAuthor, description, condition, contactInfo, status: "Pending", createdAt: new Date().toISOString() };
     try {
-      const response = await fetch("http://localhost:5041/api/exchanges", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(exchangeData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit exchange request");
-      }
-
-      alert("Your exchange request has been submitted!");
+      await createExchangeRequest(exchangeData);
+      alert("Yêu cầu trao đổi của bạn đã được gửi!");
       setBookTitle("");
       setBookAuthor("");
       setDescription("");

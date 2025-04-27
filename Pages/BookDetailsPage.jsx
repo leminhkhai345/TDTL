@@ -1,28 +1,65 @@
 // src/pages/BookDetailsPage.jsx
-import React from 'react';
-import { useParams } from 'react-router-dom';
-
-// Giả sử bạn có một mảng sách như dưới đây, bạn có thể thay đổi hoặc lấy từ API nếu cần
-const books = [
-  { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", genre: "Classic", price: 15, image: "/img/gatsby.jpg" },
-  { id: 2, title: "1984", author: "George Orwell", genre: "Dystopian", price: 18, image: "/img/1984.jpg" },
-  { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", genre: "Fiction", price: 25, image: "/img/mockingbird.jpg" },
-  { id: 4, title: "Pride and Prejudice", author: "Jane Austen", genre: "Romance", price: 22, image: "/img/pride.jpg" },
-  { id: 5, title: "The Hobbit", author: "J.R.R. Tolkien", genre: "Fantasy", price: 30, image: "/img/hobbit.jpg" },
-  { id: 6, title: "The Catcher in the Rye", author: "J.D. Salinger", genre: "Fiction", price: 17, image: "/img/catcher.jpg" },
-  { id: 7, title: "Brave New World", author: "Aldous Huxley", genre: "Sci-Fi", price: 20, image: "/img/brave.jpg" },
-  { id: 8, title: "Moby Dick", author: "Herman Melville", genre: "Adventure", price: 28, image: "/img/moby.jpg" },
-];
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useCart } from "../src/contexts/CartContext";
+import { toast } from "react-toastify";
 
 const BookDetailsPage = () => {
-  // Lấy bookId từ URL bằng useParams
   const { bookId } = useParams();
+  const [book, setBook] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { addToCart } = useCart();
 
-  // Tìm cuốn sách với bookId
-  const book = books.find((b) => b.id.toString() === bookId);
+  const API_KEY = "AIzaSyD-HCLvX01x57PU6rKtLJSFjiCKsf-Ldfk"; // Thay bằng API key của bạn
 
-  if (!book) {
-    return <div>Book not found</div>;  // Nếu không tìm thấy sách, hiển thị thông báo lỗi
+  useEffect(() => {
+    const fetchBook = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(
+          `https://www.googleapis.com/books/v1/volumes/${bookId}?key=${API_KEY}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch book details");
+        }
+        const data = await response.json();
+
+        const mappedBook = {
+          bookId: data.id,
+          title: data.volumeInfo.title || "Unknown Title",
+          author: data.volumeInfo.authors?.join(", ") || "Unknown Author",
+          genre: data.volumeInfo.categories?.[0] || "Unknown Genre",
+          price: data.saleInfo?.listPrice?.amount || (Math.random() * 20 + 5).toFixed(2),
+          image: data.volumeInfo.imageLinks?.thumbnail || "https://via.placeholder.com/150",
+          description: data.volumeInfo.description || "No description available",
+        };
+
+        setBook(mappedBook);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBook();
+  }, [bookId]);
+
+  const handleAddToCart = () => {
+    if (book) {
+      addToCart(book);
+      toast.success(`${book.title} added to cart!`);
+    }
+  };
+
+  if (loading) {
+    return <div className="text-center py-6">Loading...</div>;
+  }
+
+  if (error || !book) {
+    return <div className="text-center text-red-600 py-6">{error || "Book not found"}</div>;
   }
 
   return (
@@ -40,9 +77,12 @@ const BookDetailsPage = () => {
           <p className="text-xl text-gray-600">by {book.author}</p>
           <p className="text-sm text-gray-500">{book.genre}</p>
           <p className="mt-4 text-lg">{book.description}</p>
-          <p className="mt-4 text-xl font-bold text-blue-600">${book.price}</p>
+          <p className="mt-4 text-xl font-bold text-blue-600">${parseFloat(book.price).toFixed(2)}</p>
           <div className="mt-4 flex gap-4">
-            <button className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+            <button
+              onClick={handleAddToCart}
+              className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+            >
               Add to Cart
             </button>
             <button className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700">

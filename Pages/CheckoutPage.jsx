@@ -1,42 +1,47 @@
+// src/pages/CheckoutPage.jsx
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../src/contexts/AuthContext";
-import { useCart } from "../src/contexts/CartContext";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../src/contexts/CartContext";
+import { useAuth } from "../src/contexts/AuthContext";
 import { toast } from "react-toastify";
 
 const CheckoutPage = () => {
-  const { user } = useAuth();
   const { cartItems, clearCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [shippingInfo, setShippingInfo] = useState({
+
+  const [formData, setFormData] = useState({
     fullName: "",
+    email: "",
+    phone: "",
     address: "",
-    phoneNumber: "",
-    notes: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState("COD");
-  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!user) {
-      toast.info("Please log in to checkout!");
       navigate("/login");
       return;
     }
 
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`https://680d2126c47cb8074d8fa188.mockapi.io/users/${user.id}`);
-        if (!response.ok) throw new Error("Failed to fetch user data");
-        const userData = await response.json();
-        setShippingInfo({
-          fullName: userData.fullName || "",
-          address: userData.address || "",
-          phoneNumber: userData.phoneNumber || "",
-          notes: "",
+        const response = await fetch(
+          `https://680d2126c47cb8074d8fa188.mockapi.io/users/${user.id}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+        const data = await response.json();
+        setFormData({
+          fullName: data.fullName || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          address: data.address || "",
         });
       } catch (err) {
+        setError(err.message);
         toast.error(err.message);
       }
     };
@@ -44,196 +49,186 @@ const CheckoutPage = () => {
     fetchUserData();
   }, [user, navigate]);
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!shippingInfo.fullName) newErrors.fullName = "Full name is required";
-    if (!shippingInfo.address) newErrors.address = "Address is required";
-    if (!shippingInfo.phoneNumber) newErrors.phoneNumber = "Phone number is required";
-    else if (!/^\d{10}$/.test(shippingInfo.phoneNumber)) {
-      newErrors.phoneNumber = "Phone number must be 10 digits";
-    }
-    if (!paymentMethod) newErrors.paymentMethod = "Please select a payment method";
-    return newErrors;
-  };
-
-  const calculateTotal = () => {
-    const items = Array.isArray(cartItems) ? cartItems : [];
-    return items.reduce((total, item) => {
-      const price = typeof item.price === "number" ? item.price : 0;
-      const quantity = typeof item.quantity === "number" ? item.quantity : 0;
-      return total + price * quantity;
-    }, 0);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty!");
       return;
     }
 
     setLoading(true);
+    setError(null);
     try {
-      const items = Array.isArray(cartItems) ? cartItems : [];
-      const orderItems = items.map((item) => ({
-        bookId: item.bookId,
-        title: item.title || "Unknown Title",
-        author: item.author || "Unknown Author",
-        price: typeof item.price === "number" ? item.price : 0,
-        quantity: typeof item.quantity === "number" ? item.quantity : 0,
-      }));
+      const orderData = {
+        userId: user.id,
+        items: cartItems.map((item) => ({
+          bookId: item.bookId,
+          title: item.title,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+        total: calculateTotal(),
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        orderDate: new Date().toISOString(),
+      };
 
-      const response = await fetch("https://680d2126c47cb8074d8fa188.mockapi.io/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user.id,
-          items: orderItems,
-          shippingInfo,
-          paymentMethod,
-          total: calculateTotal(),
-          status: "Pending",
-          createdAt: new Date().toISOString(),
-        }),
-      });
-      if (!response.ok) throw new Error("Failed to create order");
+      const response = await fetch(
+        "https://680d2126c47cb8074d8fa188.mockapi.io/orders",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to place order");
+      }
 
       clearCart();
       toast.success("Order placed successfully!");
-      navigate("/order-history"); // Hoặc /profile nếu chưa có /order-history
+      navigate("/browse");
     } catch (err) {
+      setError(err.message);
       toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!user) {
-    return null;
-  }
-
-  const items = Array.isArray(cartItems) ? cartItems : [];
-  if (items.length === 0) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-6 text-center">
-        <p className="text-gray-600">Your cart is empty.</p>
-        <button
-          onClick={() => navigate("/sell")}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Browse Books
-        </button>
-      </div>
-    );
-  }
+  const calculateTotal = () => {
+    return cartItems
+      .reduce((total, item) => total + parseFloat(item.price) * item.quantity, 0)
+      .toFixed(2);
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Tóm tắt giỏ hàng */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-          <div className="space-y-4">
-            {items.map((item) => {
-              const price = typeof item.price === "number" ? item.price : 0;
-              const quantity = typeof item.quantity === "number" ? item.quantity : 0;
-              return (
-                <div key={item.bookId} className="flex justify-between border-b pb-2">
-                  <div>
-                    <p className="font-medium">{item.title || "Unknown Title"}</p>
-                    <p className="text-gray-600">by {item.author || "Unknown Author"}</p>
-                    <p className="text-gray-600">Quantity: {quantity}</p>
-                  </div>
-                  <p className="font-medium">${(price * quantity).toFixed(2)}</p>
-                </div>
-              );
-            })}
-            <div className="flex justify-between font-bold text-lg pt-4">
-              <p>Total</p>
-              <p>${calculateTotal().toFixed(2)}</p>
+      <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+
+      {cartItems.length === 0 ? (
+        <div className="text-center py-6">
+          <p className="text-gray-600">Your cart is empty.</p>
+          <button
+            onClick={() => navigate("/browse")}
+            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Browse Books
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Bảng hiển thị giỏ hàng */}
+          <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+            <h2 className="text-xl font-semibold p-6">Order Summary</h2>
+            <table className="min-w-full table-auto">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Image</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Title</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Price</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Quantity</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cartItems.map((item) => (
+                  <tr key={item.bookId} className="border-b">
+                    <td className="px-6 py-4">
+                      <img
+                        src={item.image || "https://via.placeholder.com/150"}
+                        alt={item.title}
+                        className="w-12 h-16 object-cover rounded"
+                      />
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{item.title}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      ${parseFloat(item.price).toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{item.quantity}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      ${(parseFloat(item.price) * item.quantity).toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="p-6">
+              <h3 className="text-lg font-semibold">
+                Total: <span className="text-blue-600">${calculateTotal()}</span>
+              </h3>
             </div>
           </div>
-        </div>
 
-        {/* Form thanh toán */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Shipping & Payment</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block font-medium mb-1">Full Name</label>
-              <input
-                type="text"
-                value={shippingInfo.fullName}
-                onChange={(e) =>
-                  setShippingInfo({ ...shippingInfo, fullName: e.target.value })
-                }
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.fullName && <p className="text-red-600 text-sm">{errors.fullName}</p>}
-            </div>
-            <div>
-              <label className="block font-medium mb-1">Address</label>
-              <input
-                type="text"
-                value={shippingInfo.address}
-                onChange={(e) =>
-                  setShippingInfo({ ...shippingInfo, address: e.target.value })
-                }
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.address && <p className="text-red-600 text-sm">{errors.address}</p>}
-            </div>
-            <div>
-              <label className="block font-medium mb-1">Phone Number</label>
-              <input
-                type="text"
-                value={shippingInfo.phoneNumber}
-                onChange={(e) =>
-                  setShippingInfo({ ...shippingInfo, phoneNumber: e.target.value })
-                }
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {errors.phoneNumber && <p className="text-red-600 text-sm">{errors.phoneNumber}</p>}
-            </div>
-            <div>
-              <label className="block font-medium mb-1">Notes (Optional)</label>
-              <textarea
-                value={shippingInfo.notes}
-                onChange={(e) =>
-                  setShippingInfo({ ...shippingInfo, notes: e.target.value })
-                }
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows="3"
-              />
-            </div>
-            <div>
-              <label className="block font-medium mb-1">Payment Method</label>
-              <select
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          {/* Form thanh toán */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
+            {error && <div className="text-red-600 mb-4">{error}</div>}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-600">Full Name</label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600">Phone</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600">Address</label>
+                <textarea
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ${
+                  loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
-                <option value="COD">Cash on Delivery (COD)</option>
-                <option value="BankTransfer">Bank Transfer</option>
-              </select>
-              {errors.paymentMethod && (
-                <p className="text-red-600 text-sm">{errors.paymentMethod}</p>
-              )}
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              {loading ? "Processing..." : "Place Order"}
-            </button>
-          </form>
+                {loading ? "Placing Order..." : "Place Order"}
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

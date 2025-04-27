@@ -29,7 +29,7 @@ const BookCarousel = () => {
     clone();
 
     let animationFrame;
-    const scrollStep = 0.5; // Tăng tốc độ cuộn để mượt mà hơn
+    const scrollStep = 0.4; // Tăng tốc độ cuộn để mượt mà hơn
 
     const scroll = () => {
       if (carousel.scrollLeft >= carousel.scrollWidth / 2) {

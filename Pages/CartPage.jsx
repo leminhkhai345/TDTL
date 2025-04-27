@@ -1,108 +1,134 @@
+// src/pages/CartPage.jsx
 import React from "react";
 import { useCart } from "../src/contexts/CartContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const CartPage = () => {
+  const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const navigate = useNavigate();
-  const context = useCart();
 
-  // Kiểm tra nếu context không tồn tại
-  if (!context) {
-    console.error("CartPage must be used within a CartProvider");
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-6 text-center">
-        <p className="text-red-600">Error: Cart context not available.</p>
-      </div>
-    );
-  }
+  const handleQuantityChange = (bookId, quantity) => {
+    if (quantity >= 0) {
+      updateQuantity(bookId, quantity);
+    }
+  };
 
-  const { cartItems, removeFromCart, updateQuantity } = context;
-
-  // Kiểm tra an toàn cho cartItems
-  const items = Array.isArray(cartItems) ? cartItems : [];
-
-  if (items.length === 0) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-6 text-center">
-        <p className="text-gray-600">Your cart is empty.</p>
-        <button
-          onClick={() => navigate("/browse")}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Browse Books
-        </button>
-      </div>
-    );
-  }
+  const handleRemoveItem = (bookId, title) => {
+    removeFromCart(bookId);
+    toast.success(`${title} removed from cart!`);
+  };
 
   const calculateTotal = () => {
-    return items.reduce((total, item) => {
-      const price = typeof item.price === "number" ? item.price : 0;
-      const quantity = typeof item.quantity === "number" ? item.quantity : 0;
-      return total + price * quantity;
-    }, 0);
+    return cartItems
+      .reduce((total, item) => total + parseFloat(item.price) * item.quantity, 0)
+      .toFixed(2);
   };
 
   const handleCheckout = () => {
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty!");
+      return;
+    }
     navigate("/checkout");
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold mb-8">Your Cart</h1>
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        {items.map((item) => {
-          // Kiểm tra an toàn cho price và quantity
-          const price = typeof item.price === "number" ? item.price : 0;
-          const quantity = typeof item.quantity === "number" ? item.quantity : 0;
-          const subtotal = price * quantity;
+      <h1 className="text-2xl font-bold mb-6">Your Cart</h1>
 
-          return (
-            <div key={item.bookId} className="flex items-center justify-between border-b py-4">
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold">{item.title || "Unknown Title"}</h3>
-                <p className="text-gray-600">by {item.author || "Unknown Author"}</p>
-                <p className="text-gray-600">Price: ${price.toFixed(2)}</p>
-                <div className="flex items-center mt-2">
-                  <button
-                    onClick={() => updateQuantity(item.bookId, quantity - 1)}
-                    className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                  >
-                    -
-                  </button>
-                  <span className="mx-2">{quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(item.bookId, quantity + 1)}
-                    className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <p className="font-medium">${subtotal.toFixed(2)}</p>
-                <button
-                  onClick={() => removeFromCart(item.bookId)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  Remove
-                </button>
-              </div>
-            </div>
-          );
-        })}
-        <div className="flex justify-between font-bold text-lg mt-6">
-          <p>Total</p>
-          <p>${calculateTotal().toFixed(2)}</p>
+      {cartItems.length === 0 ? (
+        <div className="text-center py-6">
+          <p className="text-gray-600">Your cart is empty.</p>
+          <Link
+            to="/browse"
+            className="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Browse Books
+          </Link>
         </div>
-      </div>
-      <button
-        onClick={handleCheckout}
-        className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-      >
-        Proceed to Checkout
-      </button>
+      ) : (
+        <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+          <table className="min-w-full table-auto">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Image</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Title</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Price</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Quantity</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Total</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cartItems.map((item) => (
+                <tr key={item.bookId} className="border-b">
+                  <td className="px-6 py-4">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-12 h-16 object-cover rounded"
+                    />
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{item.title}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    ${parseFloat(item.price).toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleQuantityChange(item.bookId, item.quantity - 1)}
+                        className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                        disabled={item.quantity <= 1}
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) =>
+                          handleQuantityChange(item.bookId, parseInt(e.target.value) || 1)
+                        }
+                        className="w-16 p-1 border rounded text-center"
+                        min="1"
+                      />
+                      <button
+                        onClick={() => handleQuantityChange(item.bookId, item.quantity + 1)}
+                        className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    ${(parseFloat(item.price) * item.quantity).toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    <button
+                      onClick={() => handleRemoveItem(item.bookId, item.title)}
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="flex justify-between items-center mt-6 p-6">
+            <h2 className="text-xl font-semibold">
+              Total: <span className="text-blue-600">${calculateTotal()}</span>
+            </h2>
+            <button
+              onClick={handleCheckout}
+              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Proceed to Checkout
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

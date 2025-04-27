@@ -1,0 +1,10 @@
+ngày 27/04/2025
+chuyển tất cả các form liên quan tới API về API thực tế;
+hoàn thành phần OTP với API thực
+hoàn thành tiếp phần thanh toán
+mở rộng thêm, làm đẹp cho sản phẩm.
+
+ngày 28/04/2025
+chạy thử API bên phía BE
+phát triển tiếp những thứ cần.
+ 
