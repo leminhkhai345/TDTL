@@ -8,8 +8,13 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
         "Name": "userId",
-        "Type": "System.Int32",
+        "Type": "",
         "IsRequired": true
       }
     ],
@@ -19,7 +24,7 @@
     "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
     "Method": "GetAllUser",
     "RelativePath": "api/admin/getallusers",
-    "HttpMethod": "POST",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
@@ -106,6 +111,22 @@
         "Name": "content",
         "Type": "System.String",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ExchangeDocument.PresentationLayer.Controllers.UserController",
+    "Method": "GetUser",
+    "RelativePath": "api/user/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

@@ -49,18 +49,19 @@ namespace ExchangeDocument.PresentationLayer.Controllers
             var user = iuserService.Login(request);
             if (user != null && user.RoleId == 1)
             {
-                var token = jwtService.GenerateToken(user.Email, "Admin");
-                return Ok(new { status = "success", message = "login successfully", data = user, Token = token });
+                var token = jwtService.GenerateToken(user, "Admin");
+                Response.Headers.Add("Authorization", $"Bearer {token}");
+                return Ok(new { status = "success", message = "login successfully", data = user});
             }
             else if (user != null && user.RoleId == 2) 
             {
-                var token = jwtService.GenerateToken(user.Email, "User");
-                return Ok(new {status = "success", message = "login successfully", data = user , Token = token});
+                var token = jwtService.GenerateToken(user, "User");
+                Response.Headers.Add("Authorization", $"Bearer {token}");
+                return Ok(new {status = "success", message = "login successfully", data = user});
             }
             else return Unauthorized(new { status = "success", message = "Wrong account or password" });
         }
 
-        [Authorize]
         [HttpPost]
         [Route("userlogout")]
         public IActionResult Logout()
@@ -74,14 +75,14 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         public IActionResult ChangPassword([FromBody]ChangePasswordRequest request)
         {
             var email = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var role = HttpContext.User.FindFirstValue(ClaimTypes.Role);
-            bool check = iuserService.ChangePassword(request, email);
+            var userId = HttpContext.User.FindFirstValue("UserId");
+            bool check = iuserService.ChangePassword(request, userId);
             if (check) return Ok(new { status = "success", message = "Password changed successfully!" });
             else return BadRequest(new { status = "error", message = "Password change failed!" });
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpGet]
         [Route("admin/getallusers")]
         public IActionResult GetAllUser()
         {
@@ -91,10 +92,20 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("admin/{userId}")]
-        public IActionResult DeleteUser(int userId)
+        public IActionResult DeleteUser(string Email)
         {
-            iuserService.DeleteUser(userId);
+            iuserService.DeleteUser(Email);
             return Ok(new {status = "success", message = "Deleted Successfully" });
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("user/{userId}")]
+        public IActionResult GetUser(int userId)
+        {
+            var user = iuserService.GetUserById(userId);
+            if(user != null) return Ok(new { status = "success", data = user });
+            return BadRequest(new { status = "success", message = "Not found!" });
         }
     }
 }

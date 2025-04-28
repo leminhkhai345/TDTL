@@ -1,4 +1,5 @@
-﻿using ExchangeDocument.BusinessLayer.DTOs;
+﻿using System.Security.Claims;
+using ExchangeDocument.BusinessLayer.DTOs;
 using ExchangeDocument.BusinessLayer.Interfaces;
 using ExchangeDocument.DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Http;
@@ -28,7 +29,8 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         [Route("")]
         public IActionResult CreateNewReview([FromBody] CreateReviewRequest request)
         {
-            ReviewResponse rs = idocService.createReview(request);
+            var userId = Convert.ToInt32(HttpContext.User.FindFirstValue("UserId"));
+            ReviewResponse rs = idocService.createReview(request, userId);
             return Ok(new { rs });
         }
 
@@ -36,7 +38,8 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         [Route("delete/{reviewId}")]
         public IActionResult DeleteReview(int reviewId)
         {
-            idocService.DeleteReview(reviewId);
+            var userId = Convert.ToInt32(HttpContext.User.FindFirstValue("UserId"));
+            idocService.DeleteReview(reviewId, userId);
             return Ok("Đã xoá review");
         }
 
@@ -44,7 +47,8 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         [Route("update/{reviewId}")]
         public IActionResult UpdateReview(int reviewId, string content)
         {
-            var rv = idocService.UpdateReview(reviewId, content);
+            var userId = Convert.ToInt32(HttpContext.User.FindFirstValue("UserId"));
+            var rv = idocService.UpdateReview(reviewId, content, userId);
             return Ok(new { rv });
         }
 

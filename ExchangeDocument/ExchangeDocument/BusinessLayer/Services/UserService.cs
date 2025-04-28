@@ -22,7 +22,7 @@ namespace ExchangeDocument.BusinessLayer.Services
         }
         public bool Register(RegisterDTO request)
         {
-            User u = IUserRepo.GetUserByEmail(request.Email);
+            var u = IUserRepo.GetUserByEmail(request.Email);
             if (u != null) return false;
 
             var otp = new Random().Next(100000, 999999).ToString();
@@ -55,7 +55,7 @@ namespace ExchangeDocument.BusinessLayer.Services
                 Email = userData.Email,
                 Password = hashedPassword,
                 Phone = userData.Phone,
-                RoleId = 1
+                RoleId = 2
             };
 
             IUserRepo.AddUser(user);
@@ -67,16 +67,23 @@ namespace ExchangeDocument.BusinessLayer.Services
             return ("Đăng ký thành công.");
         }
 
-        public User Login(DTOs.LoginRequest request)
+        public UserResponse Login(DTOs.LoginRequest request)
         {
-            User user = IUserRepo.GetUserByEmail(request.Email);
+            var user = IUserRepo.GetUserByEmail(request.Email);
             if (user == null) return null;
             var passwordHasher = new PasswordHasher<object>();
             var result = passwordHasher.VerifyHashedPassword(null, user.Password, request.Password);
 
             if (result == PasswordVerificationResult.Success)
             {
-                return IUserRepo.GetUserById(user.UserId);
+                return new UserResponse
+                {
+                    UserId = user.UserId,
+                    Fullname = user.FullName,
+                    Email = user.Email,
+                    Phone = user.Phone,
+                    RoleId = user.RoleId
+                };
             }
             return null;
         }
@@ -135,18 +142,24 @@ namespace ExchangeDocument.BusinessLayer.Services
             IUserRepo.SaveChanges();
         }
 
-        public List<User> GetAllUser()
+        public List<UserResponse> GetAllUser()
         {
-            List<User> users = IUserRepo.GetAllUser();
+            List<UserResponse> users = IUserRepo.GetAllUser();
             return users;
         }
 
-        public void DeleteUser(int id)
+        public void DeleteUser(string Email)
         {    
-            User user = IUserRepo.GetUserById(id);
+            User user = IUserRepo.GetUserByEmail(Email);
             IUserRepo.DeleteUser(user);
             IUserRepo.SaveChanges();
             
+        }
+
+        public UserResponse GetUserById(int userId)
+        {
+            var user = IUserRepo.GetUserById(userId);
+            return user;
         }
     }
 }

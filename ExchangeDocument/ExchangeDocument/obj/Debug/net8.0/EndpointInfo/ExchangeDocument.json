@@ -272,7 +272,7 @@
       }
     },
     "/api/admin/getallusers": {
-      "post": {
+      "get": {
         "tags": [
           "User"
         ],
@@ -285,6 +285,35 @@
     },
     "/api/admin/{userId}": {
       "delete": {
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "Email",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/user/{userId}": {
+      "get": {
         "tags": [
           "User"
         ],

@@ -24,37 +24,37 @@ namespace ExchangeDocument.BusinessLayer.Services
             return reviews;
         }
 
-        public ReviewResponse createReview(CreateReviewRequest request)
+        public ReviewResponse createReview(CreateReviewRequest request, int userId)
         {
             Review review = new Review
             {
                 DocumentId = request.DocumentId,
                 Content = request.content,
                 ReviewDate = DateTime.Now,
-                UserId = UserService.LoginId
+                UserId = userId
             };
             idocReppo.AddReview(review);
             idocReppo.SaveChanges();
             ReviewResponse rs = new ReviewResponse
             {
                 Content = review.Content,
-                Name = iuserRepo.GetUserById(UserService.LoginId).FullName,
+                Name = iuserRepo.GetUserById(userId).Fullname,
                 ReviewDate = review.ReviewDate
             };
             return rs;
         }
 
-        public void DeleteReview(int reviewId)
+        public void DeleteReview(int reviewId, int userId)
         {
             Review rv = idocReppo.GetReviewById(reviewId);
-            if(rv != null && rv.UserId == UserService.LoginId)
+            if(rv != null && rv.UserId == userId)
             {
                 idocReppo.RemoveReview(rv);
                 idocReppo.SaveChanges();
             }
         }
         
-        public ReviewResponse UpdateReview(int reviewId, string content)
+        public ReviewResponse UpdateReview(int reviewId, string content, int userId)
         {
             Review rv = idocReppo.GetReviewById(reviewId);
             if (rv != null)
@@ -66,7 +66,7 @@ namespace ExchangeDocument.BusinessLayer.Services
             ReviewResponse r = new ReviewResponse
             {
                 Content = content,
-                Name = iuserRepo.GetUserById(UserService.LoginId).FullName,
+                Name = iuserRepo.GetUserById(userId).Fullname,
                 ReviewDate = rv.ReviewDate
             };
             return r;

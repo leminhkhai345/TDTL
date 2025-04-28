@@ -1,6 +1,7 @@
 ﻿using ExchangeDocument.DataAccessLayer.Data;
 using ExchangeDocument.DataAccessLayer.Interfaces;
 using ExchangeDocument.DataAccessLayer.Entities;
+using ExchangeDocument.BusinessLayer.DTOs;
 
 namespace ExchangeDocument.DataAccessLayer.Repositories
 {
@@ -12,10 +13,18 @@ namespace ExchangeDocument.DataAccessLayer.Repositories
             exchangeDoc = _exchangeDoc;
         }
 
-        public User GetUserById(int id)
+        public UserResponse GetUserById(int id)
         {
             User user = exchangeDoc.Users.FirstOrDefault(s => s.UserId == id);
-            return user;
+      
+            return new UserResponse
+            {
+                UserId = user.UserId,
+                Fullname = user.FullName,
+                Email = user.Email,
+                Phone = user.Phone,
+                RoleId = user.RoleId
+            }; 
         }
 
 
@@ -51,9 +60,16 @@ namespace ExchangeDocument.DataAccessLayer.Repositories
             return profiles;
         }
 
-        public List<User> GetAllUser()
+        public List<UserResponse> GetAllUser()
         {
-            List<User> users = exchangeDoc.Users.Select(s => s).ToList();
+            List<UserResponse> users = exchangeDoc.Users.Select(s => new UserResponse
+            { 
+                UserId = s.UserId, 
+                Fullname = s.FullName, 
+                Email = s.Email,
+                Phone = s.Phone, 
+                RoleId = s.RoleId
+            }).ToList();
             return users;
         }
 

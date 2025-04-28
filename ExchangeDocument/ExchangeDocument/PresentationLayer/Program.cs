@@ -36,9 +36,11 @@ namespace ExchangeDocument.PresentationLayer
                     {
                         policy.AllowAnyOrigin()
                               .AllowAnyHeader()
-                              .AllowAnyMethod();
+                              .AllowAnyMethod()
+                              .WithExposedHeaders("Authorization");
                     });
             });
+
 
 
             builder.Services.AddAuthentication("Bearer")
@@ -102,6 +104,7 @@ namespace ExchangeDocument.PresentationLayer
 
             //app.UseCors("AllowFrontend");
             app.UseCors("AllowAll");
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

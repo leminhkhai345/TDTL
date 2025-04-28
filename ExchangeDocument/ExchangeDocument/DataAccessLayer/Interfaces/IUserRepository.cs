@@ -1,4 +1,5 @@
-﻿using ExchangeDocument.DataAccessLayer.Entities;
+﻿using ExchangeDocument.BusinessLayer.DTOs;
+using ExchangeDocument.DataAccessLayer.Entities;
 
 namespace ExchangeDocument.DataAccessLayer.Interfaces
 {
@@ -8,10 +9,11 @@ namespace ExchangeDocument.DataAccessLayer.Interfaces
         public void AddUser(User user); 
         public void AddUserprofile(Userprofile userprofile);
         public User GetUserByEmail(string email);
-        public User GetUserById(int id);
+        public UserResponse GetUserById(int id);
         public Userprofile GetProfileById(int id);
         public List<Userprofile> GetAllUSerProfile();
-        public List<User> GetAllUser();
+        public List<UserResponse> GetAllUser();
         public void DeleteUser(User user);
+
     }
 }
