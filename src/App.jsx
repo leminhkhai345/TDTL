@@ -20,6 +20,7 @@ import { Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify"; // Thêm ToastContainer
 import "react-toastify/dist/ReactToastify.css"; // Thêm CSS cho toast
 import CheckoutPage from "../Pages/CheckoutPage"; // Thêm CheckoutPage
+import OtpPage from "../Pages/OtpPage"; // Thêm OtpPage
 const ProtectedRoute = ({ children }) => {
   const { isLoggedIn } = useAuth();
   return isLoggedIn ? children : <Navigate to="/login" />;
@@ -32,6 +33,7 @@ const App = () => {
         <Router>
           <Navbar />
           <Routes>
+            <Route path="/otp" element={<OtpPage />} /> {/* Thêm route cho OtpPage */}
             <Route path="/" element={<HomePage />} />
             <Route path="/browse" element={<BrowseBooksPage />} />
             <Route path="/login" element={<LoginPage />} />

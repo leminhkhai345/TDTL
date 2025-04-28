@@ -13,8 +13,7 @@ const handleResponse = async (response) => {
 
 // Auth APIs
 export const loginUser = async (email, password) => {
-  const response = await fetch(
-    `${MOCK_API_URL}/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
+  const response = await fetch(`${MOCK_API_URL}/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
     {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -27,21 +26,53 @@ export const loginUser = async (email, password) => {
   return data[0];
 };
 
-export const registerUser = async (fullName, email, phone, password) => {
-  const response = await fetch(`${MOCK_API_URL}/users`, {
+export const registerUser = async (userData) => {
+  try {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/user/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Email: userData.email,
+        Phone: userData.phone,
+        FullName: userData.fullName,
+        Password: userData.password,
+      }),
+    });
+
+    if (!response.ok) {
+      const contentType = response.headers.get("content-type");
+      let errorMessage = "Failed to register user";
+      if (contentType && contentType.includes("application/json")) {
+        const errorData = await response.json();
+        errorMessage = errorData.errors?.["$"]?.[0] || errorData.message || errorMessage;
+      } else {
+        errorMessage = await response.text();
+      }
+      throw new Error(errorMessage);
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return await response.json();
+    } else {
+      const text = await response.text();
+      return { message: text }; // Chuẩn hóa response text
+    }
+  } catch (error) {
+    throw new Error(error.message || "Failed to register user");
+  }
+};
+
+export const sendOtp = async (email) => {
+  const response = await fetch(`${EXCHANGE_API_URL}/api/user/send`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fullName,
-      email,
-      phone,
-      password,
-      createdAt: new Date().toISOString(),
-    }),
+    body: JSON.stringify({ email }),
   });
   return handleResponse(response);
 };
-
 // Book APIs (Open Library - đã chuyển từ Google Books)
 export const getBookDetails = async (bookId) => {
   const response = await fetch(`https://openlibrary.org/works/${bookId}.json`);
@@ -147,4 +178,42 @@ export const createExchangeRequest = async (exchangeData) => {
 export const getExchangeHistory = async (userId) => {
   const response = await fetch(`${EXCHANGE_API_URL}/exchanges/user/${userId}`);
   return handleResponse(response);
+};
+
+export const verifyOtp = async (otpCode) => {
+  if (!otpCode) {
+    throw new Error("OTP code is required");
+  }
+
+  try {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/user/verify`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ OtpCode: otpCode }),
+    });
+
+    if (!response.ok) {
+      const contentType = response.headers.get("content-type");
+      let errorMessage = "Failed to verify OTP";
+      if (contentType && contentType.includes("application/json")) {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } else {
+        errorMessage = await response.text();
+      }
+      throw new Error(errorMessage);
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return await response.json();
+    } else {
+      const text = await response.text();
+      return { message: text };
+    }
+  } catch (error) {
+    throw new Error(error.message || "Failed to verify OTP");
+  }
 };
