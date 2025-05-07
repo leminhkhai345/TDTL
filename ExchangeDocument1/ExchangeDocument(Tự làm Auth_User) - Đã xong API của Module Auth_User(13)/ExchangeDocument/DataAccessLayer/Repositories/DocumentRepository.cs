@@ -46,6 +46,12 @@ namespace ExchangeDocument.DataAccessLayer.Repositories
                                  .FirstOrDefaultAsync(d => d.DocumentId == id && d.DocumentStatus.Code == "Listed");
         }
 
+        public async Task<List<Document>> GetAllDocumentDetailsByAsync()
+        {
+            return await _context.Documents
+                                 .ToListAsync();
+        }
+
         public async Task<Document> UpdateAsync(Document document)
         {
             _context.Documents.Update(document);

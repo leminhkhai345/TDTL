@@ -125,6 +125,35 @@ namespace ExchangeDocument.BusinessLayer.Services
             return documentDetailDto;
         }
 
+        public async Task<List<DocumentDetailDto>> GetAllDocumentDetailsByAsync()
+        {
+            var documentEntity = await _documentRepository.GetAllDocumentDetailsByAsync();
+            List<DocumentDetailDto> documentDetailDtoList = new List<DocumentDetailDto>();
+            foreach(Document documentEntity in documentEntity)
+            {
+                var documentDetailDto = new DocumentDetailDto
+                {
+                DocumentId = documentEntity.DocumentId,
+                Title = documentEntity.Title,
+                Author = documentEntity.Author,
+                Isbn = documentEntity.Isbn,
+                Edition = documentEntity.Edition,
+                PublicationYear = documentEntity.PublicationYear,
+                Condition = documentEntity.Condition,
+                Description = documentEntity.Description,
+                ImageUrl = documentEntity.ImageUrl,
+                Price = documentEntity.Price,
+                CategoryId = documentEntity.CategoryId,
+                CategoryName = documentEntity.Category?.CategoryName ?? "N/A",
+                UserId = documentEntity.UserId,
+                UserName = documentEntity.User?.FullName ?? "N/A" // Chỉ cần thông tin cơ bản và liên quan User/Category
+                // DocumentStatusId và StatusName không cần thiết vì đã lọc theo "Listed"
+                };              
+                documentDetailDtoList.Add(documentDetailDto);
+            }
+            return documentDetailDtoList;
+        }
+
         public async Task<(DocumentDetailDto? document, string? errorMessage)> UpdateDocumentAsync(int id, DocumentUpdateDto updateDto, int userId)
         {
             // 1. Kiểm tra danh mục tồn tại

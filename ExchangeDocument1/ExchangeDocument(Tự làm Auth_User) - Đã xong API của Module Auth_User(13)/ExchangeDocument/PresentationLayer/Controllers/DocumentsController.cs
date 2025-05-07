@@ -87,6 +87,20 @@ namespace ExchangeDocument.PresentationLayer.Controllers
             return Ok(documentDetail);
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet("admin")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<DocumentDetailDto>))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult<IEnumerable<DocumentDetailDto>>> GetAllDocuments()
+        {
+            var documents = await _documentService.GetAllDocumentDetailsAsync();
+            if(documents == null)   
+            {
+                return NotFound(new { message = "Không tìm thấy tài liệu nào." });
+            }
+            return Ok(documents);
+        }
+
         // PUT: api/documents/{id}
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DocumentDetailDto))]
@@ -121,6 +135,7 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         }
 
         // DELETE: api/documents/{id}
+        [Authorize(Roles = "User,Admin")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -133,7 +148,8 @@ namespace ExchangeDocument.PresentationLayer.Controllers
                 return BadRequest(new { message = "ID không hợp lệ." });
 
             int userId = 1; // Hardcoded cho test
-            var error = await _documentService.DeleteDocumentAsync(id, userId);
+            var isAdmin = User.IsInRole("Admin");
+            var error = await _documentService.DeleteDocumentAsync(id, userId, isAdmin);
             if (error != null)
             {
                 if (error == "NotFound")
