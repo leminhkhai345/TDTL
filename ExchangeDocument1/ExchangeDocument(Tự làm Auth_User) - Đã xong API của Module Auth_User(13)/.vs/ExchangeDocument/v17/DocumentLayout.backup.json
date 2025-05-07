@@ -1,0 +1,73 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Dowload\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User)\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User) - \u0110\u00E3 xong API c\u1EE7a Module Auth_User(13)\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|d:\\dowload\\exchangedocument(t\u1EF1 l\u00E0m auth_user)\\exchangedocument(t\u1EF1 l\u00E0m auth_user) - \u0111\u00E3 xong api c\u1EE7a module auth_user(13)\\exchangedocument\\presentationlayer\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\presentationlayer\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|d:\\dowload\\exchangedocument(t\u1EF1 l\u00E0m auth_user)\\exchangedocument(t\u1EF1 l\u00E0m auth_user) - \u0111\u00E3 xong api c\u1EE7a module auth_user(13)\\exchangedocument\\presentationlayer\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\presentationlayer\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|d:\\dowload\\exchangedocument(t\u1EF1 l\u00E0m auth_user)\\exchangedocument(t\u1EF1 l\u00E0m auth_user) - \u0111\u00E3 xong api c\u1EE7a module auth_user(13)\\exchangedocument\\exchangedocument.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\exchangedocument.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Dowload\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User)\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User) - \u0110\u00E3 xong API c\u1EE7a Module Auth_User(13)\\ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "RelativeDocumentMoniker": "ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "ToolTip": "D:\\Dowload\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User)\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User) - \u0110\u00E3 xong API c\u1EE7a Module Auth_User(13)\\ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "RelativeToolTip": "ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-04-25T03:29:38.387Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Dowload\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User)\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User) - \u0110\u00E3 xong API c\u1EE7a Module Auth_User(13)\\ExchangeDocument\\PresentationLayer\\Program.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\PresentationLayer\\Program.cs",
+              "ToolTip": "D:\\Dowload\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User)\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User) - \u0110\u00E3 xong API c\u1EE7a Module Auth_User(13)\\ExchangeDocument\\PresentationLayer\\Program.cs",
+              "RelativeToolTip": "ExchangeDocument\\PresentationLayer\\Program.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-25T03:25:02.287Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ExchangeDocument.csproj",
+              "DocumentMoniker": "D:\\Dowload\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User)\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User) - \u0110\u00E3 xong API c\u1EE7a Module Auth_User(13)\\ExchangeDocument\\ExchangeDocument.csproj",
+              "RelativeDocumentMoniker": "ExchangeDocument\\ExchangeDocument.csproj",
+              "ToolTip": "D:\\Dowload\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User)\\ExchangeDocument(T\u1EF1 l\u00E0m Auth_User) - \u0110\u00E3 xong API c\u1EE7a Module Auth_User(13)\\ExchangeDocument\\ExchangeDocument.csproj",
+              "RelativeToolTip": "ExchangeDocument\\ExchangeDocument.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-04-25T03:19:00.294Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

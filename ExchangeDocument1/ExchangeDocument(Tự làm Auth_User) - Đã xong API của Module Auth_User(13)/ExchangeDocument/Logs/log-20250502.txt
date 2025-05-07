@@ -1,0 +1,156 @@
+2025-05-02 11:32:02.145 +07:00 [DBG] An 'IServiceProvider' was created for internal use by Entity Framework.
+2025-05-02 11:32:02.541 +07:00 [WRN] Entity 'Document' has a global query filter defined and is the required end of a relationship with the entity 'OrderDetail'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 11:32:02.542 +07:00 [WRN] Entity 'Document' has a global query filter defined and is the required end of a relationship with the entity 'Review'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 11:32:02.636 +07:00 [DBG] Entity Framework Core 9.0.4 initialized 'ExchangeDocumentContext' using provider 'Microsoft.EntityFrameworkCore.SqlServer:9.0.4' with options: EngineType=SqlServer 
+2025-05-02 11:32:03.174 +07:00 [DBG] 'ExchangeDocumentContext' disposed.
+2025-05-02 11:32:16.666 +07:00 [DBG] An 'IServiceProvider' was created for internal use by Entity Framework.
+2025-05-02 11:32:17.073 +07:00 [WRN] Entity 'Document' has a global query filter defined and is the required end of a relationship with the entity 'OrderDetail'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 11:32:17.074 +07:00 [WRN] Entity 'Document' has a global query filter defined and is the required end of a relationship with the entity 'Review'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-02 11:32:17.178 +07:00 [DBG] Entity Framework Core 9.0.4 initialized 'ExchangeDocumentContext' using provider 'Microsoft.EntityFrameworkCore.SqlServer:9.0.4' with options: EngineType=SqlServer 
+2025-05-02 11:32:17.301 +07:00 [DBG] Creating DbConnection.
+2025-05-02 11:32:17.336 +07:00 [DBG] Created DbConnection. (33ms).
+2025-05-02 11:32:17.338 +07:00 [DBG] Migrating using database 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER'.
+2025-05-02 11:32:17.343 +07:00 [DBG] Opening connection to database 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER'.
+2025-05-02 11:32:17.476 +07:00 [DBG] Opened connection to database 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER'.
+2025-05-02 11:32:17.480 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-02 11:32:17.485 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (4ms).
+2025-05-02 11:32:17.486 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (7ms).
+2025-05-02 11:32:17.490 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-05-02 11:32:17.509 +07:00 [INF] Executed DbCommand (17ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-05-02 11:32:17.511 +07:00 [DBG] Closing connection to database 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER'.
+2025-05-02 11:32:17.518 +07:00 [DBG] Closed connection to database 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER' (4ms).
+2025-05-02 11:32:17.518 +07:00 [DBG] Opening connection to database 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER'.
+2025-05-02 11:32:17.518 +07:00 [DBG] Opened connection to database 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER'.
+2025-05-02 11:32:17.519 +07:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2025-05-02 11:32:17.520 +07:00 [DBG] Creating DbCommand for 'ExecuteScalar'.
+2025-05-02 11:32:17.520 +07:00 [DBG] Created DbCommand for 'ExecuteScalar' (0ms).
+2025-05-02 11:32:17.520 +07:00 [DBG] Initialized DbCommand for 'ExecuteScalar' (0ms).
+2025-05-02 11:32:17.521 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2025-05-02 11:32:17.533 +07:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2025-05-02 11:32:17.580 +07:00 [DBG] Beginning transaction with isolation level 'Unspecified'.
+2025-05-02 11:32:17.583 +07:00 [DBG] Began transaction with isolation level 'ReadCommitted'.
+2025-05-02 11:32:17.584 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-02 11:32:17.584 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.584 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.585 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2025-05-02 11:32:17.587 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2025-05-02 11:32:17.588 +07:00 [DBG] Committing transaction.
+2025-05-02 11:32:17.590 +07:00 [DBG] Committed transaction.
+2025-05-02 11:32:17.591 +07:00 [DBG] Disposing transaction.
+2025-05-02 11:32:17.592 +07:00 [DBG] Beginning transaction with isolation level 'Unspecified'.
+2025-05-02 11:32:17.592 +07:00 [DBG] Began transaction with isolation level 'ReadCommitted'.
+2025-05-02 11:32:17.593 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-02 11:32:17.593 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.593 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.593 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-05-02 11:32:17.594 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-05-02 11:32:17.594 +07:00 [DBG] Creating DbCommand for 'ExecuteScalar'.
+2025-05-02 11:32:17.594 +07:00 [DBG] Created DbCommand for 'ExecuteScalar' (0ms).
+2025-05-02 11:32:17.594 +07:00 [DBG] Initialized DbCommand for 'ExecuteScalar' (0ms).
+2025-05-02 11:32:17.594 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-05-02 11:32:17.595 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-05-02 11:32:17.596 +07:00 [DBG] Creating DbCommand for 'ExecuteReader'.
+2025-05-02 11:32:17.596 +07:00 [DBG] Created DbCommand for 'ExecuteReader' (0ms).
+2025-05-02 11:32:17.597 +07:00 [DBG] Initialized DbCommand for 'ExecuteReader' (0ms).
+2025-05-02 11:32:17.597 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2025-05-02 11:32:17.600 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2025-05-02 11:32:17.602 +07:00 [DBG] Closing data reader to 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER'.
+2025-05-02 11:32:17.603 +07:00 [DBG] A data reader for 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER' is being disposed after spending 1ms reading results.
+2025-05-02 11:32:17.606 +07:00 [INF] Applying migration '20250502043203_AddAuthFieldsToUser'.
+2025-05-02 11:32:17.623 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-02 11:32:17.623 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.623 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.623 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [users] ADD [CreatedAt] datetime2 NOT NULL DEFAULT '0001-01-01T00:00:00.0000000';
+2025-05-02 11:32:17.633 +07:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [users] ADD [CreatedAt] datetime2 NOT NULL DEFAULT '0001-01-01T00:00:00.0000000';
+2025-05-02 11:32:17.633 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-02 11:32:17.633 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.633 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.633 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [users] ADD [IsEmailVerified] bit NOT NULL DEFAULT CAST(0 AS bit);
+2025-05-02 11:32:17.635 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [users] ADD [IsEmailVerified] bit NOT NULL DEFAULT CAST(0 AS bit);
+2025-05-02 11:32:17.635 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-02 11:32:17.636 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.636 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.636 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [users] ADD [PasswordResetToken] nvarchar(max) NULL;
+2025-05-02 11:32:17.637 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [users] ADD [PasswordResetToken] nvarchar(max) NULL;
+2025-05-02 11:32:17.637 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-02 11:32:17.637 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.637 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.637 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [users] ADD [ResetTokenExpires] datetime2 NULL;
+2025-05-02 11:32:17.637 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [users] ADD [ResetTokenExpires] datetime2 NULL;
+2025-05-02 11:32:17.637 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-02 11:32:17.637 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.637 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.637 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [users] ADD [UpdatedAt] datetime2 NULL;
+2025-05-02 11:32:17.638 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [users] ADD [UpdatedAt] datetime2 NULL;
+2025-05-02 11:32:17.638 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-02 11:32:17.638 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.638 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-02 11:32:17.638 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20250502043203_AddAuthFieldsToUser', N'9.0.4');
+2025-05-02 11:32:17.640 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20250502043203_AddAuthFieldsToUser', N'9.0.4');
+2025-05-02 11:32:17.640 +07:00 [DBG] Committing transaction.
+2025-05-02 11:32:17.640 +07:00 [DBG] Committed transaction.
+2025-05-02 11:32:17.641 +07:00 [DBG] Creating DbCommand for 'ExecuteScalar'.
+2025-05-02 11:32:17.641 +07:00 [DBG] Created DbCommand for 'ExecuteScalar' (0ms).
+2025-05-02 11:32:17.641 +07:00 [DBG] Initialized DbCommand for 'ExecuteScalar' (0ms).
+2025-05-02 11:32:17.641 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2025-05-02 11:32:17.642 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2025-05-02 11:32:17.642 +07:00 [DBG] Disposing transaction.
+2025-05-02 11:32:17.642 +07:00 [DBG] Closing connection to database 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER'.
+2025-05-02 11:32:17.642 +07:00 [DBG] Closed connection to database 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER' (0ms).
+2025-05-02 11:32:17.643 +07:00 [DBG] 'ExchangeDocumentContext' disposed.
+2025-05-02 11:32:17.644 +07:00 [DBG] Disposing connection to database 'exchangedocument' on server 'DESKTOP-6HCA7KG\KHOA_SQLSERVER'.
+2025-05-02 11:32:17.645 +07:00 [DBG] Disposed connection to database '' on server '' (0ms).
