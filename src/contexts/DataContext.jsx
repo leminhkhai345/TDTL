@@ -6,7 +6,8 @@ export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState([]); // Sách từ mock API
+  const [googleBooks, setGoogleBooks] = useState([]); // Sách từ Google Books API
   const [orders, setOrders] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +42,18 @@ export const DataProvider = ({ children }) => {
   };
 
   return (
-    <DataContext.Provider value={{ users, books, orders, reviews, loading, refreshData }}>
+    <DataContext.Provider
+      value={{
+        users,
+        books,
+        googleBooks,
+        setGoogleBooks, // Hàm để cập nhật danh sách sách từ Google Books API
+        orders,
+        reviews,
+        loading,
+        refreshData,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );

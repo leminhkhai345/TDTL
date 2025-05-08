@@ -17,7 +17,94 @@ const checkAdminAccess = () => {
     throw new Error('Unauthorized: Admin access required');
   }
 };
+// Lấy chi tiết sách từ Google Books API
+export const getBookDetails = async (bookId) => {
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/books/v1/volumes/${bookId}?key=${GOOGLE_BOOKS_API_KEY}`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(`Failed to fetch book details: ${error.message}`);
+  }
+};
 
+// Mock data cho danh sách đánh giá (placeholder)
+const mockReviews = [
+  {
+    id: "1",
+    userId: "1",
+    bookId: "OL12345W",
+    rating: 5,
+    comment: "Amazing book! I loved every chapter.",
+    createdAt: "2025-05-01T10:00:00Z",
+  },
+  {
+    id: "2",
+    userId: "2",
+    bookId: "OL12345W",
+    rating: 4,
+    comment: "Really good, but the ending was a bit rushed.",
+    createdAt: "2025-05-02T12:00:00Z",
+  },
+];
+
+// Placeholder: Lấy danh sách đánh giá (mock data)
+export const getReviewsByBookId = async (bookId) => {
+  try {
+    // Khi có API thật, thay bằng:
+    // const response = await fetch(`${API_URL}/books/${bookId}/reviews`, {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+    //   },
+    // });
+    // const data = await handleResponse(response);
+    // return {
+    //   reviews: data.reviews || data,
+    //   total: data.total || (Array.isArray(data) ? data.length : 0),
+    // };
+
+    // Mock data: Lọc đánh giá theo bookId
+    const reviews = mockReviews.filter((review) => review.bookId === bookId);
+    return {
+      reviews,
+      total: reviews.length,
+    };
+  } catch (error) {
+    throw new Error(`Failed to fetch reviews: ${error.message}`);
+  }
+};
+
+// Placeholder: Thêm đánh giá mới (mock data)
+export const createReview = async (bookId, reviewData) => {
+  try {
+    // Khi có API thật, thay bằng:
+    // const response = await fetch(`${API_URL}/books/${bookId}/reviews`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+    //   },
+    //   body: JSON.stringify(reviewData),
+    // });
+    // return handleResponse(response);
+
+    // Mock data: Thêm đánh giá mới vào danh sách
+    const newReview = {
+      id: String(mockReviews.length + 1),
+      ...reviewData,
+    };
+    mockReviews.push(newReview);
+    return newReview;
+  } catch (error) {
+    throw new Error(`Failed to create review: ${error.message}`);
+  }
+};
 
 // API quản lý đánh giá (Admin)
 export const getReviews = async () => {
@@ -298,24 +385,24 @@ export const sendOtp = async (email) => {
   return handleResponse(response);
 };
 // Book APIs (Open Library - đã chuyển từ Google Books)
-export const getBookDetails = async (bookId) => {
-  const response = await fetch(`https://openlibrary.org/works/${bookId}.json`);
-  const data = await handleResponse(response);
-  return {
-    id: bookId,
-    volumeInfo: {
-      title: data.title,
-      authors: data.authors?.map((author) => author.name) || ["Unknown Author"],
-      categories: data.subjects || [],
-      imageLinks: data.covers
-        ? { thumbnail: `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg` }
-        : undefined,
-    },
-    saleInfo: {
-      listPrice: { amount: 0 },
-    },
-  };
-};
+// export const getBookDetails = async (bookId) => {
+//   const response = await fetch(`https://openlibrary.org/works/${bookId}.json`);
+//   const data = await handleResponse(response);
+//   return {
+//     id: bookId,
+//     volumeInfo: {
+//       title: data.title,
+//       authors: data.authors?.map((author) => author.name) || ["Unknown Author"],
+//       categories: data.subjects || [],
+//       imageLinks: data.covers
+//         ? { thumbnail: `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg` }
+//         : undefined,
+//     },
+//     saleInfo: {
+//       listPrice: { amount: 0 },
+//     },
+//   };
+// };
 
 export const searchBooks = async (searchQuery) => {
   const response = await fetch(
