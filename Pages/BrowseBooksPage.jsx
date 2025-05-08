@@ -40,6 +40,7 @@ const BrowseBooksPage = () => {
         ? `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=20&key=${API_KEY}`
         : `https://www.googleapis.com/books/v1/volumes?q=fiction&maxResults=20&key=${API_KEY}`;
       const response = await fetch(url);
+      console.log(response);
       if (!response.ok) {
         throw new Error("Failed to fetch books");
       }

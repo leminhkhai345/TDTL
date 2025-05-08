@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import logo from "../src/assets/book-shop1.png";
+// src/Components/Navbar.jsx
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome,
   faBookOpen,
@@ -11,13 +11,17 @@ import {
   faUser,
   faShoppingCart,
   faHistory,
-} from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "../src/contexts/AuthContext";
+  faUserShield,
+} from '@fortawesome/free-solid-svg-icons';
+import logo from '../src/assets/book-shop1.png';
+import { useAuth } from '../src/contexts/AuthContext';
 
 const Navbar = () => {
   const { isLoggedIn, user, logout } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  console.log('Navbar user:', user); // Debug
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -29,9 +33,9 @@ const Navbar = () => {
         setIsDropdownOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -76,38 +80,43 @@ const Navbar = () => {
                 <FontAwesomeIcon icon={faHistory} />
                 <span>Sell History</span>
               </Link>
-            </>
-          )}
-          {isLoggedIn && (
-            <div className="relative">
-              <button
-                className="flex items-center space-x-2"
-                onClick={toggleDropdown}
-              >
-                <img
-                  src={user?.avatar || "https://via.placeholder.com/40"}
-                  alt="Avatar"
-                  className="w-8 h-8 rounded-full border"
-                />
-              </button>
-              {isDropdownOpen && (
-                <div
-                  ref={dropdownRef}
-                  className="absolute top-full right-0 mt-2 bg-white border rounded-lg shadow-md w-48 z-50"
-                >
-                  <div className="p-2">
-                    <Link to="/profile" className="block text-gray-700 hover:text-blue-600 py-2">Profile</Link>
-                    <Link to="/settings" className="block text-gray-700 hover:text-blue-600 py-2">Settings</Link>
-                    <button
-                      onClick={logout}
-                      className="w-full text-left text-gray-700 hover:text-blue-600 py-2"
-                    >
-                      Log Out
-                    </button>
-                  </div>
-                </div>
+              {user?.role === 'admin' && (
+                <Link to="/admin" className="hover:text-blue-600 flex items-center space-x-1">
+                  <FontAwesomeIcon icon={faUserShield} />
+                  <span>Admin</span>
+                </Link>
               )}
-            </div>
+              <div className="relative">
+                <button className="flex items-center space-x-2" onClick={toggleDropdown}>
+                  <img
+                    src={user?.avatar || 'https://via.placeholder.com/40'}
+                    alt="Avatar"
+                    className="w-8 h-8 rounded-full border"
+                  />
+                </button>
+                {isDropdownOpen && (
+                  <div
+                    ref={dropdownRef}
+                    className="absolute top-full right-0 mt-2 bg-white border rounded-lg shadow-md w-48 z-50"
+                  >
+                    <div className="p-2">
+                      <Link to="/profile" className="block text-gray-700 hover:text-blue-600 py-2">
+                        Profile
+                      </Link>
+                      <Link to="/settings" className="block text-gray-700 hover:text-blue-600 py-2">
+                        Settings
+                      </Link>
+                      <button
+                        onClick={logout}
+                        className="w-full text-left text-gray-700 hover:text-blue-600 py-2"
+                      >
+                        Log Out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
           )}
           {!isLoggedIn && (
             <Link to="/login" className="hover:text-blue-600 flex items-center space-x-1">
