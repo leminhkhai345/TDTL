@@ -8,11 +8,14 @@ namespace ExchangeDocument.BusinessLayer.Interfaces.Services
     {
         Task<(DocumentDto? document, string? errorMessage)> AddDocumentAsync(DocumentCreateDto documentDto, int userId);
         Task<DocumentDetailDto?> GetListedDocumentDetailsByIdAsync(int id);
+
+        Task<List<DocumentDetailDto>> GetAllDocumentDetailsByAsync();
         Task<(DocumentDetailDto? document, string? errorMessage)> UpdateDocumentAsync(int id, DocumentUpdateDto updateDto, int userId);
         /// <summary>
         /// Soft-delete a document by its ID and user permission.
         /// </summary>
-        Task<string?> DeleteDocumentAsync(int id, int userId);
+        // Task<string?> DeleteDocumentAsync(int id, int userId);
+        Task<string?> DeleteDocumentAsync(int id, int userId, bool isAdmin);
         /// <summary>
         /// Get current user's inventory (InStock and Listed documents) with basic pagination.
         /// </summary>

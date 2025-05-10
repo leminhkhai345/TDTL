@@ -5504,11 +5504,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Dowload\\ExchangeDocument(Tự làm Auth_User)\\ExchangeDocument(Tự làm Auth_User) - Đã xong API của Module Auth_User(13)\\ExchangeDocument\\ExchangeDocument.csproj",
+      "projectUniqueName": "E:\\pbl3\\ExchangeDocument1\\ExchangeDocument(Tự làm Auth_User) - Đã xong API của Module Auth_User(13)\\ExchangeDocument\\ExchangeDocument.csproj",
       "projectName": "ExchangeDocument",
-      "projectPath": "D:\\Dowload\\ExchangeDocument(Tự làm Auth_User)\\ExchangeDocument(Tự làm Auth_User) - Đã xong API của Module Auth_User(13)\\ExchangeDocument\\ExchangeDocument.csproj",
+      "projectPath": "E:\\pbl3\\ExchangeDocument1\\ExchangeDocument(Tự làm Auth_User) - Đã xong API của Module Auth_User(13)\\ExchangeDocument\\ExchangeDocument.csproj",
       "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
-      "outputPath": "D:\\Dowload\\ExchangeDocument(Tự làm Auth_User)\\ExchangeDocument(Tự làm Auth_User) - Đã xong API của Module Auth_User(13)\\ExchangeDocument\\obj\\",
+      "outputPath": "E:\\pbl3\\ExchangeDocument1\\ExchangeDocument(Tự làm Auth_User) - Đã xong API của Module Auth_User(13)\\ExchangeDocument\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

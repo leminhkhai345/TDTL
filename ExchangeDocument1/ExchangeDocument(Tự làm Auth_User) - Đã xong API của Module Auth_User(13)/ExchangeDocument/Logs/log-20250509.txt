@@ -1,0 +1,114 @@
+2025-05-09 07:22:54.474 +07:00 [DBG] Registered model binder providers, in the following order: ["Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BinderTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ServicesModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BodyModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.HeaderModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FloatingPointTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.EnumTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DateTimeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.SimpleTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.TryParseModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CancellationTokenModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ByteArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormFileModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormCollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.KeyValuePairModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DictionaryModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ComplexObjectModelBinderProvider"]
+2025-05-09 07:22:54.788 +07:00 [DBG] Hosting starting
+2025-05-09 07:22:54.825 +07:00 [INF] User profile is available. Using 'C:\Users\ASUS\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-05-09 07:22:54.839 +07:00 [DBG] Reading data from file 'C:\Users\ASUS\AppData\Local\ASP.NET\DataProtection-Keys\key-8e54759c-7598-473f-bbce-4776bafbcb5b.xml'.
+2025-05-09 07:22:54.867 +07:00 [DBG] Found key {8e54759c-7598-473f-bbce-4776bafbcb5b}.
+2025-05-09 07:22:54.880 +07:00 [DBG] Considering key {8e54759c-7598-473f-bbce-4776bafbcb5b} with expiration date 2025-05-30 02:50:26Z as default key.
+2025-05-09 07:22:54.888 +07:00 [DBG] Forwarded activator type request from Microsoft.AspNetCore.DataProtection.XmlEncryption.DpapiXmlDecryptor, Microsoft.AspNetCore.DataProtection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 to Microsoft.AspNetCore.DataProtection.XmlEncryption.DpapiXmlDecryptor, Microsoft.AspNetCore.DataProtection, Culture=neutral, PublicKeyToken=adb9793829ddae60
+2025-05-09 07:22:54.895 +07:00 [DBG] Decrypting secret element using Windows DPAPI.
+2025-05-09 07:22:54.901 +07:00 [DBG] Forwarded activator type request from Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 to Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Culture=neutral, PublicKeyToken=adb9793829ddae60
+2025-05-09 07:22:54.907 +07:00 [DBG] Opening CNG algorithm 'AES' from provider 'null' with chaining mode CBC.
+2025-05-09 07:22:54.910 +07:00 [DBG] Opening CNG algorithm 'SHA256' from provider 'null' with HMAC.
+2025-05-09 07:22:54.913 +07:00 [DBG] Using key {8e54759c-7598-473f-bbce-4776bafbcb5b} as the default key.
+2025-05-09 07:22:54.915 +07:00 [DBG] Key ring with default key {8e54759c-7598-473f-bbce-4776bafbcb5b} was loaded during application startup.
+2025-05-09 07:22:55.073 +07:00 [INF] Now listening on: http://localhost:5041
+2025-05-09 07:22:55.076 +07:00 [DBG] Loaded hosting startup assembly ExchangeDocument
+2025-05-09 07:22:55.080 +07:00 [DBG] Loaded hosting startup assembly Microsoft.WebTools.ApiEndpointDiscovery
+2025-05-09 07:22:55.086 +07:00 [DBG] Loaded hosting startup assembly Microsoft.AspNetCore.Watch.BrowserRefresh
+2025-05-09 07:22:55.088 +07:00 [DBG] Loaded hosting startup assembly Microsoft.WebTools.BrowserLink.Net
+2025-05-09 07:22:55.159 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-09 07:22:55.162 +07:00 [INF] Hosting environment: Development
+2025-05-09 07:22:55.165 +07:00 [INF] Content root path: E:\pbl3\ExchangeDocument1\ExchangeDocument(Tự làm Auth_User) - Đã xong API của Module Auth_User(13)\ExchangeDocument
+2025-05-09 07:22:55.170 +07:00 [DBG] Hosting started
+2025-05-09 07:22:55.452 +07:00 [DBG] Connection id "0HNCEHUIED6L7" received FIN.
+2025-05-09 07:22:55.462 +07:00 [DBG] Connection id "0HNCEHUIED6L7" accepted.
+2025-05-09 07:22:55.467 +07:00 [DBG] Connection id "0HNCEHUIED6L7" started.
+2025-05-09 07:22:55.474 +07:00 [DBG] Connection id "0HNCEHUIED6L7" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-09 07:22:55.483 +07:00 [DBG] Connection id "0HNCEHUIED6L7" disconnecting.
+2025-05-09 07:22:55.489 +07:00 [DBG] Connection id "0HNCEHUIED6L7" stopped.
+2025-05-09 07:22:59.699 +07:00 [DBG] Connection id "0HNCEHUIED6L8" accepted.
+2025-05-09 07:22:59.702 +07:00 [DBG] Connection id "0HNCEHUIED6L8" started.
+2025-05-09 07:22:59.703 +07:00 [DBG] Connection id "0HNCEHUIED6L9" accepted.
+2025-05-09 07:22:59.712 +07:00 [DBG] Connection id "0HNCEHUIED6L9" started.
+2025-05-09 07:22:59.771 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger - null null
+2025-05-09 07:22:59.925 +07:00 [DBG] Wildcard detected, all requests with hosts will be allowed.
+2025-05-09 07:22:59.954 +07:00 [DBG] No candidates found for the request path '/swagger'
+2025-05-09 07:22:59.956 +07:00 [DBG] Request did not match any endpoints
+2025-05-09 07:22:59.970 +07:00 [INF] HTTP GET /swagger responded 301 in 7.8694 ms
+2025-05-09 07:22:59.992 +07:00 [DBG] Connection id "0HNCEHUIED6L8" completed keep alive response.
+2025-05-09 07:23:00.001 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger - 301 0 null 242.1096ms
+2025-05-09 07:23:00.006 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/index.html - null null
+2025-05-09 07:23:00.015 +07:00 [DBG] No candidates found for the request path '/swagger/index.html'
+2025-05-09 07:23:00.033 +07:00 [DBG] Request did not match any endpoints
+2025-05-09 07:23:00.084 +07:00 [DBG] Response markup is scheduled to include Browser Link script injection.
+2025-05-09 07:23:00.086 +07:00 [DBG] Response markup is scheduled to include browser refresh script injection.
+2025-05-09 07:23:00.097 +07:00 [INF] HTTP GET /swagger/index.html responded 200 in 59.9066 ms
+2025-05-09 07:23:00.102 +07:00 [DBG] Response markup was updated to include Browser Link script injection.
+2025-05-09 07:23:00.104 +07:00 [DBG] Response markup was updated to include browser refresh script injection.
+2025-05-09 07:23:00.107 +07:00 [DBG] Connection id "0HNCEHUIED6LA" accepted.
+2025-05-09 07:23:00.107 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui.css - null null
+2025-05-09 07:23:00.114 +07:00 [DBG] Connection id "0HNCEHUIED6LA" started.
+2025-05-09 07:23:00.109 +07:00 [DBG] Connection id "0HNCEHUIED6L8" completed keep alive response.
+2025-05-09 07:23:00.126 +07:00 [DBG] Connection id "0HNCEHUIED6LB" accepted.
+2025-05-09 07:23:00.146 +07:00 [DBG] No candidates found for the request path '/swagger/swagger-ui.css'
+2025-05-09 07:23:00.151 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui-bundle.js - null null
+2025-05-09 07:23:00.157 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/index.html - 200 null text/html;charset=utf-8 150.3583ms
+2025-05-09 07:23:00.163 +07:00 [DBG] Connection id "0HNCEHUIED6LC" accepted.
+2025-05-09 07:23:00.162 +07:00 [DBG] Connection id "0HNCEHUIED6LB" started.
+2025-05-09 07:23:00.186 +07:00 [DBG] No candidates found for the request path '/swagger/swagger-ui-bundle.js'
+2025-05-09 07:23:00.172 +07:00 [DBG] Request did not match any endpoints
+2025-05-09 07:23:00.217 +07:00 [DBG] Connection id "0HNCEHUIED6LC" started.
+2025-05-09 07:23:00.220 +07:00 [DBG] Connection id "0HNCEHUIED6LD" accepted.
+2025-05-09 07:23:00.230 +07:00 [DBG] Request did not match any endpoints
+2025-05-09 07:23:00.239 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/_framework/aspnetcore-browser-refresh.js - null null
+2025-05-09 07:23:00.244 +07:00 [DBG] Connection id "0HNCEHUIED6LD" started.
+2025-05-09 07:23:00.265 +07:00 [DBG] Connection id "0HNCEHUIED6LC" completed keep alive response.
+2025-05-09 07:23:00.271 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/_vs/browserLink - null null
+2025-05-09 07:23:00.276 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/_framework/aspnetcore-browser-refresh.js - 200 13768 application/javascript; charset=utf-8 36.5709ms
+2025-05-09 07:23:00.224 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui-standalone-preset.js - null null
+2025-05-09 07:23:00.253 +07:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2025-05-09 07:23:00.295 +07:00 [DBG] No candidates found for the request path '/swagger/swagger-ui-standalone-preset.js'
+2025-05-09 07:23:00.301 +07:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2025-05-09 07:23:00.306 +07:00 [DBG] Request did not match any endpoints
+2025-05-09 07:23:00.308 +07:00 [INF] HTTP GET /swagger/swagger-ui-bundle.js responded 200 in 58.9892 ms
+2025-05-09 07:23:00.300 +07:00 [INF] HTTP GET /swagger/swagger-ui.css responded 200 in 66.1312 ms
+2025-05-09 07:23:00.314 +07:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2025-05-09 07:23:00.322 +07:00 [DBG] Connection id "0HNCEHUIED6LA" completed keep alive response.
+2025-05-09 07:23:00.324 +07:00 [DBG] Connection id "0HNCEHUIED6L9" completed keep alive response.
+2025-05-09 07:23:00.328 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui-bundle.js - 200 1456926 text/javascript 176.3255ms
+2025-05-09 07:23:00.326 +07:00 [INF] HTTP GET /swagger/swagger-ui-standalone-preset.js responded 200 in 16.6955 ms
+2025-05-09 07:23:00.330 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui.css - 200 152034 text/css 222.4686ms
+2025-05-09 07:23:00.333 +07:00 [DBG] Connection id "0HNCEHUIED6LD" completed keep alive response.
+2025-05-09 07:23:00.338 +07:00 [DBG] Connection id "0HNCEHUIED6LB" completed keep alive response.
+2025-05-09 07:23:00.344 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/_vs/browserLink - 200 null text/javascript; charset=UTF-8 72.644ms
+2025-05-09 07:23:00.346 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui-standalone-preset.js - 200 230280 text/javascript 121.4969ms
+2025-05-09 07:23:00.538 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/v1/swagger.json - null null
+2025-05-09 07:23:00.544 +07:00 [DBG] No candidates found for the request path '/swagger/v1/swagger.json'
+2025-05-09 07:23:00.546 +07:00 [DBG] Request did not match any endpoints
+2025-05-09 07:23:00.571 +07:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 23.4403 ms
+2025-05-09 07:23:00.575 +07:00 [DBG] Connection id "0HNCEHUIED6LD" completed keep alive response.
+2025-05-09 07:23:00.576 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 38.9176ms
+2025-05-09 07:23:04.353 +07:00 [DBG] Connection id "0HNCEHUIED6L9" received FIN.
+2025-05-09 07:23:04.353 +07:00 [DBG] Connection id "0HNCEHUIED6LB" received FIN.
+2025-05-09 07:23:04.353 +07:00 [DBG] Connection id "0HNCEHUIED6LC" received FIN.
+2025-05-09 07:23:04.357 +07:00 [DBG] Connection id "0HNCEHUIED6L9" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-09 07:23:04.353 +07:00 [DBG] Connection id "0HNCEHUIED6LD" received FIN.
+2025-05-09 07:23:04.375 +07:00 [DBG] Connection id "0HNCEHUIED6L9" disconnecting.
+2025-05-09 07:23:04.353 +07:00 [DBG] Connection id "0HNCEHUIED6LA" received FIN.
+2025-05-09 07:23:04.368 +07:00 [DBG] Connection id "0HNCEHUIED6LC" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-09 07:23:04.359 +07:00 [DBG] Connection id "0HNCEHUIED6LB" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-09 07:23:04.384 +07:00 [DBG] Connection id "0HNCEHUIED6LA" disconnecting.
+2025-05-09 07:23:04.386 +07:00 [DBG] Connection id "0HNCEHUIED6LC" disconnecting.
+2025-05-09 07:23:04.384 +07:00 [DBG] Connection id "0HNCEHUIED6L9" stopped.
+2025-05-09 07:23:04.353 +07:00 [DBG] Connection id "0HNCEHUIED6L8" received FIN.
+2025-05-09 07:23:04.382 +07:00 [DBG] Connection id "0HNCEHUIED6LD" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-09 07:23:04.393 +07:00 [DBG] Connection id "0HNCEHUIED6LB" disconnecting.
+2025-05-09 07:23:04.398 +07:00 [DBG] Connection id "0HNCEHUIED6LA" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-09 07:23:04.402 +07:00 [DBG] Connection id "0HNCEHUIED6LC" stopped.
+2025-05-09 07:23:04.408 +07:00 [DBG] Connection id "0HNCEHUIED6L8" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-09 07:23:04.412 +07:00 [DBG] Connection id "0HNCEHUIED6LD" disconnecting.
+2025-05-09 07:23:04.414 +07:00 [DBG] Connection id "0HNCEHUIED6LB" stopped.
+2025-05-09 07:23:04.421 +07:00 [DBG] Connection id "0HNCEHUIED6L8" disconnecting.
+2025-05-09 07:23:04.423 +07:00 [DBG] Connection id "0HNCEHUIED6LD" stopped.
+2025-05-09 07:23:04.425 +07:00 [DBG] Connection id "0HNCEHUIED6L8" stopped.
+2025-05-09 07:23:04.426 +07:00 [DBG] Connection id "0HNCEHUIED6LA" stopped.

@@ -127,9 +127,9 @@ namespace ExchangeDocument.BusinessLayer.Services
 
         public async Task<List<DocumentDetailDto>> GetAllDocumentDetailsByAsync()
         {
-            var documentEntity = await _documentRepository.GetAllDocumentDetailsByAsync();
+            var documentEntitys = await _documentRepository.GetAllDocumentDetailsByAsync();
             List<DocumentDetailDto> documentDetailDtoList = new List<DocumentDetailDto>();
-            foreach(Document documentEntity in documentEntity)
+            foreach(Document documentEntity in documentEntitys)
             {
                 var documentDetailDto = new DocumentDetailDto
                 {
@@ -220,14 +220,22 @@ namespace ExchangeDocument.BusinessLayer.Services
         /// <summary>
         /// Soft-delete a document by its ID and user permission.
         /// </summary>
-        public async Task<string?> DeleteDocumentAsync(int id, int userId)
+        // public async Task<string?> DeleteDocumentAsync(int id, int userId)
+        // {
+        //     return await DeleteDocumentAsync(id, userId, false);
+        // }
+
+        /// <summary>
+        /// Soft-delete a document by its ID and user permission.
+        /// </summary>
+        public async Task<string?> DeleteDocumentAsync(int id, int userId, bool isAdmin)
         {
             var existing = await _documentRepository.GetByIdAsync(id);
             if (existing == null)
                 return "NotFound";
-            if (existing.UserId != userId)
+            if (!isAdmin && existing.UserId != userId)
                 return "Forbidden";
-            if (existing.DocumentStatus.Code != "InStock" && existing.DocumentStatus.Code != "Listed")
+            if (!isAdmin && existing.DocumentStatus.Code != "InStock" && existing.DocumentStatus.Code != "Listed")
                 return "Conflict";
             await _documentRepository.SoftDeleteAsync(existing);
             return null;

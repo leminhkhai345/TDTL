@@ -1,0 +1,308 @@
+2025-05-08 18:54:41.261 +07:00 [DBG] Registered model binder providers, in the following order: ["Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BinderTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ServicesModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BodyModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.HeaderModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FloatingPointTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.EnumTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DateTimeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.SimpleTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.TryParseModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CancellationTokenModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ByteArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormFileModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormCollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.KeyValuePairModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DictionaryModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ComplexObjectModelBinderProvider"]
+2025-05-08 18:54:41.368 +07:00 [DBG] Hosting starting
+2025-05-08 18:54:41.409 +07:00 [INF] User profile is available. Using 'C:\Users\ASUS\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-05-08 18:54:41.419 +07:00 [DBG] Reading data from file 'C:\Users\ASUS\AppData\Local\ASP.NET\DataProtection-Keys\key-8e54759c-7598-473f-bbce-4776bafbcb5b.xml'.
+2025-05-08 18:54:41.451 +07:00 [DBG] Found key {8e54759c-7598-473f-bbce-4776bafbcb5b}.
+2025-05-08 18:54:41.460 +07:00 [DBG] Considering key {8e54759c-7598-473f-bbce-4776bafbcb5b} with expiration date 2025-05-30 02:50:26Z as default key.
+2025-05-08 18:54:41.464 +07:00 [DBG] Forwarded activator type request from Microsoft.AspNetCore.DataProtection.XmlEncryption.DpapiXmlDecryptor, Microsoft.AspNetCore.DataProtection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 to Microsoft.AspNetCore.DataProtection.XmlEncryption.DpapiXmlDecryptor, Microsoft.AspNetCore.DataProtection, Culture=neutral, PublicKeyToken=adb9793829ddae60
+2025-05-08 18:54:41.467 +07:00 [DBG] Decrypting secret element using Windows DPAPI.
+2025-05-08 18:54:41.469 +07:00 [DBG] Forwarded activator type request from Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 to Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Culture=neutral, PublicKeyToken=adb9793829ddae60
+2025-05-08 18:54:41.474 +07:00 [DBG] Opening CNG algorithm 'AES' from provider 'null' with chaining mode CBC.
+2025-05-08 18:54:41.476 +07:00 [DBG] Opening CNG algorithm 'SHA256' from provider 'null' with HMAC.
+2025-05-08 18:54:41.477 +07:00 [DBG] Using key {8e54759c-7598-473f-bbce-4776bafbcb5b} as the default key.
+2025-05-08 18:54:41.478 +07:00 [DBG] Key ring with default key {8e54759c-7598-473f-bbce-4776bafbcb5b} was loaded during application startup.
+2025-05-08 18:54:41.667 +07:00 [INF] Now listening on: http://localhost:5041
+2025-05-08 18:54:41.668 +07:00 [DBG] Loaded hosting startup assembly ExchangeDocument
+2025-05-08 18:54:41.669 +07:00 [DBG] Loaded hosting startup assembly Microsoft.WebTools.ApiEndpointDiscovery
+2025-05-08 18:54:41.670 +07:00 [DBG] Loaded hosting startup assembly Microsoft.AspNetCore.Watch.BrowserRefresh
+2025-05-08 18:54:41.671 +07:00 [DBG] Loaded hosting startup assembly Microsoft.WebTools.BrowserLink.Net
+2025-05-08 18:54:41.737 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-08 18:54:41.738 +07:00 [DBG] Connection id "0HNCE4SF2IHD8" accepted.
+2025-05-08 18:54:41.747 +07:00 [INF] Hosting environment: Development
+2025-05-08 18:54:41.738 +07:00 [DBG] Connection id "0HNCE4SF2IHD7" accepted.
+2025-05-08 18:54:41.756 +07:00 [DBG] Connection id "0HNCE4SF2IHD8" started.
+2025-05-08 18:54:41.757 +07:00 [INF] Content root path: E:\pbl3\ExchangeDocument1\ExchangeDocument(Tự làm Auth_User) - Đã xong API của Module Auth_User(13)\ExchangeDocument
+2025-05-08 18:54:41.758 +07:00 [DBG] Connection id "0HNCE4SF2IHD7" started.
+2025-05-08 18:54:41.759 +07:00 [DBG] Hosting started
+2025-05-08 18:54:41.768 +07:00 [DBG] Connection id "0HNCE4SF2IHD7" received FIN.
+2025-05-08 18:54:41.768 +07:00 [DBG] Connection id "0HNCE4SF2IHD8" received FIN.
+2025-05-08 18:54:41.771 +07:00 [DBG] Connection id "0HNCE4SF2IHD8" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:54:41.771 +07:00 [DBG] Connection id "0HNCE4SF2IHD7" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:54:41.779 +07:00 [DBG] Connection id "0HNCE4SF2IHD8" disconnecting.
+2025-05-08 18:54:41.779 +07:00 [DBG] Connection id "0HNCE4SF2IHD7" disconnecting.
+2025-05-08 18:54:41.780 +07:00 [DBG] Connection id "0HNCE4SF2IHD8" stopped.
+2025-05-08 18:54:41.781 +07:00 [DBG] Connection id "0HNCE4SF2IHD7" stopped.
+2025-05-08 18:54:42.961 +07:00 [DBG] Connection id "0HNCE4SF2IHD9" accepted.
+2025-05-08 18:54:42.970 +07:00 [DBG] Connection id "0HNCE4SF2IHD9" started.
+2025-05-08 18:54:42.971 +07:00 [DBG] Connection id "0HNCE4SF2IHDA" accepted.
+2025-05-08 18:54:42.975 +07:00 [DBG] Connection id "0HNCE4SF2IHDA" started.
+2025-05-08 18:54:43.016 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger - null null
+2025-05-08 18:54:43.151 +07:00 [DBG] Wildcard detected, all requests with hosts will be allowed.
+2025-05-08 18:54:43.174 +07:00 [DBG] No candidates found for the request path '/swagger'
+2025-05-08 18:54:43.176 +07:00 [DBG] Request did not match any endpoints
+2025-05-08 18:54:43.183 +07:00 [INF] HTTP GET /swagger responded 301 in 4.1348 ms
+2025-05-08 18:54:43.189 +07:00 [DBG] Connection id "0HNCE4SF2IHD9" received FIN.
+2025-05-08 18:54:43.198 +07:00 [DBG] Connection id "0HNCE4SF2IHD9" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:54:43.200 +07:00 [DBG] Connection id "0HNCE4SF2IHD9" disconnecting.
+2025-05-08 18:54:43.202 +07:00 [DBG] Connection id "0HNCE4SF2IHDA" completed keep alive response.
+2025-05-08 18:54:43.203 +07:00 [DBG] Connection id "0HNCE4SF2IHD9" stopped.
+2025-05-08 18:54:43.203 +07:00 [DBG] Connection id "0HNCE4SF2IHDA" received FIN.
+2025-05-08 18:54:43.205 +07:00 [DBG] Connection id "0HNCE4SF2IHDB" accepted.
+2025-05-08 18:54:43.205 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger - 301 0 null 198.7867ms
+2025-05-08 18:54:43.206 +07:00 [DBG] Connection id "0HNCE4SF2IHDA" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:54:43.208 +07:00 [DBG] Connection id "0HNCE4SF2IHDB" started.
+2025-05-08 18:54:43.213 +07:00 [DBG] Connection id "0HNCE4SF2IHDA" disconnecting.
+2025-05-08 18:54:43.215 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/index.html - null null
+2025-05-08 18:54:43.217 +07:00 [DBG] Connection id "0HNCE4SF2IHDA" stopped.
+2025-05-08 18:54:43.225 +07:00 [DBG] No candidates found for the request path '/swagger/index.html'
+2025-05-08 18:54:43.226 +07:00 [DBG] Request did not match any endpoints
+2025-05-08 18:54:43.269 +07:00 [DBG] Response markup is scheduled to include Browser Link script injection.
+2025-05-08 18:54:43.271 +07:00 [DBG] Response markup is scheduled to include browser refresh script injection.
+2025-05-08 18:54:43.279 +07:00 [INF] HTTP GET /swagger/index.html responded 200 in 52.8206 ms
+2025-05-08 18:54:43.281 +07:00 [DBG] Response markup was updated to include Browser Link script injection.
+2025-05-08 18:54:43.282 +07:00 [DBG] Response markup was updated to include browser refresh script injection.
+2025-05-08 18:54:43.282 +07:00 [DBG] Connection id "0HNCE4SF2IHDB" completed keep alive response.
+2025-05-08 18:54:43.283 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/index.html - 200 null text/html;charset=utf-8 69.1272ms
+2025-05-08 18:54:43.353 +07:00 [DBG] Connection id "0HNCE4SF2IHDC" accepted.
+2025-05-08 18:54:43.353 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui.css - null null
+2025-05-08 18:54:43.354 +07:00 [DBG] Connection id "0HNCE4SF2IHDC" started.
+2025-05-08 18:54:43.355 +07:00 [DBG] Connection id "0HNCE4SF2IHDD" accepted.
+2025-05-08 18:54:43.356 +07:00 [DBG] No candidates found for the request path '/swagger/swagger-ui.css'
+2025-05-08 18:54:43.358 +07:00 [DBG] Connection id "0HNCE4SF2IHDD" started.
+2025-05-08 18:54:43.357 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui-bundle.js - null null
+2025-05-08 18:54:43.358 +07:00 [DBG] Connection id "0HNCE4SF2IHDE" accepted.
+2025-05-08 18:54:43.359 +07:00 [DBG] Request did not match any endpoints
+2025-05-08 18:54:43.360 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui-standalone-preset.js - null null
+2025-05-08 18:54:43.363 +07:00 [DBG] Connection id "0HNCE4SF2IHDE" started.
+2025-05-08 18:54:43.363 +07:00 [DBG] No candidates found for the request path '/swagger/swagger-ui-bundle.js'
+2025-05-08 18:54:43.364 +07:00 [DBG] Connection id "0HNCE4SF2IHDF" accepted.
+2025-05-08 18:54:43.367 +07:00 [DBG] No candidates found for the request path '/swagger/swagger-ui-standalone-preset.js'
+2025-05-08 18:54:43.369 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/_framework/aspnetcore-browser-refresh.js - null null
+2025-05-08 18:54:43.372 +07:00 [DBG] Request did not match any endpoints
+2025-05-08 18:54:43.370 +07:00 [DBG] Request did not match any endpoints
+2025-05-08 18:54:43.371 +07:00 [DBG] Connection id "0HNCE4SF2IHDF" started.
+2025-05-08 18:54:43.385 +07:00 [DBG] Connection id "0HNCE4SF2IHDE" completed keep alive response.
+2025-05-08 18:54:43.387 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/_vs/browserLink - null null
+2025-05-08 18:54:43.400 +07:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2025-05-08 18:54:43.400 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/_framework/aspnetcore-browser-refresh.js - 200 13768 application/javascript; charset=utf-8 30.7378ms
+2025-05-08 18:54:43.407 +07:00 [INF] HTTP GET /swagger/swagger-ui-standalone-preset.js responded 200 in 22.5251 ms
+2025-05-08 18:54:43.417 +07:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2025-05-08 18:54:43.418 +07:00 [DBG] Connection id "0HNCE4SF2IHDD" completed keep alive response.
+2025-05-08 18:54:43.400 +07:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2025-05-08 18:54:43.422 +07:00 [INF] HTTP GET /swagger/swagger-ui-bundle.js responded 200 in 36.3462 ms
+2025-05-08 18:54:43.424 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui-standalone-preset.js - 200 230280 text/javascript 63.7456ms
+2025-05-08 18:54:43.427 +07:00 [DBG] Connection id "0HNCE4SF2IHDC" completed keep alive response.
+2025-05-08 18:54:43.425 +07:00 [INF] HTTP GET /swagger/swagger-ui.css responded 200 in 60.8557 ms
+2025-05-08 18:54:43.430 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui-bundle.js - 200 1456926 text/javascript 72.7992ms
+2025-05-08 18:54:43.432 +07:00 [DBG] Connection id "0HNCE4SF2IHDB" completed keep alive response.
+2025-05-08 18:54:43.436 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/swagger-ui.css - 200 152034 text/css 82.8322ms
+2025-05-08 18:54:43.452 +07:00 [DBG] Connection id "0HNCE4SF2IHDF" completed keep alive response.
+2025-05-08 18:54:43.453 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/_vs/browserLink - 200 null text/javascript; charset=UTF-8 65.8629ms
+2025-05-08 18:54:43.609 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/v1/swagger.json - null null
+2025-05-08 18:54:43.611 +07:00 [DBG] No candidates found for the request path '/swagger/v1/swagger.json'
+2025-05-08 18:54:43.612 +07:00 [DBG] Request did not match any endpoints
+2025-05-08 18:54:43.624 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/favicon-32x32.png - null null
+2025-05-08 18:54:43.627 +07:00 [DBG] No candidates found for the request path '/swagger/favicon-32x32.png'
+2025-05-08 18:54:43.627 +07:00 [DBG] Request did not match any endpoints
+2025-05-08 18:54:43.628 +07:00 [INF] Sending file. Request path: '/favicon-32x32.png'. Physical path: 'N/A'
+2025-05-08 18:54:43.631 +07:00 [INF] HTTP GET /swagger/favicon-32x32.png responded 200 in 2.6291 ms
+2025-05-08 18:54:43.633 +07:00 [DBG] Connection id "0HNCE4SF2IHDC" completed keep alive response.
+2025-05-08 18:54:43.634 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/favicon-32x32.png - 200 628 image/png 9.7201ms
+2025-05-08 18:54:43.636 +07:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 23.3650 ms
+2025-05-08 18:54:43.638 +07:00 [DBG] Connection id "0HNCE4SF2IHDF" completed keep alive response.
+2025-05-08 18:54:43.639 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 30.5393ms
+2025-05-08 18:54:45.243 +07:00 [DBG] Connection id "0HNCE4SF2IHDB" received FIN.
+2025-05-08 18:54:45.243 +07:00 [DBG] Connection id "0HNCE4SF2IHDE" received FIN.
+2025-05-08 18:54:45.243 +07:00 [DBG] Connection id "0HNCE4SF2IHDD" received FIN.
+2025-05-08 18:54:45.244 +07:00 [DBG] Connection id "0HNCE4SF2IHDC" received FIN.
+2025-05-08 18:54:45.244 +07:00 [DBG] Connection id "0HNCE4SF2IHDF" received FIN.
+2025-05-08 18:54:45.245 +07:00 [DBG] Connection id "0HNCE4SF2IHDB" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:54:45.245 +07:00 [DBG] Connection id "0HNCE4SF2IHDE" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:54:45.254 +07:00 [DBG] Connection id "0HNCE4SF2IHDB" disconnecting.
+2025-05-08 18:54:45.247 +07:00 [DBG] Connection id "0HNCE4SF2IHDC" disconnecting.
+2025-05-08 18:54:45.247 +07:00 [DBG] Connection id "0HNCE4SF2IHDF" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:54:45.246 +07:00 [DBG] Connection id "0HNCE4SF2IHDD" disconnecting.
+2025-05-08 18:54:45.261 +07:00 [DBG] Connection id "0HNCE4SF2IHDE" disconnecting.
+2025-05-08 18:54:45.263 +07:00 [DBG] Connection id "0HNCE4SF2IHDC" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:54:45.264 +07:00 [DBG] Connection id "0HNCE4SF2IHDF" disconnecting.
+2025-05-08 18:54:45.264 +07:00 [DBG] Connection id "0HNCE4SF2IHDD" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:54:45.265 +07:00 [DBG] Connection id "0HNCE4SF2IHDE" stopped.
+2025-05-08 18:54:45.267 +07:00 [DBG] Connection id "0HNCE4SF2IHDF" stopped.
+2025-05-08 18:54:45.271 +07:00 [DBG] Connection id "0HNCE4SF2IHDC" stopped.
+2025-05-08 18:54:45.271 +07:00 [DBG] Connection id "0HNCE4SF2IHDD" stopped.
+2025-05-08 18:54:45.271 +07:00 [DBG] Connection id "0HNCE4SF2IHDB" stopped.
+2025-05-08 18:55:10.036 +07:00 [DBG] Registered model binder providers, in the following order: ["Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BinderTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ServicesModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BodyModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.HeaderModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FloatingPointTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.EnumTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DateTimeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.SimpleTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.TryParseModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CancellationTokenModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ByteArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormFileModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormCollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.KeyValuePairModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DictionaryModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ComplexObjectModelBinderProvider"]
+2025-05-08 18:55:10.106 +07:00 [DBG] Hosting starting
+2025-05-08 18:55:10.119 +07:00 [INF] User profile is available. Using 'C:\Users\ASUS\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-05-08 18:55:10.127 +07:00 [DBG] Reading data from file 'C:\Users\ASUS\AppData\Local\ASP.NET\DataProtection-Keys\key-8e54759c-7598-473f-bbce-4776bafbcb5b.xml'.
+2025-05-08 18:55:10.133 +07:00 [DBG] Found key {8e54759c-7598-473f-bbce-4776bafbcb5b}.
+2025-05-08 18:55:10.141 +07:00 [DBG] Considering key {8e54759c-7598-473f-bbce-4776bafbcb5b} with expiration date 2025-05-30 02:50:26Z as default key.
+2025-05-08 18:55:10.145 +07:00 [DBG] Forwarded activator type request from Microsoft.AspNetCore.DataProtection.XmlEncryption.DpapiXmlDecryptor, Microsoft.AspNetCore.DataProtection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 to Microsoft.AspNetCore.DataProtection.XmlEncryption.DpapiXmlDecryptor, Microsoft.AspNetCore.DataProtection, Culture=neutral, PublicKeyToken=adb9793829ddae60
+2025-05-08 18:55:10.147 +07:00 [DBG] Decrypting secret element using Windows DPAPI.
+2025-05-08 18:55:10.149 +07:00 [DBG] Forwarded activator type request from Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 to Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Culture=neutral, PublicKeyToken=adb9793829ddae60
+2025-05-08 18:55:10.153 +07:00 [DBG] Opening CNG algorithm 'AES' from provider 'null' with chaining mode CBC.
+2025-05-08 18:55:10.155 +07:00 [DBG] Opening CNG algorithm 'SHA256' from provider 'null' with HMAC.
+2025-05-08 18:55:10.157 +07:00 [DBG] Using key {8e54759c-7598-473f-bbce-4776bafbcb5b} as the default key.
+2025-05-08 18:55:10.158 +07:00 [DBG] Key ring with default key {8e54759c-7598-473f-bbce-4776bafbcb5b} was loaded during application startup.
+2025-05-08 18:55:10.190 +07:00 [INF] Now listening on: http://localhost:5041
+2025-05-08 18:55:10.191 +07:00 [DBG] Loaded hosting startup assembly ExchangeDocument
+2025-05-08 18:55:10.192 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-05-08 18:55:10.192 +07:00 [INF] Hosting environment: Development
+2025-05-08 18:55:10.193 +07:00 [INF] Content root path: E:\pbl3\ExchangeDocument1\ExchangeDocument(Tự làm Auth_User) - Đã xong API của Module Auth_User(13)\ExchangeDocument
+2025-05-08 18:55:10.194 +07:00 [DBG] Hosting started
+2025-05-08 18:55:19.651 +07:00 [DBG] Connection id "0HNCE4SQC567D" accepted.
+2025-05-08 18:55:19.653 +07:00 [DBG] Connection id "0HNCE4SQC567E" accepted.
+2025-05-08 18:55:19.653 +07:00 [DBG] Connection id "0HNCE4SQC567D" started.
+2025-05-08 18:55:19.654 +07:00 [DBG] Connection id "0HNCE4SQC567E" started.
+2025-05-08 18:55:19.689 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/ - null null
+2025-05-08 18:55:19.694 +07:00 [DBG] Wildcard detected, all requests with hosts will be allowed.
+2025-05-08 18:55:19.713 +07:00 [DBG] No candidates found for the request path '/'
+2025-05-08 18:55:19.716 +07:00 [DBG] Request did not match any endpoints
+2025-05-08 18:55:19.730 +07:00 [DBG] The request path  does not match the path filter
+2025-05-08 18:55:19.732 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-05-08 18:55:19.756 +07:00 [DBG] AuthenticationScheme: Bearer was not authenticated.
+2025-05-08 18:55:19.759 +07:00 [INF] HTTP GET / responded 404 in 40.3034 ms
+2025-05-08 18:55:19.764 +07:00 [DBG] Connection id "0HNCE4SQC567D" completed keep alive response.
+2025-05-08 18:55:19.766 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/ - 404 0 null 78.048ms
+2025-05-08 18:55:19.772 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5041/, Response status code: 404
+2025-05-08 18:55:20.108 +07:00 [DBG] Connection id "0HNCE4SQC567E" received FIN.
+2025-05-08 18:55:20.108 +07:00 [DBG] Connection id "0HNCE4SQC567D" received FIN.
+2025-05-08 18:55:20.110 +07:00 [DBG] Connection id "0HNCE4SQC567D" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:55:20.110 +07:00 [DBG] Connection id "0HNCE4SQC567E" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:55:20.112 +07:00 [DBG] Connection id "0HNCE4SQC567D" disconnecting.
+2025-05-08 18:55:20.112 +07:00 [DBG] Connection id "0HNCE4SQC567E" disconnecting.
+2025-05-08 18:55:20.113 +07:00 [DBG] Connection id "0HNCE4SQC567D" stopped.
+2025-05-08 18:55:20.113 +07:00 [DBG] Connection id "0HNCE4SQC567E" stopped.
+2025-05-08 18:55:41.878 +07:00 [DBG] Connection id "0HNCE4SQC567F" accepted.
+2025-05-08 18:55:41.881 +07:00 [DBG] Connection id "0HNCE4SQC567F" started.
+2025-05-08 18:55:41.881 +07:00 [DBG] Connection id "0HNCE4SQC567G" accepted.
+2025-05-08 18:55:41.885 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/index.html - null null
+2025-05-08 18:55:41.886 +07:00 [DBG] Connection id "0HNCE4SQC567G" started.
+2025-05-08 18:55:41.894 +07:00 [DBG] No candidates found for the request path '/swagger/index.html'
+2025-05-08 18:55:41.896 +07:00 [DBG] Request did not match any endpoints
+2025-05-08 18:55:41.952 +07:00 [INF] HTTP GET /swagger/index.html responded 200 in 54.5791 ms
+2025-05-08 18:55:41.954 +07:00 [DBG] Connection id "0HNCE4SQC567F" completed keep alive response.
+2025-05-08 18:55:41.955 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/index.html - 200 null text/html;charset=utf-8 70.1643ms
+2025-05-08 18:55:42.328 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5041/swagger/v1/swagger.json - null null
+2025-05-08 18:55:42.330 +07:00 [DBG] No candidates found for the request path '/swagger/v1/swagger.json'
+2025-05-08 18:55:42.331 +07:00 [DBG] Request did not match any endpoints
+2025-05-08 18:55:42.434 +07:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 102.2514 ms
+2025-05-08 18:55:42.436 +07:00 [DBG] Connection id "0HNCE4SQC567F" completed keep alive response.
+2025-05-08 18:55:42.439 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5041/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 110.8012ms
+2025-05-08 18:55:55.048 +07:00 [DBG] Connection id "0HNCE4SQC567G" received FIN.
+2025-05-08 18:55:55.048 +07:00 [DBG] Connection id "0HNCE4SQC567F" received FIN.
+2025-05-08 18:55:55.049 +07:00 [DBG] Connection id "0HNCE4SQC567G" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:55:55.050 +07:00 [DBG] Connection id "0HNCE4SQC567F" disconnecting.
+2025-05-08 18:55:55.051 +07:00 [DBG] Connection id "0HNCE4SQC567G" disconnecting.
+2025-05-08 18:55:55.052 +07:00 [DBG] Connection id "0HNCE4SQC567F" sending FIN because: "The Socket transport's send loop completed gracefully."
+2025-05-08 18:55:55.053 +07:00 [DBG] Connection id "0HNCE4SQC567G" stopped.
+2025-05-08 18:55:55.055 +07:00 [DBG] Connection id "0HNCE4SQC567F" stopped.
+2025-05-08 18:56:36.557 +07:00 [DBG] An 'IServiceProvider' was created for internal use by Entity Framework.
+2025-05-08 18:56:36.878 +07:00 [WRN] Entity 'User' has a global query filter defined and is the required end of a relationship with the entity 'Order'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-08 18:56:36.879 +07:00 [WRN] Entity 'Document' has a global query filter defined and is the required end of a relationship with the entity 'OrderDetail'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-08 18:56:36.879 +07:00 [WRN] Entity 'Document' has a global query filter defined and is the required end of a relationship with the entity 'Review'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-08 18:56:36.879 +07:00 [WRN] Entity 'User' has a global query filter defined and is the required end of a relationship with the entity 'Userprofile'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2025-05-08 18:56:36.961 +07:00 [DBG] Entity Framework Core 9.0.4 initialized 'ExchangeDocumentContext' using provider 'Microsoft.EntityFrameworkCore.SqlServer:9.0.4' with options: EngineType=SqlServer 
+2025-05-08 18:56:37.058 +07:00 [DBG] Creating DbConnection.
+2025-05-08 18:56:37.093 +07:00 [DBG] Created DbConnection. (34ms).
+2025-05-08 18:56:37.095 +07:00 [DBG] Migrating using database 'exchangedocument' on server 'MINHKHAI'.
+2025-05-08 18:56:37.099 +07:00 [DBG] Opening connection to database 'exchangedocument' on server 'MINHKHAI'.
+2025-05-08 18:56:37.478 +07:00 [DBG] Opened connection to database 'exchangedocument' on server 'MINHKHAI'.
+2025-05-08 18:56:37.482 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-08 18:56:37.487 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (4ms).
+2025-05-08 18:56:37.488 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (8ms).
+2025-05-08 18:56:37.492 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-05-08 18:56:37.507 +07:00 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-05-08 18:56:37.509 +07:00 [DBG] Closing connection to database 'exchangedocument' on server 'MINHKHAI'.
+2025-05-08 18:56:37.514 +07:00 [DBG] Closed connection to database 'exchangedocument' on server 'MINHKHAI' (3ms).
+2025-05-08 18:56:37.514 +07:00 [DBG] Opening connection to database 'exchangedocument' on server 'MINHKHAI'.
+2025-05-08 18:56:37.514 +07:00 [DBG] Opened connection to database 'exchangedocument' on server 'MINHKHAI'.
+2025-05-08 18:56:37.515 +07:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2025-05-08 18:56:37.516 +07:00 [DBG] Creating DbCommand for 'ExecuteScalar'.
+2025-05-08 18:56:37.516 +07:00 [DBG] Created DbCommand for 'ExecuteScalar' (0ms).
+2025-05-08 18:56:37.516 +07:00 [DBG] Initialized DbCommand for 'ExecuteScalar' (0ms).
+2025-05-08 18:56:37.516 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2025-05-08 18:56:37.550 +07:00 [INF] Executed DbCommand (33ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2025-05-08 18:56:37.583 +07:00 [DBG] Beginning transaction with isolation level 'Unspecified'.
+2025-05-08 18:56:37.588 +07:00 [DBG] Began transaction with isolation level 'ReadCommitted'.
+2025-05-08 18:56:37.589 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-08 18:56:37.589 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-08 18:56:37.589 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-08 18:56:37.589 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2025-05-08 18:56:37.601 +07:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2025-05-08 18:56:37.602 +07:00 [DBG] Committing transaction.
+2025-05-08 18:56:37.605 +07:00 [DBG] Committed transaction.
+2025-05-08 18:56:37.606 +07:00 [DBG] Disposing transaction.
+2025-05-08 18:56:37.607 +07:00 [DBG] Beginning transaction with isolation level 'Unspecified'.
+2025-05-08 18:56:37.608 +07:00 [DBG] Began transaction with isolation level 'ReadCommitted'.
+2025-05-08 18:56:37.608 +07:00 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2025-05-08 18:56:37.608 +07:00 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-08 18:56:37.609 +07:00 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2025-05-08 18:56:37.609 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-05-08 18:56:37.609 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-05-08 18:56:37.609 +07:00 [DBG] Creating DbCommand for 'ExecuteScalar'.
+2025-05-08 18:56:37.609 +07:00 [DBG] Created DbCommand for 'ExecuteScalar' (0ms).
+2025-05-08 18:56:37.609 +07:00 [DBG] Initialized DbCommand for 'ExecuteScalar' (0ms).
+2025-05-08 18:56:37.609 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-05-08 18:56:37.610 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-05-08 18:56:37.612 +07:00 [DBG] Creating DbCommand for 'ExecuteReader'.
+2025-05-08 18:56:37.612 +07:00 [DBG] Created DbCommand for 'ExecuteReader' (0ms).
+2025-05-08 18:56:37.612 +07:00 [DBG] Initialized DbCommand for 'ExecuteReader' (0ms).
+2025-05-08 18:56:37.612 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2025-05-08 18:56:37.622 +07:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2025-05-08 18:56:37.623 +07:00 [DBG] Closing data reader to 'exchangedocument' on server 'MINHKHAI'.
+2025-05-08 18:56:37.624 +07:00 [DBG] A data reader for 'exchangedocument' on server 'MINHKHAI' is being disposed after spending 1ms reading results.
+2025-05-08 18:56:37.627 +07:00 [INF] No migrations were applied. The database is already up to date.
+2025-05-08 18:56:37.627 +07:00 [DBG] Committing transaction.
+2025-05-08 18:56:37.627 +07:00 [DBG] Committed transaction.
+2025-05-08 18:56:37.627 +07:00 [DBG] Creating DbCommand for 'ExecuteScalar'.
+2025-05-08 18:56:37.628 +07:00 [DBG] Created DbCommand for 'ExecuteScalar' (0ms).
+2025-05-08 18:56:37.628 +07:00 [DBG] Initialized DbCommand for 'ExecuteScalar' (0ms).
+2025-05-08 18:56:37.628 +07:00 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2025-05-08 18:56:37.632 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2025-05-08 18:56:37.632 +07:00 [DBG] Disposing transaction.
+2025-05-08 18:56:37.632 +07:00 [DBG] Closing connection to database 'exchangedocument' on server 'MINHKHAI'.
+2025-05-08 18:56:37.633 +07:00 [DBG] Closed connection to database 'exchangedocument' on server 'MINHKHAI' (0ms).
+2025-05-08 18:56:37.634 +07:00 [DBG] 'ExchangeDocumentContext' disposed.
+2025-05-08 18:56:37.635 +07:00 [DBG] Disposing connection to database 'exchangedocument' on server 'MINHKHAI'.
+2025-05-08 18:56:37.635 +07:00 [DBG] Disposed connection to database '' on server '' (0ms).

@@ -93,7 +93,7 @@ namespace ExchangeDocument.PresentationLayer.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<IEnumerable<DocumentDetailDto>>> GetAllDocuments()
         {
-            var documents = await _documentService.GetAllDocumentDetailsAsync();
+            var documents = await _documentService.GetAllDocumentDetailsByAsync();
             if(documents == null)   
             {
                 return NotFound(new { message = "Không tìm thấy tài liệu nào." });

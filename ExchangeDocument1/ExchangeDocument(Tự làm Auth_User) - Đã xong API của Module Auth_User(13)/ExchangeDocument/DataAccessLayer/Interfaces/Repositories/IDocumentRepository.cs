@@ -20,5 +20,7 @@ namespace ExchangeDocument.DataAccessLayer.Interfaces.Repositories
         /// Get a paginated list of documents for a specific user, filtering by inventory status (InStock, Listed).
         /// </summary>
         Task<PagedResult<Document>> GetInventoryByUserAsync(int userId, DocumentQueryParameters queryParams);
+        Task<List<Document>> GetAllDocumentDetailsByAsync();
+
     }
 }
