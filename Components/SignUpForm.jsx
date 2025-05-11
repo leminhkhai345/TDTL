@@ -6,12 +6,12 @@ import { registerUser } from "../src/API/api";
 const SignUpForm = ({ onSubmit, errorMessage }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const validateForm = () => {
     const newErrors = {};
     if (!name.trim()) newErrors.name = "Họ tên không được để trống.";
@@ -20,17 +20,18 @@ const SignUpForm = ({ onSubmit, errorMessage }) => {
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = "Email không hợp lệ.";
     }
-    if (!phone.trim()) {
-      newErrors.phone = "Số điện thoại không được để trống.";
-    } else if (!/^\d{10,11}$/.test(phone)) {
-      newErrors.phone = "Số điện thoại không hợp lệ.";
-    }
     if (!password) {
       newErrors.password = "Mật khẩu không được để trống.";
-    } else if (password.length < 6) {
-      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự.";
+    } else {
+      if (password.length < 8) {
+        newErrors.password = "Mật khẩu phải có ít nhất 8 ký tự.";
+      } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/.test(password)) {
+        newErrors.password = "Mật khẩu phải chứa chữ hoa, chữ thường, số và ký tự đặc biệt.";
+      }
     }
-    if (password !== confirmPassword) {
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Mật khẩu xác nhận không được để trống.";
+    } else if (password !== confirmPassword) {
       newErrors.confirmPassword = "Mật khẩu xác nhận không khớp.";
     }
     return newErrors;
@@ -46,19 +47,18 @@ const SignUpForm = ({ onSubmit, errorMessage }) => {
 
     setLoading(true);
     try {
-      // Gọi API đăng ký
       await registerUser({
         fullName: name,
         email,
-        phone,
         password,
+        confirmPassword,
       });
       toast.success("Đăng ký thành công! Vui lòng kiểm tra email để nhận mã OTP.");
-      // Chuyển hướng đến OtpPage
       navigate("/otp", { state: { email, redirect: "/login" } });
     } catch (err) {
-      toast.error(err.message || "Lỗi khi đăng ký. Vui lòng thử lại.");
-      setErrors({ api: err.message || "Lỗi khi đăng ký." });
+      const errorMessage = err.message || "Lỗi khi đăng ký. Vui lòng thử lại.";
+      setErrors({ api: errorMessage });
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -106,27 +106,6 @@ const SignUpForm = ({ onSubmit, errorMessage }) => {
           required
         />
         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="phone" className="block text-sm font-semibold text-gray-700">
-          Phone
-        </label>
-        <input
-          type="tel"
-          id="phone"
-          name="phone"
-          value={phone}
-          onChange={(e) => {
-            setPhone(e.target.value);
-            setErrors((prev) => ({ ...prev, phone: "" }));
-          }}
-          className={`w-full p-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            errors.phone ? "border-red-500" : "border-gray-300"
-          }`}
-          required
-        />
-        {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
       </div>
 
       <div>

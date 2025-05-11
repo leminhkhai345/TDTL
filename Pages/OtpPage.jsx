@@ -1,23 +1,32 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { verifyOtp } from "../src/API/api";
+import { verifyOtp, sendOtp } from "../src/API/api";
 
 const OtpPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { email } = location.state || {};
+  const { state } = useLocation();
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [otpExpiry, setOtpExpiry] = useState(300); // 5 phút
+  const email = state?.email || localStorage.getItem("userEmail");
 
-  // Debug
-  console.log("OtpPage: location.state =", location.state);
-  console.log("OtpPage: email =", email);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setOtpExpiry((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-  // Xử lý xác minh OTP
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!email) {
+      setError("Không tìm thấy email. Vui lòng đăng ký lại.");
+      toast.error("Không tìm thấy email. Vui lòng đăng ký lại.");
+      navigate("/signup");
+      return;
+    }
     if (!otp || otp.length !== 6 || !/^\d{6}$/.test(otp)) {
       setError("Vui lòng nhập mã OTP 6 chữ số.");
       toast.error("Vui lòng nhập mã OTP 6 chữ số.");
@@ -30,15 +39,39 @@ const OtpPage = () => {
       const response = await verifyOtp(otp);
       if (response.status === "success") {
         toast.success("Xác nhận OTP thành công!");
-        // Lưu token nếu BE trả về (hiện tại BE không trả token)
-        navigate(location.state?.redirect || "/login");
+        localStorage.removeItem("userEmail");
+        navigate("/login");
       } else {
         setError("Mã OTP không đúng. Vui lòng thử lại.");
         toast.error("Mã OTP không đúng.");
       }
     } catch (err) {
-      setError(err.message);
-      toast.error(err.message);
+      let errorMessage = err.message || "Lỗi khi xác minh OTP. Vui lòng thử lại.";
+      if (err.message.includes("Email")) {
+        errorMessage = "Email không hợp lệ hoặc không tìm thấy.";
+      } else if (err.message.includes("OTP")) {
+        errorMessage = "Mã OTP không đúng hoặc đã hết hạn.";
+      }
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!email) {
+      toast.error("No email provided. Please sign up again.");
+      navigate("/signup");
+      return;
+    }
+    try {
+      setLoading(true);
+      await sendOtp(email);
+      toast.success("OTP resent successfully!");
+      setOtpExpiry(300); // Reset expiry
+    } catch (err) {
+      toast.error(err.message || "Failed to resend OTP");
     } finally {
       setLoading(false);
     }
@@ -50,6 +83,9 @@ const OtpPage = () => {
       <p className="text-center mb-4">
         Một mã OTP đã được gửi đến email: <strong>{email || "Không xác định"}</strong>. Vui lòng nhập mã để xác nhận.
       </p>
+      <p className="text-center mb-4">
+        OTP expires in: {Math.floor(otpExpiry / 60)}:{(otpExpiry % 60).toString().padStart(2, '0')}
+      </p>
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-600">Mã OTP</label>
@@ -60,9 +96,7 @@ const OtpPage = () => {
               setOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
               setError("");
             }}
-            className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              error ? "border-red-500" : ""
-            }`}
+            className={`w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${error ? "border-red-500" : ""}`}
             placeholder="Nhập mã OTP 6 chữ số"
             maxLength={6}
           />
@@ -71,21 +105,24 @@ const OtpPage = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-2 px-4 rounded-lg text-white ${
-            loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-          }`}
+          className={`w-full py-2 px-4 rounded-lg text-white ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
         >
           {loading ? "Đang xử lý..." : "Xác Nhận"}
         </button>
+        <button
+          type="button"
+          onClick={handleResendOtp}
+          className="w-full text-blue-600 hover:underline mt-4"
+          disabled={loading || !email}
+        >
+          Resend OTP
+        </button>
         {!email && (
           <p className="text-center text-red-500 mt-4">
-            Không tìm thấy email. Nếu không nhận được OTP, vui lòng{" "}
-            <button
-              onClick={() => navigate("/signup")}
-              className="text-blue-600 underline"
-            >
+            Không tìm thấy email. Vui lòng{" "}
+            <Link to="/signup" className="text-blue-600 underline">
               đăng ký lại
-            </button>.
+            </Link>.
           </p>
         )}
       </form>

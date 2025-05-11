@@ -1,76 +1,87 @@
-// src/contexts/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser } from '../API/api'; // Đảm bảo import từ api.js
+import { loginUser, registerUser } from '../API/api';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(false);
 
   useEffect(() => {
     const storedLogin = localStorage.getItem('isLoggedIn') === 'true';
     const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedLogin && storedUser) {
+    const storedToken = localStorage.getItem('token');
+    if (storedLogin && storedUser && storedToken) {
+      if (!storedUser.role) {
+        storedUser.role = 'user';
+        localStorage.setItem('user', JSON.stringify(storedUser));
+      }
       setIsLoggedIn(true);
       setUser(storedUser);
+      setToken(storedToken);
     }
+    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
     try {
+      setAuthLoading(true);
       const userData = await loginUser(email, password);
-      const userWithRole = { ...userData, role: userData.role || 'user' }; // Thêm role, mặc định là 'user'
       setIsLoggedIn(true);
-      setUser(userWithRole);
+      setUser({
+        email: userData.email,
+        role: userData.role || 'user',
+      });
+      setToken(userData.token);
       localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('user', JSON.stringify(userWithRole));
+      localStorage.setItem('user', JSON.stringify({
+        email: userData.email,
+        role: userData.role || 'user',
+      }));
+      localStorage.setItem('token', userData.token);
       return { success: true };
     } catch (err) {
       return { success: false, message: err.message };
+    } finally {
+      setAuthLoading(false);
     }
   };
 
-  const register = async (fullName, email, phone, password) => {
+  const register = async (fullName, email, phone, password, confirmPassword) => {
     try {
-      const response = await fetch('https://680d2126c47cb8074d8fa188.mockapi.io/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fullName,
-          email,
-          phone,
-          password,
-          role: 'user', // Người dùng mới luôn là 'user'
-          createdAt: new Date().toISOString(),
-        }),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
+      setAuthLoading(true);
+      const response = await registerUser({ fullName, email, phone, password, confirmPassword });
+      if (response.status !== "success") {
+        throw new Error(response.message || "Registration failed");
       }
-
-      const userData = await response.json();
-      const userWithRole = { ...userData, role: 'user' };
-      setIsLoggedIn(true);
-      setUser(userWithRole);
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('user', JSON.stringify(userWithRole));
+      localStorage.setItem("userEmail", email);
       return { success: true };
     } catch (err) {
       return { success: false, message: err.message };
+    } finally {
+      setAuthLoading(false);
     }
   };
 
   const logout = () => {
     setIsLoggedIn(false);
     setUser(null);
+    setToken(null);
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+  };
+
+  const isAdmin = () => {
+    return user?.role === 'admin';
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, register, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, token, login, register, logout, isAdmin, loading, authLoading }}>
       {children}
     </AuthContext.Provider>
   );

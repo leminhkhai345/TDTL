@@ -1,8 +1,8 @@
-// src/pages/CartPage.jsx
 import React from "react";
 import { useCart } from "../src/contexts/CartContext";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { motion } from 'framer-motion';
 
 const CartPage = () => {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -33,22 +33,74 @@ const CartPage = () => {
     navigate("/checkout");
   };
 
+  // Hiệu ứng animation cho section
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut",
+        staggerChildren: 0.3,
+      },
+    },
+  };
+
+  const childVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  };
+
+  // Hiệu ứng cho các hàng trong bảng
+  const rowVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: (i) => ({
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.5,
+        delay: i * 0.1,
+        ease: "easeOut",
+      },
+    }),
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6">Your Cart</h1>
+    <motion.div
+      className="max-w-7xl mx-auto px-4 py-6 bg-gradient-to-b from-gray-50 to-gray-100"
+      variants={sectionVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.h1
+        variants={childVariants}
+        className="text-3xl font-bold mb-6 text-blue-800 bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent"
+      >
+        Your Cart
+      </motion.h1>
 
       {cartItems.length === 0 ? (
-        <div className="text-center py-6">
+        <motion.div
+          variants={childVariants}
+          className="text-center py-6"
+        >
           <p className="text-gray-600">Your cart is empty.</p>
-          <Link
-            to="/browse"
-            className="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Browse Books
-          </Link>
-        </div>
+          <motion.div variants={childVariants}>
+            <Link
+              to="/browse"
+              className="mt-4 inline-block px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition-all duration-300"
+              whileHover={{ scale: 1.05, transition: { duration: 0.3, ease: "easeOut" } }}
+            >
+              Browse Books
+            </Link>
+          </motion.div>
+        </motion.div>
       ) : (
-        <div className="bg-white rounded-lg shadow-md overflow-x-auto">
+        <motion.div
+          variants={childVariants}
+          className="bg-white rounded-lg shadow-md overflow-x-auto"
+        >
           <table className="min-w-full table-auto">
             <thead className="bg-gray-100">
               <tr>
@@ -61,13 +113,21 @@ const CartPage = () => {
               </tr>
             </thead>
             <tbody>
-              {cartItems.map((item) => (
-                <tr key={item.bookId} className="border-b">
+              {cartItems.map((item, index) => (
+                <motion.tr
+                  key={item.bookId}
+                  custom={index}
+                  variants={rowVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="border-b"
+                >
                   <td className="px-6 py-4">
-                    <img
+                    <motion.img
                       src={item.image}
                       alt={item.title}
                       className="w-12 h-16 object-cover rounded"
+                      whileHover={{ scale: 1.05, transition: { duration: 0.3, ease: "easeOut" } }}
                     />
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{item.title}</td>
@@ -76,14 +136,15 @@ const CartPage = () => {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     <div className="flex items-center gap-2">
-                      <button
+                      <motion.button
                         onClick={() => handleQuantityChange(item.bookId, item.quantity - 1)}
-                        className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                        className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
                         disabled={item.quantity <= 1}
+                        whileHover={{ scale: 1.05, transition: { duration: 0.3, ease: "easeOut" } }}
                       >
                         -
-                      </button>
-                      <input
+                      </motion.button>
+                      <motion.input
                         type="number"
                         value={item.quantity}
                         onChange={(e) =>
@@ -91,45 +152,52 @@ const CartPage = () => {
                         }
                         className="w-16 p-1 border rounded text-center"
                         min="1"
+                        whileHover={{ scale: 1.02, transition: { duration: 0.3, ease: "easeOut" } }}
                       />
-                      <button
+                      <motion.button
                         onClick={() => handleQuantityChange(item.bookId, item.quantity + 1)}
-                        className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                        className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                        whileHover={{ scale: 1.05, transition: { duration: 0.3, ease: "easeOut" } }}
                       >
                         +
-                      </button>
+                      </motion.button>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     ${(parseFloat(item.price) * item.quantity).toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <button
+                    <motion.button
                       onClick={() => handleRemoveItem(item.bookId, item.title)}
-                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                      className="px-3 py-1 bg-gradient-to-r from-red-500 to-red-700 text-white rounded hover:from-red-600 hover:to-red-800 transition-all duration-300"
+                      whileHover={{ scale: 1.05, transition: { duration: 0.3, ease: "easeOut" } }}
                     >
                       Remove
-                    </button>
+                    </motion.button>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
 
-          <div className="flex justify-between items-center mt-6 p-6">
+          <motion.div
+            variants={childVariants}
+            className="flex justify-between items-center mt-6 p-6"
+          >
             <h2 className="text-xl font-semibold">
               Total: <span className="text-blue-600">${calculateTotal()}</span>
             </h2>
-            <button
+            <motion.button
               onClick={handleCheckout}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              className="px-6 py-2 bg-gradient-to-r from-green-600 to-green-800 text-white rounded-lg hover:from-green-700 hover:to-green-900 transition-all duration-300"
+              whileHover={{ scale: 1.05, transition: { duration: 0.3, ease: "easeOut" } }}
             >
               Proceed to Checkout
-            </button>
-          </div>
-        </div>
+            </motion.button>
+          </motion.div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,4 +1,3 @@
-// src/pages/BrowseBooksPage.jsx
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import BookCard from '../Components/BookCard';
 import FilterBar from '../Components/FilterBar';
@@ -22,6 +21,7 @@ const BrowseBooksPage = () => {
 
   const API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
 
+  // Danh mục cứng cho người dùng thông thường
   const genreMap = {
     Fiction: 'Fiction',
     'Juvenile Fiction': 'Fiction',
@@ -102,13 +102,12 @@ const BrowseBooksPage = () => {
     });
   };
 
-  // Kiểm tra trạng thái lọc/tìm kiếm hoặc chế độ xem
   useEffect(() => {
     if (
       searchQuery !== '' ||
       selectedGenre !== 'All Genres' ||
       selectedPrice !== 'All Prices' ||
-      viewMode === 'list' // Ẩn khi ở chế độ list
+      viewMode === 'list'
     ) {
       setIsFiltering(true);
     } else {
@@ -120,14 +119,12 @@ const BrowseBooksPage = () => {
     }
   }, [searchQuery, selectedGenre, selectedPrice, books, loading, viewMode]);
 
-  // Lọc sách nổi bật (giả lập: sách có giá cao nhất)
   const featuredBooks = useMemo(() => {
     return [...books]
       .sort((a, b) => parseFloat(b.price) - parseFloat(a.price))
       .slice(0, 5);
   }, [books]);
 
-  // Lọc sách mới (giả lập: sách có ngày xuất bản gần nhất hoặc ID lớn nhất)
   const newBooks = useMemo(() => {
     return [...books]
       .sort((a, b) => {
@@ -191,7 +188,6 @@ const BrowseBooksPage = () => {
           </div>
         </div>
 
-        {/* Hiển thị Featured Books và New Releases chỉ khi không có tìm kiếm/lọc và ở chế độ grid */}
         {!isFiltering && (
           <>
             {featuredBooks.length > 0 && (
@@ -274,7 +270,6 @@ const BrowseBooksPage = () => {
           </>
         )}
 
-        {/* Phần All Books luôn hiển thị */}
         <h2 className="text-2xl font-semibold mb-4 text-blue-700">All Books</h2>
         {loading && <div className="text-center py-6">Loading...</div>}
         {error && <div className="text-center text-red-600 py-6">{error}</div>}

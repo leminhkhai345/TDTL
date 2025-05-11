@@ -1,15 +1,45 @@
+// import { LoginRequest } from "../types/auth";
 const MOCK_API_URL = import.meta.env.VITE_MOCK_API_URL;
 const EXCHANGE_API_URL = import.meta.env.VITE_EXCHANGE_API_URL;
 const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
-
 // Hàm xử lý phản hồi và lỗi
 const handleResponse = async (response) => {
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `Lỗi HTTP ${response.status}`);
+    const contentType = response.headers.get("content-type");
+    let errorMessage = `Lỗi HTTP ${response.status}`;
+    let errorData = {};
+    if (contentType && contentType.includes("application/json")) {
+      errorData = await response.json();
+      errorMessage = errorData.ErrorMessage || errorData.message || errorData.error || JSON.stringify(errorData) || errorMessage;
+    } else {
+      errorMessage = await response.text();
+    }
+    throw new Error(errorMessage);
   }
-  return response.json();
+  const contentType = response.headers.get("content-type");
+  if (contentType && contentType.includes("application/json")) {
+    return await response.json();
+  }
+  return { message: await response.text() };
 };
+// Hàm giải mã JWT để lấy payload (không kiểm tra chữ ký)
+const decodeJwt = (token) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error("Failed to decode JWT:", error);
+    return null;
+  }
+};
+
 // Kiểm tra quyền Admin
 const checkAdminAccess = () => {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -18,20 +48,20 @@ const checkAdminAccess = () => {
   }
 };
 // Lấy chi tiết sách từ Google Books API
-export const getBookDetails = async (bookId) => {
-  try {
-    const response = await fetch(
-      `https://www.googleapis.com/books/v1/volumes/${bookId}?key=${GOOGLE_BOOKS_API_KEY}`
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw new Error(`Failed to fetch book details: ${error.message}`);
-  }
-};
+// export const getBookDetails = async (bookId) => {
+//   try {
+//     const response = await fetch(
+//       `https://www.googleapis.com/books/v1/volumes/${bookId}?key=${GOOGLE_BOOKS_API_KEY}`
+//     );
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+//     const data = await response.json();
+//     return data;
+//   } catch (error) {
+//     throw new Error(`Failed to fetch book details: ${error.message}`);
+//   }
+// };
 
 // Mock data cho danh sách đánh giá (placeholder)
 const mockReviews = [
@@ -210,24 +240,6 @@ export const deleteOrder = async (orderId) => {
 };
 
 // API quản lý sách (Admin)
-export const getBooks = async () => {
-  try {
-    checkAdminAccess();
-    const response = await fetch(`${API_URL}/admin/books`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-      },
-    });
-    const data = await handleResponse(response);
-    return {
-      books: data.books || data,
-      total: data.total || (Array.isArray(data) ? data.length : 0),
-    };
-  } catch (error) {
-    throw new Error(`Failed to fetch books: ${error.message}`);
-  }
-};
 
 export const getBookById = async (bookId) => {
   try {
@@ -244,38 +256,9 @@ export const getBookById = async (bookId) => {
   }
 };
 
-export const deleteBook = async (bookId) => {
-  try {
-    checkAdminAccess();
-    const response = await fetch(`${API_URL}/admin/books/${bookId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-      },
-    });
-    return handleResponse(response);
-  } catch (error) {
-    throw new Error(`Failed to delete book: ${error.message}`);
-  }
-};
 
-export const approveBook = async (bookId, status) => {
-  try {
-    checkAdminAccess();
-    const response = await fetch(`${API_URL}/admin/books/${bookId}/approve`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-      },
-      body: JSON.stringify({ status }),
-    });
-    return handleResponse(response);
-  } catch (error) {
-    throw new Error(`Failed to approve/reject book: ${error.message}`);
-  }
-};
+
+
 
 //API quản lý user cho admin
 export const getUsers = async (page = 1, limit = 10, search = '') => {
@@ -323,67 +306,142 @@ export const lockUser = async (userId, isLocked) => {
 
 
 // Auth APIs
-export const loginUser = async (email, password) => {
-  const response = await fetch(`${MOCK_API_URL}/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
-    {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
+// src/API/api.js
+// export const loginUser = async (email, password) => {
+//   try {
+//     const response = await fetch(`${EXCHANGE_API_URL}/api/Auth/login`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ Email: email, Password: password }),
+//     });
+//     const data = await handleResponse(response);
+//     if (!data.Token) {
+//       throw new Error(data.ErrorMessage || data.error?.message || "Authentication failed");
+//     }
+//     return {
+//       token: data.token,
+//       email: email,
+//     };
+//   } catch (error) {
+//     console.error("Login failed:", error);
+//     throw new Error(error.message || "Failed to login");
+//   }
+// };
+// Hàm Forgot Password
+export const forgotPassword = async (email) => {
+  try {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new Error("Invalid email format");
     }
-  );
-  const data = await handleResponse(response);
-  if (data.length === 0) {
-    throw new Error("Email hoặc mật khẩu không đúng");
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Auth/forgot-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ Email: email }),
+    });
+    return await handleResponse(response);
+  } catch (error) {
+    console.error("Forgot password failed:", error);
+    throw new Error(error.message || "Failed to send reset password request");
   }
-  return data[0];
 };
 
+
+
+// Hàm Reset Password
+export const resetPassword = async (token, newPassword, confirmPassword) => {
+  try {
+    if (!token) {
+      throw new Error("Reset token is required");
+    }
+    if (newPassword.length < 8) {
+      throw new Error("Password must be at least 8 characters long");
+    }
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/.test(newPassword)) {
+      throw new Error("Password must include uppercase, lowercase, digit, and special character");
+    }
+    if (newPassword !== confirmPassword) {
+      throw new Error("Passwords do not match");
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Auth/reset-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Token: token,
+        NewPassword: newPassword,
+        ConfirmPassword: confirmPassword,
+      }),
+    });
+    return await handleResponse(response);
+  } catch (error) {
+    console.error("Reset password failed:", error);
+    throw new Error(error.message || "Failed to reset password");
+  }
+};
+// API đăng ký
 export const registerUser = async (userData) => {
   try {
-    const response = await fetch(`${EXCHANGE_API_URL}/api/user/register`, {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)) {
+      throw new Error("Invalid email format");
+    }
+    if (userData.password.length < 6) {
+      throw new Error("Password must be at least 6 characters");
+    }
+    if (userData.password !== userData.confirmPassword) {
+      throw new Error("Passwords do not match");
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         Email: userData.email,
-        Phone: userData.phone,
         FullName: userData.fullName,
         Password: userData.password,
+        ConfirmPassword: userData.confirmPassword,
       }),
     });
 
     if (!response.ok) {
       const contentType = response.headers.get("content-type");
       let errorMessage = "Failed to register user";
+      let errorData = {};
       if (contentType && contentType.includes("application/json")) {
-        const errorData = await response.json();
-        errorMessage = errorData.errors?.["$"]?.[0] || errorData.message || errorMessage;
+        errorData = await response.json();
+        if (errorData.message?.includes("email")) {
+          errorMessage = "Email already exists";
+        } else if (errorData.message?.includes("password")) {
+          errorMessage = "Password is too weak";
+        } else {
+          errorMessage = errorData.ErrorMessage || errorData.message || errorData.error || JSON.stringify(errorData) || errorMessage;
+        }
       } else {
         errorMessage = await response.text();
       }
+      console.error("Register error:", { status: response.status, errorData, errorMessage });
       throw new Error(errorMessage);
     }
 
+    localStorage.setItem("userEmail", userData.email);
+
     const contentType = response.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
-      return await response.json();
+      const data = await response.json();
+      return { status: "success", message: data.message || "Registration successful" };
     } else {
       const text = await response.text();
-      return { message: text }; // Chuẩn hóa response text
+      return { status: "success", message: text };
     }
   } catch (error) {
+    console.error("Register failed:", error);
     throw new Error(error.message || "Failed to register user");
   }
 };
 
-export const sendOtp = async (email) => {
-  const response = await fetch(`${EXCHANGE_API_URL}/api/user/send`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
-  });
-  return handleResponse(response);
-};
 // Book APIs (Open Library - đã chuyển từ Google Books)
 // export const getBookDetails = async (bookId) => {
 //   const response = await fetch(`https://openlibrary.org/works/${bookId}.json`);
@@ -491,40 +549,286 @@ export const getExchangeHistory = async (userId) => {
   return handleResponse(response);
 };
 
+// API xác minh OTP
 export const verifyOtp = async (otpCode) => {
-  if (!otpCode) {
-    throw new Error("OTP code is required");
+  const email = localStorage.getItem("userEmail");
+  if (!email) {
+    console.error("No email found in localStorage");
+    throw new Error("Không tìm thấy email. Vui lòng đăng ký lại.");
   }
-
+  if (!otpCode || !/^\d{6}$/.test(otpCode)) {
+    console.error("Invalid OTP code");
+    throw new Error("Mã OTP phải là 6 chữ số.");
+  }
   try {
-    const response = await fetch(`${EXCHANGE_API_URL}/api/user/verify`, {
+    console.log("Sending OTP verification request:", { Email: email, Otp: otpCode });
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Auth/verify-otp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ OtpCode: otpCode }),
+      body: JSON.stringify({ Email: email, Otp: otpCode }),
     });
 
     if (!response.ok) {
       const contentType = response.headers.get("content-type");
-      let errorMessage = "Failed to verify OTP";
+      let errorMessage = "Xác minh OTP thất bại.";
+      let errorData = {};
       if (contentType && contentType.includes("application/json")) {
-        const errorData = await response.json();
-        errorMessage = errorData.message || errorMessage;
+        errorData = await response.json();
+        if (errorData.message?.includes("expired")) {
+          errorMessage = "OTP has expired. Please request a new one.";
+        } else if (errorData.message?.includes("invalid")) {
+          errorMessage = "Invalid OTP code.";
+        } else {
+          errorMessage = errorData.ErrorMessage || errorData.message || errorData.error || JSON.stringify(errorData) || errorMessage;
+        }
       } else {
         errorMessage = await response.text();
       }
+      console.error("Verify OTP error:", { status: response.status, errorData, errorMessage });
       throw new Error(errorMessage);
     }
 
     const contentType = response.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
-      return await response.json();
+      const data = await response.json();
+      return {
+        status: data.status || (data.message && data.message.includes("successful") ? "success" : "error"),
+        message: data.message || "Verification successful"
+      };
     } else {
       const text = await response.text();
-      return { message: text };
+      return { status: "success", message: text };
     }
   } catch (error) {
-    throw new Error(error.message || "Failed to verify OTP");
+    console.error("Verify OTP failed:", error);
+    throw new Error(error.message || "Xác minh OTP thất bại.");
+  }
+};
+
+// API gửi OTP
+export const sendOtp = async (email) => {
+  try {
+    console.log("Sending OTP request for email:", email);
+    const response = await fetch(`${EXCHANGE_API_URL}/api/user/send`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    if (!response.ok) {
+      const contentType = response.headers.get("content-type");
+      let errorMessage = "Gửi OTP thất bại.";
+      let errorData = {};
+      if (contentType && contentType.includes("application/json")) {
+        errorData = await response.json();
+        errorMessage = errorData.ErrorMessage || errorData.message || errorData.error || JSON.stringify(errorData) || errorMessage;
+      } else {
+        errorMessage = await response.text();
+      }
+      console.error("Send OTP error:", { status: response.status, errorData, errorMessage });
+      throw new Error(errorMessage);
+    }
+    console.log("Send OTP success");
+    return { status: "success" };
+  } catch (error) {
+    console.error("Send OTP failed:", error);
+    throw new Error(error.message || "Gửi OTP thất bại.");
+  }
+};
+
+
+
+
+
+
+
+
+// Mock data cho Category Admin
+let mockCategories = [
+  { id: '1', name: 'Fiction', description: 'Fictional literature', status: 'active' },
+  { id: '2', name: 'Sci-Fi', description: 'Science fiction books', status: 'active' },
+  { id: '3', name: 'Romance', description: 'Romantic novels', status: 'inactive' },
+];
+
+// Mock data cho Books
+let mockBooks = [
+  {
+    id: '1',
+    title: 'Sample Fiction Book',
+    author: 'John Doe',
+    price: 10.99,
+    genre: 'Fiction',
+    status: 'pending',
+    bookImage: 'https://via.placeholder.com/150',
+  },
+  {
+    id: '2',
+    title: 'Sci-Fi Adventure',
+    author: 'Jane Doe',
+    price: 15.50,
+    genre: 'Sci-Fi',
+    status: 'approved',
+    bookImage: 'https://via.placeholder.com/150',
+  },
+  {
+    id: '3',
+    title: 'Romantic Novel',
+    author: 'Alice Smith',
+    price: 12.75,
+    genre: 'Romance',
+    status: 'rejected',
+    bookImage: 'https://via.placeholder.com/150',
+  },
+];
+
+// API quản lý Category Admin
+export const getAdminCategories = async () => {
+  try {
+    checkAdminAccess();
+    return { categories: mockCategories, total: mockCategories.length };
+  } catch (error) {
+    throw new Error(`Failed to fetch admin categories: ${error.message}`);
+  }
+};
+
+export const createAdminCategory = async (categoryData) => {
+  try {
+    checkAdminAccess();
+    const newCategory = {
+      id: String(mockCategories.length + 1),
+      ...categoryData,
+    };
+    mockCategories.push(newCategory);
+    return newCategory;
+  } catch (error) {
+    throw new Error(`Failed to create admin category: ${error.message}`);
+  }
+};
+
+export const updateAdminCategory = async (categoryId, categoryData) => {
+  try {
+    checkAdminAccess();
+    mockCategories = mockCategories.map((cat) =>
+      cat.id === categoryId ? { ...cat, ...categoryData } : cat
+    );
+    return mockCategories.find((cat) => cat.id === categoryId);
+  } catch (error) {
+    throw new Error(`Failed to update admin category: ${error.message}`);
+  }
+};
+
+export const deleteAdminCategory = async (categoryId) => {
+  try {
+    checkAdminAccess();
+    mockCategories = mockCategories.filter((cat) => cat.id !== categoryId);
+    return { success: true };
+  } catch (error) {
+    throw new Error(`Failed to delete admin category: ${error.message}`);
+  }
+};
+
+// API quản lý sách (Admin)
+export const getBooks = async () => {
+  try {
+    checkAdminAccess();
+    // Khi có API thật, thay bằng:
+    // const response = await fetch(`${MOCK_API_URL}/admin/books`, {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+    //   },
+    // });
+    // const data = await handleResponse(response);
+    // return {
+    //   books: data.books || data,
+    //   total: data.total || (Array.isArray(data) ? data.length : 0),
+    // };
+
+    // Mock data
+    return {
+      books: mockBooks,
+      total: mockBooks.length,
+    };
+  } catch (error) {
+    throw new Error(`Failed to fetch books: ${error.message}`);
+  }
+};
+
+export const deleteBook = async (bookId) => {
+  try {
+    checkAdminAccess();
+    mockBooks = mockBooks.filter((book) => book.id !== bookId);
+    return { success: true };
+  } catch (error) {
+    throw new Error(`Failed to delete book: ${error.message}`);
+  }
+};
+
+export const approveBook = async (bookId, status) => {
+  try {
+    checkAdminAccess();
+    mockBooks = mockBooks.map((book) =>
+      book.id === bookId ? { ...book, status } : book
+    );
+    return mockBooks.find((book) => book.id === bookId);
+  } catch (error) {
+    throw new Error(`Failed to approve/reject book: ${error.message}`);
+  }
+};
+
+// Các API khác (giữ nguyên, chỉ liệt kê một phần)
+export const getBookDetails = async (bookId) => {
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/books/v1/volumes/${bookId}?key=${GOOGLE_BOOKS_API_KEY}`
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(`Failed to fetch book details: ${error.message}`);
+  }
+};
+
+const mockUsers = [
+  {
+    id: "1",
+    email: "admin@example.com",
+    password: "admin123",
+    role: "admin",
+    token: "mock_jwt_admin_token_123",
+  },
+  {
+    id: "2",
+    email: "user@example.com",
+    password: "user123",
+    role: "user",
+    token: "mock_jwt_user_token_456",
+  },
+];
+export const loginUser = async (email, password) => {
+  try {
+    // Tìm người dùng trong danh sách mock
+    const user = mockUsers.find(
+      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+    );
+
+    if (!user) {
+      // Mô phỏng phản hồi lỗi từ BE
+      throw new Error("Invalid email or password");
+    }
+
+    // Trả về token và thông tin người dùng (mô phỏng phản hồi thành công từ BE)
+    return {
+      Token: user.token,
+      email: user.email,
+      role: user.role,
+    };
+  } catch (error) {
+    console.error("Login failed:", error);
+    throw new Error(error.message || "Failed to login");
   }
 };

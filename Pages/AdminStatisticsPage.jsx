@@ -1,364 +1,248 @@
-// src/pages/AdminReviewsPage.jsx
-import React, { useState, useEffect, useMemo, useCallback, useContext } from 'react';
+// src/pages/AdminStatisticsPage.jsx
+import React, { useContext, useMemo } from 'react';
 import { DataContext } from '../src/contexts/DataContext';
-import { deleteReview } from '../src/API/api';
-import { toast } from 'react-toastify';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { motion } from 'framer-motion';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from 'recharts';
 
-const AdminReviewsPage = () => {
-  const { reviews: allReviews, users: allUsers, books: allBooks, refreshData } = useContext(DataContext);
-  const [reviews, setReviews] = useState([]);
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
-  const [ratingFilter, setRatingFilter] = useState('all');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [sortBy, setSortBy] = useState('id');
-  const [sortDirection, setSortDirection] = useState('asc');
-  const [total, setTotal] = useState(0);
-  const [filteredTotal, setFilteredTotal] = useState(0);
-  const [selectedReview, setSelectedReview] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [reviewToDelete, setReviewToDelete] = useState(null);
-  const limit = 10;
+const AdminStatisticsPage = () => {
+  const { users, googleBooks, orders, reviews, loading } = useContext(DataContext);
 
-  useEffect(() => {
-    setTotal(allReviews.length);
-    setFilteredTotal(allReviews.length);
-  }, [allReviews]);
+  // Tính toán thống kê với useMemo để tối ưu hiệu suất
+  const stats = useMemo(() => {
+    const totalUsers = users.length;
+    const totalBooks = googleBooks.length;
+    const totalOrders = orders.length;
+    const totalReviews = reviews.length;
 
-  const filteredReviews = useMemo(() => {
-    let filtered = [...allReviews];
+    const totalRevenue = orders.reduce((sum, order) => {
+      return sum + (order.totalAmount || 0);
+    }, 0);
 
-    filtered = filtered.filter((review) => {
-      const matchesSearch =
-        !search ||
-        review.id.toLowerCase().includes(search.toLowerCase()) ||
-        review.userId.toLowerCase().includes(search.toLowerCase()) ||
-        review.bookId.toLowerCase().includes(search.toLowerCase()) ||
-        review.comment.toLowerCase().includes(search.toLowerCase());
-      const matchesRating =
-        ratingFilter === 'all' || Number(review.rating) === Number(ratingFilter);
-      const reviewDate = new Date(review.createdAt);
-      const matchesDate =
-        (!startDate || reviewDate >= new Date(startDate)) &&
-        (!endDate || reviewDate <= new Date(endDate));
-      return matchesSearch && matchesRating && matchesDate;
-    });
+    const lockedUsers = users.filter((user) => user.isLocked).length;
 
-    filtered.sort((a, b) => {
-      const valueA = sortBy === 'rating' ? Number(a.rating) : a.id.toLowerCase();
-      const valueB = sortBy === 'rating' ? Number(b.rating) : b.id.toLowerCase();
-      if (sortDirection === 'asc') {
-        return valueA > valueB ? 1 : -1;
-      } else {
-        return valueA < valueB ? 1 : -1;
-      }
-    });
+    // Phân bố sách theo thể loại (dành cho biểu đồ cột)
+    const booksByGenreData = Object.entries(
+      googleBooks.reduce((acc, book) => {
+        const genre = book.genre || 'Unknown Genre';
+        acc[genre] = (acc[genre] || 0) + 1;
+        return acc;
+      }, {})
+    ).map(([name, value]) => ({ name, value }));
 
-    return filtered;
-  }, [allReviews, search, ratingFilter, startDate, endDate, sortBy, sortDirection]);
+    // Phân bố giao dịch theo trạng thái (dành cho biểu đồ tròn)
+    const ordersByStatusData = Object.entries(
+      orders.reduce((acc, order) => {
+        const status = order.status || 'unknown';
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {})
+    ).map(([name, value]) => ({ name: name.charAt(0).toUpperCase() + name.slice(1), value }));
 
-  useEffect(() => {
-    setFilteredTotal(filteredReviews.length);
+    // Top 5 sách có nhiều đánh giá nhất
+    const topBooksByReviews = googleBooks
+      .map((book) => {
+        const bookReviews = reviews.filter((review) => review.bookId === book.bookId);
+        return {
+          title: book.title,
+          reviewCount: bookReviews.length,
+          averageRating:
+            bookReviews.length > 0
+              ? (bookReviews.reduce((sum, review) => sum + (review.rating || 0), 0) /
+                  bookReviews.length).toFixed(1)
+              : 0,
+        };
+      })
+      .sort((a, b) => b.reviewCount - a.reviewCount)
+      .slice(0, 5);
 
-    const maxPage = Math.ceil(filteredReviews.length / limit);
-    if (page > maxPage && maxPage > 0) {
-      setPage(maxPage);
-    } else if (filteredReviews.length === 0) {
-      setPage(1);
-    }
+    // Xu hướng doanh thu (giả lập theo ngày nếu không có dữ liệu thời gian cụ thể)
+    const revenueTrend = orders.reduce((acc, order) => {
+      const date = order.createdAt
+        ? new Date(order.createdAt).toLocaleDateString()
+        : 'Unknown Date';
+      acc[date] = (acc[date] || 0) + (order.totalAmount || 0);
+      return acc;
+    }, {});
+    const revenueTrendData = Object.entries(revenueTrend).map(([date, revenue]) => ({
+      date,
+      revenue,
+    }));
 
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    const paginatedReviews = filteredReviews.slice(startIndex, endIndex);
-    setReviews(paginatedReviews);
-  }, [filteredReviews, page]);
+    const averageRating =
+      reviews.length > 0
+        ? (reviews.reduce((sum, review) => sum + (review.rating || 0), 0) / reviews.length).toFixed(1)
+        : 0;
 
-  const handleDelete = useCallback((reviewId) => {
-    setReviewToDelete(reviewId);
-    setIsDeleteModalOpen(true);
-  }, []);
+    return {
+      totalUsers,
+      totalBooks,
+      totalOrders,
+      totalReviews,
+      totalRevenue,
+      lockedUsers,
+      booksByGenreData,
+      ordersByStatusData,
+      topBooksByReviews,
+      revenueTrendData,
+      averageRating,
+    };
+  }, [users, googleBooks, orders, reviews]);
 
-  const confirmDelete = useCallback(async () => {
-    try {
-      await deleteReview(reviewToDelete);
-      refreshData(); // Làm mới dữ liệu từ context
-      toast.success('Review deleted successfully');
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setIsDeleteModalOpen(false);
-      setReviewToDelete(null);
-    }
-  }, [reviewToDelete, refreshData]);
+  // Màu sắc cho biểu đồ tròn
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
-  const cancelDelete = useCallback(() => {
-    setIsDeleteModalOpen(false);
-    setReviewToDelete(null);
-  }, []);
-
-  const handleViewDetails = useCallback((review) => {
-    setSelectedReview(review);
-    setIsModalOpen(true);
-  }, []);
-
-  const closeModal = useCallback(() => {
-    setIsModalOpen(false);
-    setSelectedReview(null);
-  }, []);
-
-  const handleRefresh = useCallback(() => {
-    setPage(1);
-    setSearch('');
-    setRatingFilter('all');
-    setStartDate('');
-    setEndDate('');
-    setSortBy('id');
-    setSortDirection('asc');
-    refreshData();
-  }, [refreshData]);
+  if (loading) {
+    return <div className="text-center py-6 text-gray-600">Loading statistics...</div>;
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-blue-700">Manage Reviews</h1>
-        <button
-          onClick={handleRefresh}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2"
+    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white px-4 py-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Tiêu đề chính với hiệu ứng fade-in */}
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-4xl font-bold mb-10 text-blue-800 text-center"
         >
-          <FontAwesomeIcon icon={faSyncAlt} />
-          Refresh
-        </button>
-      </div>
-      <div className="mb-6 flex flex-wrap gap-4 items-center">
-        <input
-          type="text"
-          placeholder="Search by ID, user ID, book ID, or comment..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="p-2 border rounded-lg w-full max-w-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <select
-          value={ratingFilter}
-          onChange={(e) => setRatingFilter(e.target.value)}
-          className="p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          Admin Statistics Dashboard
+        </motion.h1>
+
+        {/* Thẻ thống kê chính với hiệu ứng xuất hiện */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
         >
-          <option value="all">All Ratings</option>
-          <option value="1">1 Star</option>
-          <option value="2">2 Stars</option>
-          <option value="3">3 Stars</option>
-          <option value="4">4 Stars</option>
-          <option value="5">5 Stars</option>
-        </select>
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className="p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          className="p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="id">Sort by ID</option>
-          <option value="rating">Sort by Rating</option>
-        </select>
-        <select
-          value={sortDirection}
-          onChange={(e) => setSortDirection(e.target.value)}
-          className="p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="asc">Ascending</option>
-          <option value="desc">Descending</option>
-        </select>
-      </div>
-      <p className="mb-6 text-gray-600">Total Reviews: {total} (Filtered: {filteredTotal})</p>
-      {reviews.length === 0 ? (
-        <p className="text-center text-gray-600">
-          {search || ratingFilter !== 'all' || startDate || endDate
-            ? 'No reviews match your search.'
-            : 'No reviews found.'}
-        </p>
-      ) : (
-        <div>
-          <div className="md:hidden">
-            {reviews.map((review) => (
-              <div key={review.id} className="border-b p-4">
-                <p>
-                  <strong>ID:</strong>{' '}
-                  <button
-                    onClick={() => handleViewDetails(review)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {review.id}
-                  </button>
-                </p>
-                <p><strong>User ID:</strong> {review.userId}</p>
-                <p><strong>Book ID:</strong> {review.bookId}</p>
-                <p><strong>Rating:</strong> {review.rating} Stars</p>
-                <p><strong>Comment:</strong> {review.comment}</p>
-                <div className="mt-2 flex gap-2">
-                  <button
-                    onClick={() => handleDelete(review.id)}
-                    className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <h3 className="text-lg font-semibold">Total Users</h3>
+            <p className="text-3xl font-bold mt-2">{stats.totalUsers}</p>
+            <p className="text-sm mt-1">Locked: {stats.lockedUsers}</p>
           </div>
-          <div className="hidden md:block bg-white rounded-lg shadow overflow-x-auto">
-            <table className="min-w-full table-auto">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">ID</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">User ID</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Book ID</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Rating</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Comment</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reviews.map((review) => (
-                  <tr key={review.id} className="border-b">
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      <button
-                        onClick={() => handleViewDetails(review)}
-                        className="text-blue-600 hover:underline"
-                      >
-                        {review.id}
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{review.userId}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{review.bookId}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{review.rating} Stars</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{review.comment}</td>
-                    <td className="px-6 py-4 text-sm">
-                      <button
-                        onClick={() => handleDelete(review.id)}
-                        className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="bg-gradient-to-r from-green-500 to-green-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <h3 className="text-lg font-semibold">Total Books</h3>
+            <p className="text-3xl font-bold mt-2">{stats.totalBooks}</p>
           </div>
-        </div>
-      )}
-      <div className="mt-6 flex justify-between">
-        <button
-          onClick={() => setPage(page - 1)}
-          disabled={page === 1}
-          className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          Previous
-        </button>
-        <span className="text-gray-600">Page {page}</span>
-        <button
-          onClick={() => setPage(page + 1)}
-          disabled={reviews.length < limit || page * limit >= filteredTotal}
-          className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          Next
-        </button>
-      </div>
-      {isModalOpen && selectedReview && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4 text-blue-700">Review Details</h2>
-            <p><strong>ID:</strong> {selectedReview.id}</p>
-            <p><strong>Rating:</strong> {selectedReview.rating} Stars</p>
-            <p><strong>Comment:</strong> {selectedReview.comment}</p>
-            <p><strong>Created At:</strong> {new Date(selectedReview.createdAt).toLocaleString()}</p>
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold text-gray-800">User Information</h3>
-              {(() => {
-                const user = allUsers.find((u) => u.id === selectedReview.userId);
-                return user ? (
-                  <>
-                    <p><strong>Name:</strong> {user.fullName}</p>
-                    <p><strong>Email:</strong> {user.email}</p>
-                  </>
-                ) : (
-                  <p className="text-gray-600">User not found</p>
-                );
-              })()}
-            </div>
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold text-gray-800">Book Information</h3>
-              {(() => {
-                const book = allBooks.find((b) => b.id === selectedReview.bookId);
-                return book ? (
-                  <div className="flex items-center gap-2">
-                    {book.coverImage && (
-                      <img
-                        src={book.coverImage}
-                        alt={book.title}
-                        className="w-10 h-10 object-cover rounded"
-                      />
-                    )}
+          <div className="bg-gradient-to-r from-yellow-500 to-yellow-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <h3 className="text-lg font-semibold">Total Orders</h3>
+            <p className="text-3xl font-bold mt-2">{stats.totalOrders}</p>
+            <p className="text-sm mt-1">Revenue: ${stats.totalRevenue.toFixed(2)}</p>
+          </div>
+          <div className="bg-gradient-to-r from-red-500 to-red-700 text-white p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <h3 className="text-lg font-semibold">Total Reviews</h3>
+            <p className="text-3xl font-bold mt-2">{stats.totalReviews}</p>
+            <p className="text-sm mt-1">Avg Rating: {stats.averageRating}</p>
+          </div>
+        </motion.div>
+
+        {/* Thống kê chi tiết */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Biểu đồ cột: Số lượng sách theo thể loại */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="bg-white p-6 rounded-xl shadow-md"
+          >
+            <h2 className="text-xl font-semibold mb-4 text-blue-700">Books by Genre</h2>
+            {stats.booksByGenreData.length > 0 ? (
+              <BarChart width={500} height={300} data={stats.booksByGenreData}>
+                <XAxis dataKey="name" tick={{ fill: '#4B5EAA', fontSize: 12 }} />
+                <YAxis tick={{ fill: '#4B5EAA', fontSize: 12 }} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#0088FE" />
+              </BarChart>
+            ) : (
+              <p className="text-gray-600">No books data available.</p>
+            )}
+          </motion.div>
+
+          {/* Biểu đồ tròn: Số lượng giao dịch theo trạng thái */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="bg-white p-6 rounded-xl shadow-md"
+          >
+            <h2 className="text-xl font-semibold mb-4 text-blue-700">Orders by Status</h2>
+            {stats.ordersByStatusData.length > 0 ? (
+              <PieChart width={500} height={300}>
+                <Pie
+                  data={stats.ordersByStatusData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label
+                >
+                  {stats.ordersByStatusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            ) : (
+              <p className="text-gray-600">No orders data available.</p>
+            )}
+          </motion.div>
+
+          {/* Top 5 sách có nhiều đánh giá nhất */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="bg-white p-6 rounded-xl shadow-md lg:col-span-2"
+          >
+            <h2 className="text-xl font-semibold mb-4 text-blue-700">Top 5 Books by Reviews</h2>
+            {stats.topBooksByReviews.length > 0 ? (
+              <div className="space-y-4">
+                {stats.topBooksByReviews.map((book, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
                     <div>
-                      <p><strong>Title:</strong> {book.title}</p>
-                      <p><strong>Author:</strong> {book.author}</p>
+                      <h3 className="text-lg font-semibold text-blue-800">{book.title}</h3>
+                      <p className="text-sm text-gray-600">Reviews: {book.reviewCount}</p>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-yellow-500 mr-2">★</span>
+                      <span className="text-blue-600 font-semibold">{book.averageRating}</span>
                     </div>
                   </div>
-                ) : (
-                  <p className="text-gray-600">Book not found</p>
-                );
-              })()}
-            </div>
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-              >
-                Close
-              </button>
-            </div>
-          </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600">No reviews data available.</p>
+            )}
+          </motion.div>
+
+          {/* Xu hướng doanh thu */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="bg-white p-6 rounded-xl shadow-md lg:col-span-2"
+          >
+            <h2 className="text-xl font-semibold mb-4 text-blue-700">Revenue Trend</h2>
+            {stats.revenueTrendData.length > 0 ? (
+              <BarChart width={800} height={300} data={stats.revenueTrendData}>
+                <XAxis dataKey="date" tick={{ fill: '#4B5EAA', fontSize: 12 }} />
+                <YAxis tick={{ fill: '#4B5EAA', fontSize: 12 }} />
+                <Tooltip />
+                <Bar dataKey="revenue" fill="#00C49F" />
+              </BarChart>
+            ) : (
+              <p className="text-gray-600">No revenue data available.</p>
+            )}
+          </motion.div>
         </div>
-      )}
-      {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-sm">
-            <h2 className="text-xl font-bold mb-4 text-blue-700">Confirm Deletion</h2>
-            <p className="mb-4 text-gray-700">
-              Are you sure you want to delete this review?
-            </p>
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={cancelDelete}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
 
-export default AdminReviewsPage;
+export default AdminStatisticsPage;
