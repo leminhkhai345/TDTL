@@ -305,28 +305,37 @@ export const lockUser = async (userId, isLocked) => {
 };
 
 
-// Auth APIs
-// src/API/api.js
-// export const loginUser = async (email, password) => {
-//   try {
-//     const response = await fetch(`${EXCHANGE_API_URL}/api/Auth/login`, {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ Email: email, Password: password }),
-//     });
-//     const data = await handleResponse(response);
-//     if (!data.Token) {
-//       throw new Error(data.ErrorMessage || data.error?.message || "Authentication failed");
-//     }
-//     return {
-//       token: data.token,
-//       email: email,
-//     };
-//   } catch (error) {
-//     console.error("Login failed:", error);
-//     throw new Error(error.message || "Failed to login");
-//   }
-// };
+// API đăng nhập
+export const loginUser = async (email, password) => {
+  try {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ Email: email, Password: password }),
+    });
+
+    const data = await handleResponse(response);
+
+    if (!data.Token) {
+      throw new Error(data.ErrorMessage || "Authentication failed");
+    }
+
+    // Giải mã JWT để lấy email và role
+    const decodedToken = decodeJwt(data.Token);
+    if (!decodedToken) {
+      throw new Error("Failed to decode authentication token");
+    }
+
+    return {
+      Token: data.Token,
+      email: decodedToken.email || email, // Lấy email từ token, fallback về email đầu vào
+      role: decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || 'user', // Lấy role từ claim
+    };
+  } catch (error) {
+    console.error("Login failed:", error);
+    throw new Error(error.message || "Failed to login");
+  }
+};
 // Hàm Forgot Password
 export const forgotPassword = async (email) => {
   try {
@@ -809,26 +818,26 @@ const mockUsers = [
     token: "mock_jwt_user_token_456",
   },
 ];
-export const loginUser = async (email, password) => {
-  try {
-    // Tìm người dùng trong danh sách mock
-    const user = mockUsers.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-    );
+// export const loginUser = async (email, password) => {
+//   try {
+//     // Tìm người dùng trong danh sách mock
+//     const user = mockUsers.find(
+//       (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+//     );
 
-    if (!user) {
-      // Mô phỏng phản hồi lỗi từ BE
-      throw new Error("Invalid email or password");
-    }
+//     if (!user) {
+//       // Mô phỏng phản hồi lỗi từ BE
+//       throw new Error("Invalid email or password");
+//     }
 
-    // Trả về token và thông tin người dùng (mô phỏng phản hồi thành công từ BE)
-    return {
-      Token: user.token,
-      email: user.email,
-      role: user.role,
-    };
-  } catch (error) {
-    console.error("Login failed:", error);
-    throw new Error(error.message || "Failed to login");
-  }
-};
+//     // Trả về token và thông tin người dùng (mô phỏng phản hồi thành công từ BE)
+//     return {
+//       Token: user.token,
+//       email: user.email,
+//       role: user.role,
+//     };
+//   } catch (error) {
+//     console.error("Login failed:", error);
+//     throw new Error(error.message || "Failed to login");
+//   }
+// };
