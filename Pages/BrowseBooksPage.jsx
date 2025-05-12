@@ -1,70 +1,54 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import BookCard from '../Components/BookCard';
 import FilterBar from '../Components/FilterBar';
 import SearchBar from '../Components/SearchBar';
 import { useCart } from '../src/contexts/CartContext';
-import { DataContext } from '../src/contexts/DataContext';
 import { toast } from 'react-toastify';
+import { getListedDocuments, getCategories } from '../src/API/api';
 
 const BrowseBooksPage = () => {
   const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState('All Genres');
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [selectedPrice, setSelectedPrice] = useState('All Prices');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState('grid');
   const [isFiltering, setIsFiltering] = useState(false);
   const { addToCart } = useCart();
-  const { setGoogleBooks } = useContext(DataContext);
 
-  const API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
+  // Lấy danh mục từ backend
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        setCategories(data.map(cat => cat.categoryName));
+      } catch (err) {
+        toast.error('Failed to load categories');
+      }
+    };
+    fetchCategories();
+  }, []);
 
-  // Danh mục cứng cho người dùng thông thường
-  const genreMap = {
-    Fiction: 'Fiction',
-    'Juvenile Fiction': 'Fiction',
-    'Literary Criticism': 'Classic',
-    'Science Fiction': 'Sci-Fi',
-    Romance: 'Romance',
-    Dystopian: 'Dystopian',
-    Fantasy: 'Fantasy',
-    Adventure: 'Adventure',
-  };
-
-  const fetchBooks = async (query = '') => {
+  // Lấy danh sách tài liệu từ backend
+  const fetchBooks = async () => {
     setLoading(true);
     setError(null);
     try {
-      const url = query
-        ? `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-            query
-          )}&maxResults=20&key=${API_KEY}`
-        : `https://www.googleapis.com/books/v1/volumes?q=fiction&maxResults=20&key=${API_KEY}`;
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Failed to fetch books');
-      }
-      const data = await response.json();
-
-      const mappedBooks = data.items?.map((item) => {
-        const rawGenre = item.volumeInfo.categories?.[0] || 'Unknown Genre';
-        const price = item.saleInfo?.listPrice?.amount || (Math.random() * 20 + 5).toFixed(2);
-        return {
-          bookId: item.id,
-          title: item.volumeInfo.title || 'Unknown Title',
-          author: item.volumeInfo.authors?.join(', ') || 'Unknown Author',
-          genre: genreMap[rawGenre] || 'Unknown Genre',
-          price,
-          image: item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/150',
-          description: item.volumeInfo.description || 'No description available',
-          publishedDate: item.volumeInfo.publishedDate || 'Unknown Date',
-        };
-      }) || [];
-
+      const data = await getListedDocuments();
+      const mappedBooks = data.map((item) => ({
+        documentId: item.documentId,
+        title: item.title || 'Unknown Title',
+        author: item.author || 'Unknown Author',
+        categoryName: item.categoryName || 'Unknown Category',
+        price: item.price !== null ? item.price : (Math.random() * 20 + 5).toFixed(2),
+        image: item.imageUrl || 'https://via.placeholder.com/150',
+        description: item.description || 'No description available',
+        publicationYear: item.publicationYear || 'Unknown Year',
+      }));
       setBooks(mappedBooks);
-      setGoogleBooks(mappedBooks);
       setFilteredBooks(mappedBooks);
     } catch (err) {
       setError(err.message);
@@ -80,32 +64,27 @@ const BrowseBooksPage = () => {
 
   const filterBooks = () => {
     return books.filter((book) => {
-      const genreMatch =
-        selectedGenre === 'All Genres' ||
-        book.genre.toLowerCase() === selectedGenre.toLowerCase();
+      const categoryMatch =
+        selectedCategory === 'All Categories' ||
+        book.categoryName.toLowerCase() === selectedCategory.toLowerCase();
 
       const priceMatch =
         selectedPrice === 'All Prices' ||
-        (selectedPrice === 'Under $10' && parseFloat(book.price) < 10) ||
-        (selectedPrice === '$10 - $20' &&
-          parseFloat(book.price) >= 10 &&
-          parseFloat(book.price) <= 20) ||
-        (selectedPrice === '$20 - $30' &&
-          parseFloat(book.price) > 20 &&
-          parseFloat(book.price) <= 30);
+        (selectedPrice === '1-2' && parseFloat(book.price) >= 1 && parseFloat(book.price) <= 2) ||
+        (selectedPrice === '2-4' && parseFloat(book.price) > 2 && parseFloat(book.price) <= 4) ||
+        (selectedPrice === 'Above 4' && parseFloat(book.price) > 4);
 
       const searchMatch =
-        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchQuery.toLowerCase());
+        book.title.toLowerCase().includes(searchQuery.toLowerCase());
 
-      return genreMatch && priceMatch && searchMatch;
+      return categoryMatch && priceMatch && searchMatch;
     });
   };
 
   useEffect(() => {
     if (
       searchQuery !== '' ||
-      selectedGenre !== 'All Genres' ||
+      selectedCategory !== 'All Categories' ||
       selectedPrice !== 'All Prices' ||
       viewMode === 'list'
     ) {
@@ -117,7 +96,7 @@ const BrowseBooksPage = () => {
     if (!loading) {
       setFilteredBooks(filterBooks());
     }
-  }, [searchQuery, selectedGenre, selectedPrice, books, loading, viewMode]);
+  }, [searchQuery, selectedCategory, selectedPrice, books, loading, viewMode]);
 
   const featuredBooks = useMemo(() => {
     return [...books]
@@ -128,20 +107,19 @@ const BrowseBooksPage = () => {
   const newBooks = useMemo(() => {
     return [...books]
       .sort((a, b) => {
-        const dateA = new Date(a.publishedDate);
-        const dateB = new Date(b.publishedDate);
-        return dateB - dateA;
+        const yearA = parseInt(a.publicationYear) || 0;
+        const yearB = parseInt(b.publicationYear) || 0;
+        return yearB - yearA;
       })
       .slice(0, 5);
   }, [books]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    fetchBooks(query);
   };
 
-  const handleFilterChange = (genre, price) => {
-    setSelectedGenre(genre);
+  const handleFilterChange = (category, price) => {
+    setSelectedCategory(category);
     setSelectedPrice(price);
   };
 
@@ -163,7 +141,10 @@ const BrowseBooksPage = () => {
 
         <div className="flex flex-col md:flex-row gap-4 mb-8 items-center">
           <SearchBar searchQuery={searchQuery} onSearch={handleSearch} />
-          <FilterBar onFilterChange={handleFilterChange} />
+          <FilterBar
+            categories={categories}
+            onFilterChange={handleFilterChange}
+          />
           <div className="flex gap-2">
             <button
               onClick={() => handleViewModeChange('grid')}
@@ -196,7 +177,7 @@ const BrowseBooksPage = () => {
                 <div className="flex gap-6 overflow-x-auto pb-4">
                   {featuredBooks.map((book) => (
                     <div
-                      key={book.bookId}
+                      key={book.documentId}
                       className="flex-none w-64 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
                     >
                       <img
@@ -216,7 +197,7 @@ const BrowseBooksPage = () => {
                             Add to Cart
                           </button>
                           <a
-                            href={`/book-details/${book.bookId}`}
+                            href={`/book-details/${book.documentId}`}
                             className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition-colors text-center text-sm"
                           >
                             View Details
@@ -235,7 +216,7 @@ const BrowseBooksPage = () => {
                 <div className="flex gap-6 overflow-x-auto pb-4">
                   {newBooks.map((book) => (
                     <div
-                      key={book.bookId}
+                      key={book.documentId}
                       className="flex-none w-64 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
                     >
                       <img
@@ -255,7 +236,7 @@ const BrowseBooksPage = () => {
                             Add to Cart
                           </button>
                           <a
-                            href={`/book-details/${book.bookId}`}
+                            href={`/book-details/${book.documentId}`}
                             className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition-colors text-center text-sm"
                           >
                             View Details
@@ -283,41 +264,16 @@ const BrowseBooksPage = () => {
           }`}
         >
           {filteredBooks.map((book) => (
-            <div
-              key={book.bookId}
-              className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ${
-                viewMode === 'list' ? 'flex items-center gap-4 p-4' : ''
-              }`}
-            >
-              <img
-                src={book.image}
-                alt={book.title}
-                className={`rounded-lg object-cover ${
-                  viewMode === 'grid'
-                    ? 'w-full h-48 rounded-t-lg'
-                    : 'w-24 h-32 rounded-lg'
-                }`}
-              />
-              <div className={viewMode === 'list' ? 'flex-1' : 'p-4'}>
-                <h3 className="text-lg font-semibold text-blue-800 truncate">{book.title}</h3>
-                <p className="text-sm text-gray-600 truncate">{book.author}</p>
-                <p className="text-blue-600 font-bold mt-2">${parseFloat(book.price).toFixed(2)}</p>
-                <div className={`mt-4 flex gap-2 ${viewMode === 'list' ? 'flex-row' : ''}`}>
-                  <button
-                    onClick={() => handleAddToCart(book)}
-                    className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                  >
-                    Add to Cart
-                  </button>
-                  <a
-                    href={`/book-details/${book.bookId}`}
-                    className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition-colors text-center text-sm"
-                  >
-                    View Details
-                  </a>
-                </div>
-              </div>
-            </div>
+            <BookCard
+              key={book.documentId}
+              book={{
+                ...book,
+                bookId: book.documentId,
+                genre: book.categoryName,
+              }}
+              viewMode={viewMode}
+              onAddToCart={handleAddToCart}
+            />
           ))}
         </div>
       </div>

@@ -10,38 +10,28 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
+  const { login, authLoading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    const trimmedEmail = email.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-      setError("Please enter a valid email address (e.g., user@example.com).");
-      toast.error("Please enter a valid email address.");
-      return;
-    }
-
-    setLoading(true);
     try {
-      const result = await login(trimmedEmail, password);
+      const result = await login(email, password);
       if (result.success) {
-        toast.success("Logged in successfully!");
-        navigate("/");
+        // Chuyển hướng dựa trên vai trò
+        const redirectTo = result.role === 'Admin' ? '/admin' : '/';
+        navigate(redirectTo);
       } else {
-        setError(result.message || "Invalid email or password.");
-        toast.error(result.message || "Invalid email or password.");
+        setError(result.message);
+        toast.error(result.message);
       }
     } catch (err) {
       const errorMessage = err.message || "Failed to login. Please try again.";
       setError(errorMessage);
       toast.error(errorMessage);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -107,7 +97,7 @@ const LoginPage = () => {
               </button>
             </div>
           )}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             <motion.div variants={inputVariants} className="relative">
               <label className="block font-medium mb-1 text-gray-700">Email</label>
               <div className="flex items-center border rounded-lg focus-within:ring-2 focus-within:ring-blue-500 shadow-sm hover:shadow-md transition-shadow">
@@ -116,7 +106,7 @@ const LoginPage = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-3 pl-4 border-0 focus:outline-none rounded-lg"
+                  className="w-full p-4 pl-4 border-0 focus:outline-none rounded-lg"
                   placeholder="Enter your email"
                   required
                 />
@@ -130,7 +120,7 @@ const LoginPage = () => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-3 pl-4 border-0 focus:outline-none rounded-lg"
+                  className="w-full p-4 pl-4 border-0 focus:outline-none rounded-lg"
                   placeholder="Enter your password"
                   required
                 />
@@ -146,10 +136,36 @@ const LoginPage = () => {
             <motion.div variants={inputVariants}>
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg hover:scale-105 hover:shadow-lg transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:scale-100"
-                disabled={loading}
+                className="w-full py-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold text-lg rounded-lg hover:scale-105 hover:shadow-lg transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:scale-100"
+                disabled={authLoading}
               >
-                {loading ? "Logging in..." : "Login"}
+                {authLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      />
+                    </svg>
+                    Logging in...
+                  </span>
+                ) : (
+                  "Login"
+                )}
               </button>
             </motion.div>
           </form>

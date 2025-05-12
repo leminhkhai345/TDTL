@@ -1,10 +1,8 @@
-// src/pages/BookDetailsPage.jsx
-import React, { useState, useEffect, useMemo, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCart } from '../src/contexts/CartContext';
-import { DataContext } from '../src/contexts/DataContext';
-import { getBookDetails, getReviewsByBookId, createReview } from '../src/API/api';
 import { toast } from 'react-toastify';
+import { getReviewsByBookId, createReview } from '../src/API/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
@@ -14,38 +12,29 @@ const BookDetailsPage = () => {
   const [book, setBook] = useState(null);
   const [bookReviews, setBookReviews] = useState([]);
   const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0); // Hiệu ứng hover cho sao
+  const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const { addToCart } = useCart();
-  const { googleBooks } = useContext(DataContext); // Lấy danh sách sách từ DataContext
 
-  const user = JSON.parse(localStorage.getItem('user')); // Lấy thông tin user từ localStorage
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const fetchBookDetails = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Tìm sách trong DataContext để lấy giá đã sinh ra
-      const cachedBook = googleBooks.find((b) => b.bookId === bookId);
-      let bookData;
-      let price;
-
-      if (cachedBook) {
-        price = cachedBook.price; // Lấy giá từ DataContext
-        bookData = await getBookDetails(bookId); // Lấy chi tiết sách từ Google Books API
-        bookData.saleInfo.listPrice.amount = price; // Gán giá từ DataContext
-      } else {
-        bookData = await getBookDetails(bookId); // Lấy chi tiết sách từ Google Books API
-        price = bookData.saleInfo?.listPrice?.amount || (Math.random() * 20 + 5).toFixed(2);
-        bookData.saleInfo.listPrice.amount = price;
+      const response = await fetch(`${import.meta.env.VITE_EXCHANGE_API_URL}/api/Documents/${bookId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch book details: ${response.statusText}`);
       }
+      const bookData = await response.json();
 
-      const reviewsResponse = await getReviewsByBookId(bookId); // Lấy danh sách đánh giá từ mock API
       setBook(bookData);
+
+      const reviewsResponse = await getReviewsByBookId(bookId);
       setBookReviews(reviewsResponse.reviews || reviewsResponse);
     } catch (err) {
       setError(err.message || 'Failed to load book details');
@@ -56,7 +45,7 @@ const BookDetailsPage = () => {
 
   useEffect(() => {
     fetchBookDetails();
-  }, [bookId, googleBooks]);
+  }, [bookId]);
 
   const handleSubmitReview = useCallback(async (e) => {
     e.preventDefault();
@@ -84,7 +73,7 @@ const BookDetailsPage = () => {
     try {
       setSubmitting(true);
       await createReview(bookId, reviewData);
-      await fetchBookDetails(); // Làm mới dữ liệu
+      await fetchBookDetails();
       setRating(0);
       setHoverRating(0);
       setComment('');
@@ -111,20 +100,19 @@ const BookDetailsPage = () => {
   const handleAddToCart = () => {
     if (book) {
       const mappedBook = {
-        bookId: book.id,
-        title: book.volumeInfo.title || 'Unknown Title',
-        author: book.volumeInfo.authors?.join(', ') || 'Unknown Author',
-        genre: book.volumeInfo.categories?.[0] || 'Unknown Genre',
-        price: book.saleInfo?.listPrice?.amount || (Math.random() * 20 + 5).toFixed(2),
-        image: book.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/150',
-        description: book.volumeInfo.description || 'No description available',
+        documentId: book.documentId,
+        title: book.title || 'Unknown Title',
+        author: book.author || 'Unknown Author',
+        categoryName: book.categoryName || 'Unknown Category',
+        price: book.price !== null ? book.price : (Math.random() * 20 + 5).toFixed(2),
+        image: book.imageUrl || 'https://via.placeholder.com/150',
+        description: book.description || 'No description available',
       };
       addToCart(mappedBook);
       toast.success(`${mappedBook.title} added to cart!`);
     }
   };
 
-  // Memoize danh sách đánh giá để tối ưu render
   const renderedReviews = useMemo(() => {
     return bookReviews.map((review) => (
       <div key={review.id} className="border-b py-4">
@@ -152,28 +140,24 @@ const BookDetailsPage = () => {
     return <div className="text-center text-red-600 py-6">{error || 'Book not found'}</div>;
   }
 
-  const { volumeInfo } = book;
-  const title = volumeInfo?.title || 'Unknown Title';
-  const authors = volumeInfo?.authors?.join(', ') || 'Unknown Author';
-  const price = book.saleInfo?.listPrice?.amount || (Math.random() * 20 + 5).toFixed(2);
-  const coverImage = volumeInfo?.imageLinks?.thumbnail || 'https://via.placeholder.com/150';
-  const description = volumeInfo?.description || 'No description available';
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       <div className="flex gap-6 mb-8">
         <div className="w-1/3">
           <img
-            src={coverImage}
-            alt={title}
+            src={book.imageUrl || 'https://via.placeholder.com/150'}
+            alt={book.title}
             className="w-full h-72 object-cover rounded-lg"
           />
         </div>
         <div className="w-2/3">
-          <h2 className="text-3xl font-semibold text-blue-800">{title}</h2>
-          <p className="text-xl text-gray-600">by {authors}</p>
-          <p className="mt-4 text-lg">{description}</p>
-          <p className="mt-4 text-xl font-bold text-blue-600">${parseFloat(price).toFixed(2)}</p>
+          <h2 className="text-3xl font-semibold text-blue-800">{book.title}</h2>
+          <p className="text-xl text-gray-600">by {book.author || 'Unknown Author'}</p>
+          <p className="text-sm text-gray-600 mt-2">Category: {book.categoryName}</p>
+          <p className="mt-4 text-lg">{book.description || 'No description available'}</p>
+          <p className="mt-4 text-xl font-bold text-blue-600">
+            {book.price !== null ? `$${parseFloat(book.price).toFixed(2)}` : 'Price not available'}
+          </p>
           <div className="mt-4 flex gap-4">
             <button
               onClick={handleAddToCart}

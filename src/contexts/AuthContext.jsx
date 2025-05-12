@@ -15,10 +15,6 @@ export const AuthProvider = ({ children }) => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
     const storedToken = localStorage.getItem('token');
     if (storedLogin && storedUser && storedToken) {
-      if (!storedUser.role) {
-        storedUser.role = 'user';
-        localStorage.setItem('user', JSON.stringify(storedUser));
-      }
       setIsLoggedIn(true);
       setUser(storedUser);
       setToken(storedToken);
@@ -30,21 +26,42 @@ export const AuthProvider = ({ children }) => {
     try {
       setAuthLoading(true);
       const userData = await loginUser(email, password);
+      console.log('Login role:', userData.role); // Debug vai trò
+
+      // Xóa localStorage cũ
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userEmail');
+
+      // Cập nhật trạng thái
       setIsLoggedIn(true);
       setUser({
         email: userData.email,
-        role: userData.role || 'user',
+        role: userData.role || 'User', // Fallback nếu role không có
       });
-      setToken(userData.token);
+      setToken(userData.Token);
+
+      // Lưu vào localStorage
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('user', JSON.stringify({
         email: userData.email,
-        role: userData.role || 'user',
+        role: userData.role || 'User',
       }));
-      localStorage.setItem('token', userData.token);
-      return { success: true };
+      localStorage.setItem('token', userData.Token);
+
+      return { success: true, role: userData.role };
     } catch (err) {
-      return { success: false, message: err.message };
+      let errorMessage = err.message;
+      if (errorMessage.includes('Invalid credentials')) {
+        errorMessage = 'Email hoặc mật khẩu không đúng.';
+      } else if (errorMessage.includes('Email not verified')) {
+        errorMessage = 'Email chưa được xác minh. Vui lòng kiểm tra email của bạn.';
+      } else if (errorMessage.includes('Failed to decode')) {
+        errorMessage = 'Lỗi xác thực. Vui lòng thử lại.';
+      }
+
+      return { success: false, message: errorMessage };
     } finally {
       setAuthLoading(false);
     }
@@ -54,10 +71,10 @@ export const AuthProvider = ({ children }) => {
     try {
       setAuthLoading(true);
       const response = await registerUser({ fullName, email, phone, password, confirmPassword });
-      if (response.status !== "success") {
-        throw new Error(response.message || "Registration failed");
+      if (response.status !== 'success') {
+        throw new Error(response.message || 'Registration failed');
       }
-      localStorage.setItem("userEmail", email);
+      localStorage.setItem('userEmail', email);
       return { success: true };
     } catch (err) {
       return { success: false, message: err.message };
@@ -70,14 +87,11 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(false);
     setUser(null);
     setToken(null);
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    localStorage.removeItem('userEmail');
+    localStorage.clear(); // Xóa toàn bộ localStorage để tránh dữ liệu cũ
   };
 
   const isAdmin = () => {
-    return user?.role === 'admin';
+    return user?.role === 'Admin' || user?.role?.toLowerCase() === 'admin';
   };
 
   return (

@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-toastify';
+import { getListedDocuments } from '../src/API/api';
 
 const BookCarousel = () => {
-  const API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,60 +20,28 @@ const BookCarousel = () => {
         setLoading(true);
         setError(null);
 
-        const query = 'fiction';
-        const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=20&key=${API_KEY}`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch books: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        if (!data.items || data.items.length === 0) {
-          throw new Error('No books found.');
-        }
-
-        const mappedBooks = data.items.map((item) => {
-          // Kiểm tra giá kỹ hơn
-          let price = null;
-          if (item.saleInfo) {
-            if (item.saleInfo.saleability === 'FOR_SALE') {
-              if (item.saleInfo.listPrice?.amount) {
-                price = item.saleInfo.listPrice.amount;
-              } else if (item.saleInfo.retailPrice?.amount) {
-                price = item.saleInfo.retailPrice.amount;
-              }
-            } else if (item.saleInfo.saleability === 'FREE') {
-              price = 0.00;
-            }
-            // Nếu saleability là NOT_FOR_SALE hoặc không có giá, price giữ là null
-          }
-
-          // Ghi log để debug giá
-          console.log(`Book: ${item.volumeInfo?.title}, SaleInfo:`, item.saleInfo, `Price: ${price}`);
-
-          return {
-            id: item.id,
-            title: item.volumeInfo?.title || 'Unknown Title',
-            author: item.volumeInfo?.authors?.join(', ') || 'Unknown Author',
-            price: price,
-            bookImage: item.volumeInfo?.imageLinks?.thumbnail || 'https://via.placeholder.com/150',
-            genre: item.volumeInfo?.categories?.[0] || 'Unknown Category',
-            status: 'approved',
-            description: item.volumeInfo?.description || 'No description available.',
-          };
-        });
+        const data = await getListedDocuments();
+        const mappedBooks = data.map((item) => ({
+          documentId: item.documentId,
+          title: item.title || 'Unknown Title',
+          author: item.author || 'Unknown Author',
+          price: item.price !== null ? item.price : (Math.random() * 20 + 5).toFixed(2),
+          image: item.imageUrl || 'https://via.placeholder.com/150',
+          categoryName: item.categoryName || 'Unknown Category',
+          description: item.description || 'No description available',
+        }));
 
         setBooks(mappedBooks);
       } catch (err) {
         setError(err.message || 'An error occurred while fetching books.');
+        toast.error(err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchBooks();
-  }, [API_KEY]);
+  }, []);
 
   const totalSlides = Math.ceil(books.length / booksPerPage);
 
@@ -103,8 +72,6 @@ const BookCarousel = () => {
 
   return (
     <div className="relative max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      {/* <h2 className="text-3xl font-bold text-blue-800 mb-6 text-center">Featured Books</h2> */}
-
       <div className="relative overflow-hidden">
         <AnimatePresence initial={false} mode="wait">
           <motion.div
@@ -117,14 +84,14 @@ const BookCarousel = () => {
           >
             {displayedBooks.map((book) => (
               <Link
-                to={`/book-details/${book.id}`}
-                key={book.id}
+                to={`/book-details/${book.documentId}`}
+                key={book.documentId}
                 className="group relative bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
                 <div className="relative">
                   <img
-                    src={book.bookImage || 'https://via.placeholder.com/150'}
-                    alt={book.title || 'Book'}
+                    src={book.image}
+                    alt={book.title}
                     className="w-full h-48 object-cover transition-opacity duration-300 group-hover:opacity-80"
                     loading="lazy"
                   />
@@ -135,11 +102,11 @@ const BookCarousel = () => {
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-800 truncate">{book.title || 'Unknown Title'}</h3>
-                  <p className="text-sm text-gray-600">{book.author || 'Unknown Author'}</p>
-                  <p className="text-sm text-gray-600">{book.genre || 'Unknown Category'}</p>
+                  <h3 className="text-lg font-semibold text-gray-800 truncate">{book.title}</h3>
+                  <p className="text-sm text-gray-600">{book.author}</p>
+                  <p className="text-sm text-gray-600">{book.categoryName}</p>
                   <p className="text-lg font-bold text-blue-600 mt-2">
-                    {book.price !== null ? `$${Number(book.price).toFixed(2)}` : 'Price not available'}
+                    {book.price !== null ? `$${parseFloat(book.price).toFixed(2)}` : 'Price not available'}
                   </p>
                 </div>
               </Link>

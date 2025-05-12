@@ -14,7 +14,7 @@ import {
   faBars,
   faTimes,
   faKey,
-  faTachometerAlt, // Icon cho Dashboard
+  faTachometerAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = () => {
@@ -22,6 +22,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSellDropdownOpen, setIsSellDropdownOpen] = useState(false); // Thêm state cho dropdown Sell
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -39,6 +40,10 @@ const Navbar = () => {
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleSellDropdown = () => {
+    setIsSellDropdownOpen(!isSellDropdownOpen);
   };
 
   const handleChangePassword = async (e) => {
@@ -90,7 +95,6 @@ const Navbar = () => {
 
             {isLoggedIn && isAdmin() ? (
               <>
-                {/* Chỉ hiển thị Dashboard khi là Admin */}
                 <Link to="/admin" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
                   <FontAwesomeIcon icon={faTachometerAlt} />
                   <span>Dashboard</span>
@@ -98,7 +102,6 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                {/* Hiển thị các liên kết khác khi không phải Admin */}
                 <Link to="/browse" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
                   <FontAwesomeIcon icon={faBook} />
                   <span>Browse</span>
@@ -109,10 +112,36 @@ const Navbar = () => {
                       <FontAwesomeIcon icon={faExchangeAlt} />
                       <span>Exchange</span>
                     </Link>
-                    <Link to="/sell" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
-                      <FontAwesomeIcon icon={faBook} />
-                      <span>Sell</span>
-                    </Link>
+                    {/* Dropdown cho Sell */}
+                    <div className="relative">
+                      <button
+                        onClick={toggleSellDropdown}
+                        className="flex items-center space-x-2 focus:outline-none"
+                      >
+                        <FontAwesomeIcon icon={faBook} />
+                        <span>Sell</span>
+                      </button>
+                      {isSellDropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg z-50">
+                          <Link
+                            to="/sell"
+                            className="flex items-center space-x-2 px-4 py-2 hover:bg-blue-100 rounded-t-lg"
+                            onClick={() => setIsSellDropdownOpen(false)}
+                          >
+                            <FontAwesomeIcon icon={faBook} />
+                            <span>Sell a Book</span>
+                          </Link>
+                          <Link
+                            to="/sell-history"
+                            className="flex items-center space-x-2 px-4 py-2 hover:bg-blue-100 rounded-b-lg"
+                            onClick={() => setIsSellDropdownOpen(false)}
+                          >
+                            <FontAwesomeIcon icon={faBook} />
+                            <span>Sell History</span>
+                          </Link>
+                        </div>
+                      )}
+                    </div>
                     <Link to="/cart" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
                       <FontAwesomeIcon icon={faShoppingCart} />
                       <span>Cart</span>
@@ -195,7 +224,6 @@ const Navbar = () => {
 
               {isLoggedIn && isAdmin() ? (
                 <>
-                  {/* Chỉ hiển thị Dashboard khi là Admin */}
                   <Link to="/admin" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
                     <FontAwesomeIcon icon={faTachometerAlt} />
                     <span>Dashboard</span>
@@ -203,7 +231,6 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  {/* Hiển thị các liên kết khác khi không phải Admin */}
                   <Link to="/browse" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
                     <FontAwesomeIcon icon={faBook} />
                     <span>Browse</span>
@@ -216,7 +243,11 @@ const Navbar = () => {
                       </Link>
                       <Link to="/sell" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
                         <FontAwesomeIcon icon={faBook} />
-                        <span>Sell</span>
+                        <span>Sell a Book</span>
+                      </Link>
+                      <Link to="/sell-history" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
+                        <FontAwesomeIcon icon={faBook} />
+                        <span>Sell History</span>
                       </Link>
                       <Link to="/cart" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
                         <FontAwesomeIcon icon={faShoppingCart} />

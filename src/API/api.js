@@ -5,23 +5,25 @@ const GOOGLE_BOOKS_API_KEY = import.meta.env.VITE_GOOGLE_BOOKS_API_KEY;
 // Hàm xử lý phản hồi và lỗi
 const handleResponse = async (response) => {
   if (!response.ok) {
-    const contentType = response.headers.get("content-type");
-    let errorMessage = `Lỗi HTTP ${response.status}`;
+    const contentType = response.headers.get('content-type');
+    let errorMessage = `HTTP Error ${response.status}`;
     let errorData = {};
-    if (contentType && contentType.includes("application/json")) {
+    if (contentType && contentType.includes('application/json')) {
       errorData = await response.json();
-      errorMessage = errorData.ErrorMessage || errorData.message || errorData.error || JSON.stringify(errorData) || errorMessage;
+      errorMessage = errorData.error || errorData.message || JSON.stringify(errorData) || errorMessage;
     } else {
       errorMessage = await response.text();
     }
     throw new Error(errorMessage);
   }
-  const contentType = response.headers.get("content-type");
-  if (contentType && contentType.includes("application/json")) {
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
     return await response.json();
   }
   return { message: await response.text() };
 };
+
+
 // Hàm giải mã JWT để lấy payload (không kiểm tra chữ ký)
 const decodeJwt = (token) => {
   try {
@@ -40,48 +42,7 @@ const decodeJwt = (token) => {
   }
 };
 
-// Kiểm tra quyền Admin
-const checkAdminAccess = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  if (!user || user.role !== 'admin') {
-    throw new Error('Unauthorized: Admin access required');
-  }
-};
-// Lấy chi tiết sách từ Google Books API
-// export const getBookDetails = async (bookId) => {
-//   try {
-//     const response = await fetch(
-//       `https://www.googleapis.com/books/v1/volumes/${bookId}?key=${GOOGLE_BOOKS_API_KEY}`
-//     );
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! status: ${response.status}`);
-//     }
-//     const data = await response.json();
-//     return data;
-//   } catch (error) {
-//     throw new Error(`Failed to fetch book details: ${error.message}`);
-//   }
-// };
 
-// Mock data cho danh sách đánh giá (placeholder)
-const mockReviews = [
-  {
-    id: "1",
-    userId: "1",
-    bookId: "OL12345W",
-    rating: 5,
-    comment: "Amazing book! I loved every chapter.",
-    createdAt: "2025-05-01T10:00:00Z",
-  },
-  {
-    id: "2",
-    userId: "2",
-    bookId: "OL12345W",
-    rating: 4,
-    comment: "Really good, but the ending was a bit rushed.",
-    createdAt: "2025-05-02T12:00:00Z",
-  },
-];
 
 // Placeholder: Lấy danh sách đánh giá (mock data)
 export const getReviewsByBookId = async (bookId) => {
@@ -308,6 +269,7 @@ export const lockUser = async (userId, isLocked) => {
 // API đăng nhập
 export const loginUser = async (email, password) => {
   try {
+    console.log("Sending login request:", { email }); // Ghi log để debug
     const response = await fetch(`${EXCHANGE_API_URL}/api/Auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -316,23 +278,30 @@ export const loginUser = async (email, password) => {
 
     const data = await handleResponse(response);
 
-    if (!data.Token) {
-      throw new Error(data.ErrorMessage || "Authentication failed");
+    // Kiểm tra Token (hỗ trợ cả Token và token để tránh lỗi viết hoa)
+    const token = data.Token || data.token;
+    if (!token) {
+      console.error("No token found in response:", data);
+      throw new Error(data.ErrorMessage || "Authentication failed: No token received");
     }
 
     // Giải mã JWT để lấy email và role
-    const decodedToken = decodeJwt(data.Token);
+    const decodedToken = decodeJwt(token);
     if (!decodedToken) {
+      console.error("Failed to decode token:", token);
       throw new Error("Failed to decode authentication token");
     }
 
-    return {
-      Token: data.Token,
+    const userData = {
+      Token: token,
       email: decodedToken.email || email, // Lấy email từ token, fallback về email đầu vào
       role: decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || 'user', // Lấy role từ claim
     };
+
+    console.log("Login successful:", userData); // Ghi log để debug
+    return userData;
   } catch (error) {
-    console.error("Login failed:", error);
+    console.error("Login failed:", error.message, error.stack);
     throw new Error(error.message || "Failed to login");
   }
 };
@@ -692,50 +661,7 @@ let mockBooks = [
 ];
 
 // API quản lý Category Admin
-export const getAdminCategories = async () => {
-  try {
-    checkAdminAccess();
-    return { categories: mockCategories, total: mockCategories.length };
-  } catch (error) {
-    throw new Error(`Failed to fetch admin categories: ${error.message}`);
-  }
-};
 
-export const createAdminCategory = async (categoryData) => {
-  try {
-    checkAdminAccess();
-    const newCategory = {
-      id: String(mockCategories.length + 1),
-      ...categoryData,
-    };
-    mockCategories.push(newCategory);
-    return newCategory;
-  } catch (error) {
-    throw new Error(`Failed to create admin category: ${error.message}`);
-  }
-};
-
-export const updateAdminCategory = async (categoryId, categoryData) => {
-  try {
-    checkAdminAccess();
-    mockCategories = mockCategories.map((cat) =>
-      cat.id === categoryId ? { ...cat, ...categoryData } : cat
-    );
-    return mockCategories.find((cat) => cat.id === categoryId);
-  } catch (error) {
-    throw new Error(`Failed to update admin category: ${error.message}`);
-  }
-};
-
-export const deleteAdminCategory = async (categoryId) => {
-  try {
-    checkAdminAccess();
-    mockCategories = mockCategories.filter((cat) => cat.id !== categoryId);
-    return { success: true };
-  } catch (error) {
-    throw new Error(`Failed to delete admin category: ${error.message}`);
-  }
-};
 
 // API quản lý sách (Admin)
 export const getBooks = async () => {
@@ -841,3 +767,245 @@ const mockUsers = [
 //     throw new Error(error.message || "Failed to login");
 //   }
 // };
+
+
+// Tạo yêu cầu bán sách mới
+export const createDocument = async (documentData) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Documents`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(documentData),
+    });
+
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Create document failed:', error);
+    throw new Error(error.message || 'Failed to create document');
+  }
+};
+
+// Lấy danh sách sách trong kho của người dùng
+export const getMyInventory = async (page = 1, pageSize = 10) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Documents/mine?Page=${page}&PageSize=${pageSize}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await handleResponse(response);
+    // Ánh xạ dữ liệu để khớp với frontend
+    return {
+      items: data.items || [],
+      total: data.totalCount || 0,
+      page: data.page || 1,
+      pageSize: data.pageSize || 10,
+      totalPages: data.totalPages || 0,
+    };
+  } catch (error) {
+    console.error('Get my inventory failed:', error);
+    throw new Error(error.message || 'Failed to fetch inventory');
+  }
+};
+
+
+// Cập nhật tài liệu (dùng để hủy hoặc chỉnh sửa yêu cầu bán)
+export const updateDocument = async (documentId, updateData) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Documents/${documentId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updateData),
+    });
+
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Update document failed:', error);
+    throw new Error(error.message || 'Failed to update document');
+  }
+};
+
+// Xóa tài liệu
+export const deleteDocument = async (documentId) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Documents/${documentId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Delete document failed:', error);
+    throw new Error(error.message || 'Failed to delete document');
+  }
+};
+
+
+// Lấy danh sách tài liệu đang được liệt kê
+export const getListedDocuments = async () => {
+  try {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Documents/listed`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await handleResponse(response);
+    return data.documents || [];
+  } catch (error) {
+    throw new Error(error.message || 'Failed to fetch listed documents');
+  }
+};
+
+// Lấy danh sách danh mục
+export const getCategories = async () => {
+  try {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Categories`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    throw new Error(error.message || 'Failed to fetch categories');
+  }
+};
+
+
+//những thứ liên quan tới ADMIN
+const checkAdminAccess = () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (!user || user.role !== 'admin') {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+    throw new Error('Unauthorized: Admin access required');
+  }
+};
+
+
+// Lấy danh sách danh mục
+export const getAdminCategories = async (search = '') => {
+  try {
+    checkAdminAccess();
+    const response = await fetch(
+      `${EXCHANGE_API_URL}/api/admin/categories${search ? `?search=${encodeURIComponent(search)}` : ''}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+      }
+    );
+    const data = await handleResponse(response);
+    return {
+      categories: Array.isArray(data) ? data : data.categories || [],
+      total: data.total || (Array.isArray(data) ? data.length : 0),
+    };
+  } catch (error) {
+    if (error.message.includes('Unauthorized')) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    throw new Error(error.message || 'Failed to fetch admin categories');
+  }
+};
+
+export const createAdminCategory = async (categoryData) => {
+  try {
+    console.log('Creating category with data:', categoryData);
+    checkAdminAccess();
+    const token = localStorage.getItem('token');
+    console.log('Token:', token);
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/categories`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token || ''}`,
+      },
+      body: JSON.stringify({ categoryName: categoryData.name }),
+    });
+    console.log('Response status:', response.status);
+    const data = await handleResponse(response);
+    console.log('Response data:', data);
+    return data;
+  } catch (error) {
+    console.error('Create category error:', error.message);
+    throw new Error(error.message || 'Failed to create admin category');
+  }
+};
+
+export const updateAdminCategory = async (categoryId, categoryData) => {
+  try {
+    checkAdminAccess();
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/categories/${categoryId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+      },
+      body: JSON.stringify({ categoryId, categoryName: categoryData.name }),
+    });
+    return await handleResponse(response);
+  } catch (error) {
+    if (error.message.includes('Unauthorized')) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    throw new Error(error.message || 'Failed to update admin category');
+  }
+};
+
+export const deleteAdminCategory = async (categoryId) => {
+  try {
+    checkAdminAccess();
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/categories/${categoryId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+      },
+    });
+    return await handleResponse(response);
+  } catch (error) {
+    if (error.message.includes('Unauthorized')) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    throw new Error(error.message || 'Failed to delete admin category');
+  }
+};
+

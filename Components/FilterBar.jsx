@@ -1,42 +1,32 @@
 import React, { useState } from 'react';
 
-const FilterBar = ({ onFilterChange }) => {
-  const [selectedGenre, setSelectedGenre] = useState('All Genres');
+const FilterBar = ({ categories, onFilterChange }) => {
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [selectedPrice, setSelectedPrice] = useState('All Prices');
 
-  // Danh mục cứng cho người dùng thông thường, không liên quan đến Category Admin
-  const genres = [
-    'All Genres',
-    'Fiction',
-    'Sci-Fi',
-    'Romance',
-    'Fantasy',
-    'Adventure',
-    'Dystopian',
-    'Classic',
-  ];
-  const prices = ['All Prices', 'Under $10', '$10 - $20', '$20 - $30'];
+  const prices = ['All Prices', '1-2', '2-4', 'Above 4'];
 
-  const handleGenreChange = (e) => {
-    setSelectedGenre(e.target.value);
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
     onFilterChange(e.target.value, selectedPrice);
   };
 
   const handlePriceChange = (e) => {
     setSelectedPrice(e.target.value);
-    onFilterChange(selectedGenre, e.target.value);
+    onFilterChange(selectedCategory, e.target.value);
   };
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-center">
       <select
-        value={selectedGenre}
-        onChange={handleGenreChange}
+        value={selectedCategory}
+        onChange={handleCategoryChange}
         className="p-3 border rounded-lg w-full sm:w-48 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm hover:shadow-md transition-shadow"
       >
-        {genres.map((genre) => (
-          <option key={genre} value={genre}>
-            {genre}
+        <option value="All Categories">All Categories</option>
+        {categories.map((category) => (
+          <option key={category} value={category}>
+            {category}
           </option>
         ))}
       </select>
