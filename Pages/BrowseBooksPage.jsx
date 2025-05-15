@@ -1,4 +1,6 @@
+// File: BrowseBooksPage.jsx
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import BookCard from '../Components/BookCard';
 import FilterBar from '../Components/FilterBar';
 import SearchBar from '../Components/SearchBar';
@@ -19,7 +21,7 @@ const BrowseBooksPage = () => {
   const [isFiltering, setIsFiltering] = useState(false);
   const { addToCart } = useCart();
 
-  // Lấy danh mục từ backend
+  // Fetch categories from backend
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -32,22 +34,12 @@ const BrowseBooksPage = () => {
     fetchCategories();
   }, []);
 
-  // Lấy danh sách tài liệu từ backend
+  // Fetch books from api.js
   const fetchBooks = async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getListedDocuments();
-      const mappedBooks = data.map((item) => ({
-        documentId: item.documentId,
-        title: item.title || 'Unknown Title',
-        author: item.author || 'Unknown Author',
-        categoryName: item.categoryName || 'Unknown Category',
-        price: item.price !== null ? item.price : (Math.random() * 20 + 5).toFixed(2),
-        image: item.imageUrl || 'https://via.placeholder.com/150',
-        description: item.description || 'No description available',
-        publicationYear: item.publicationYear || 'Unknown Year',
-      }));
+      const mappedBooks = await getListedDocuments(1, 50); // Fetch up to 50 books
       setBooks(mappedBooks);
       setFilteredBooks(mappedBooks);
     } catch (err) {
@@ -106,11 +98,7 @@ const BrowseBooksPage = () => {
 
   const newBooks = useMemo(() => {
     return [...books]
-      .sort((a, b) => {
-        const yearA = parseInt(a.publicationYear) || 0;
-        const yearB = parseInt(b.publicationYear) || 0;
-        return yearB - yearA;
-      })
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .slice(0, 5);
   }, [books]);
 
@@ -129,14 +117,14 @@ const BrowseBooksPage = () => {
 
   const handleAddToCart = (book) => {
     addToCart(book);
-    toast.success(`${book.title} added to cart!`);
+    toast.success(`${book.title} has been added to cart!`);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white px-4 py-6">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold mb-8 text-blue-800 text-center">
-          Discover Your Next Favorite Book
+          Discover Your Favorite Books
         </h1>
 
         <div className="flex flex-col md:flex-row gap-4 mb-8 items-center">
@@ -177,13 +165,14 @@ const BrowseBooksPage = () => {
                 <div className="flex gap-6 overflow-x-auto pb-4">
                   {featuredBooks.map((book) => (
                     <div
-                      key={book.documentId}
+                      key={book.listingId}
                       className="flex-none w-64 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
                     >
                       <img
-                        src={book.image}
+                        src={book.imageUrl}
                         alt={book.title}
                         className="w-full h-48 object-cover rounded-t-lg"
+                        onError={(e) => (e.target.src = 'https://via.placeholder.com/150')}
                       />
                       <div className="p-4">
                         <h3 className="text-lg font-semibold text-blue-800 truncate">{book.title}</h3>
@@ -196,12 +185,12 @@ const BrowseBooksPage = () => {
                           >
                             Add to Cart
                           </button>
-                          <a
-                            href={`/book-details/${book.documentId}`}
+                          <Link
+                            to={`/books/${book.listingId}`}
                             className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition-colors text-center text-sm"
                           >
                             View Details
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -216,13 +205,14 @@ const BrowseBooksPage = () => {
                 <div className="flex gap-6 overflow-x-auto pb-4">
                   {newBooks.map((book) => (
                     <div
-                      key={book.documentId}
+                      key={book.listingId}
                       className="flex-none w-64 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
                     >
                       <img
-                        src={book.image}
+                        src={book.imageUrl}
                         alt={book.title}
                         className="w-full h-48 object-cover rounded-t-lg"
+                        onError={(e) => (e.target.src = 'https://via.placeholder.com/150')}
                       />
                       <div className="p-4">
                         <h3 className="text-lg font-semibold text-blue-800 truncate">{book.title}</h3>
@@ -235,12 +225,12 @@ const BrowseBooksPage = () => {
                           >
                             Add to Cart
                           </button>
-                          <a
-                            href={`/book-details/${book.documentId}`}
+                          <Link
+                            to={`/books/${book.listingId}`}
                             className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition-colors text-center text-sm"
                           >
                             View Details
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -265,10 +255,10 @@ const BrowseBooksPage = () => {
         >
           {filteredBooks.map((book) => (
             <BookCard
-              key={book.documentId}
+              key={book.listingId}
               book={{
                 ...book,
-                bookId: book.documentId,
+                bookId: book.listingId,
                 genre: book.categoryName,
               }}
               viewMode={viewMode}

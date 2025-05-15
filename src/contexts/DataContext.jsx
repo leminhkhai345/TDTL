@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { getUsers, getBooks, getOrders, getReviews, getAdminCategories } from '../API/api';
+import { getUsers, getOrders, getReviews, getAdminCategories } from '../API/api';
+import { toast } from 'react-toastify';
 
 export const DataContext = createContext();
 
@@ -19,39 +20,37 @@ export const DataProvider = ({ children }) => {
       setError(null);
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user || user.role !== 'admin') {
-        return; // Không gọi API nếu không phải admin
+        setError('Access denied: Admin role required');
+        toast.error('Access denied: Admin role required');
+        return;
       }
-      const [usersData, booksData, ordersData, reviewsData, categoriesData] = await Promise.all([
-        getUsers().catch(err => {
-          console.error('Failed to fetch users:', err.message);
+      const [usersData, ordersData, reviewsData, categoriesData] = await Promise.all([
+        getUsers().catch((err) => {
+          toast.error('Failed to fetch users: ' + err.message);
           return { users: [], total: 0 };
         }),
-        getBooks().catch(err => {
-          console.error('Failed to fetch books:', err.message);
-          return { books: [], total: 0 };
-        }),
-        getOrders().catch(err => {
-          console.error('Failed to fetch orders:', err.message);
+        getOrders().catch((err) => {
+          toast.error('Failed to fetch orders: ' + err.message);
           return { orders: [], total: 0 };
         }),
-        getReviews().catch(err => {
-          console.error('Failed to fetch reviews:', err.message);
+        getReviews().catch((err) => {
+          toast.error('Failed to fetch reviews: ' + err.message);
           return { reviews: [], total: 0 };
         }),
-        getAdminCategories().catch(err => {
-          console.error('Failed to fetch categories:', err.message);
+        getAdminCategories().catch((err) => {
+          toast.error('Failed to fetch categories: ' + err.message);
           return { categories: [], total: 0 };
         }),
       ]);
 
       setUsers(usersData.users || usersData);
-      setBooks(booksData.books || booksData);
       setOrders(ordersData.orders || ordersData);
       setReviews(reviewsData.reviews || reviewsData);
       setCategories(categoriesData.categories || categoriesData);
     } catch (err) {
-      setError(err.message || 'Failed to load data');
-      console.error(err.message || 'Failed to load data');
+      const errorMsg = err.message || 'Failed to load data';
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }

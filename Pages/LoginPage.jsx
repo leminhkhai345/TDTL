@@ -21,8 +21,7 @@ const LoginPage = () => {
     try {
       const result = await login(email, password);
       if (result.success) {
-        // Chuyển hướng dựa trên vai trò
-        const redirectTo = result.role === 'Admin' ? '/admin' : '/';
+        const redirectTo = result.role === 'admin' ? '/admin' : '/'; // Chuẩn hóa với viết thường
         navigate(redirectTo);
       } else {
         setError(result.message);
@@ -41,7 +40,6 @@ const LoginPage = () => {
     setPassword("");
   };
 
-  // Hiệu ứng animation cho form
   const formVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {

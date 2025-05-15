@@ -15,6 +15,8 @@ import {
   faTimes,
   faKey,
   faTachometerAlt,
+  faWarehouse,
+  faShoppingBag, // Thêm icon cho Orders
 } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = () => {
@@ -22,7 +24,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isSellDropdownOpen, setIsSellDropdownOpen] = useState(false); // Thêm state cho dropdown Sell
+  const [isSellDropdownOpen, setIsSellDropdownOpen] = useState(false);
+  const [isOrdersDropdownOpen, setIsOrdersDropdownOpen] = useState(false); // Thêm state cho Orders dropdown
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -44,6 +47,10 @@ const Navbar = () => {
 
   const toggleSellDropdown = () => {
     setIsSellDropdownOpen(!isSellDropdownOpen);
+  };
+
+  const toggleOrdersDropdown = () => {
+    setIsOrdersDropdownOpen(!isOrdersDropdownOpen); // Thêm hàm cho Orders dropdown
   };
 
   const handleChangePassword = async (e) => {
@@ -142,10 +149,44 @@ const Navbar = () => {
                         </div>
                       )}
                     </div>
+                    <Link to="/inventory" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
+                      <FontAwesomeIcon icon={faWarehouse} />
+                      <span>Inventory</span>
+                    </Link>
                     <Link to="/cart" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
                       <FontAwesomeIcon icon={faShoppingCart} />
                       <span>Cart</span>
                     </Link>
+                    {/* Dropdown cho Orders */}
+                    <div className="relative">
+                      <button
+                        onClick={toggleOrdersDropdown}
+                        className="flex items-center space-x-2 focus:outline-none"
+                      >
+                        <FontAwesomeIcon icon={faShoppingBag} />
+                        <span>Orders</span>
+                      </button>
+                      {isOrdersDropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg z-50">
+                          <Link
+                            to="/my-purchases"
+                            className="flex items-center space-x-2 px-4 py-2 hover:bg-blue-100 rounded-t-lg"
+                            onClick={() => setIsOrdersDropdownOpen(false)}
+                          >
+                            <FontAwesomeIcon icon={faShoppingBag} />
+                            <span>My Purchases</span>
+                          </Link>
+                          <Link
+                            to="/my-sales"
+                            className="flex items-center space-x-2 px-4 py-2 hover:bg-blue-100 rounded-b-lg"
+                            onClick={() => setIsOrdersDropdownOpen(false)}
+                          >
+                            <FontAwesomeIcon icon={faShoppingBag} />
+                            <span>My Sales</span>
+                          </Link>
+                        </div>
+                      )}
+                    </div>
                   </>
                 )}
               </>
@@ -249,9 +290,21 @@ const Navbar = () => {
                         <FontAwesomeIcon icon={faBook} />
                         <span>Sell History</span>
                       </Link>
+                      <Link to="/inventory" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
+                        <FontAwesomeIcon icon={faWarehouse} />
+                        <span>Inventory</span>
+                      </Link>
                       <Link to="/cart" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
                         <FontAwesomeIcon icon={faShoppingCart} />
                         <span>Cart</span>
+                      </Link>
+                      <Link to="/my-purchases" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
+                        <FontAwesomeIcon icon={faShoppingBag} />
+                        <span>My Purchases</span>
+                      </Link>
+                      <Link to="/my-sales" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
+                        <FontAwesomeIcon icon={faShoppingBag} />
+                        <span>My Sales</span>
                       </Link>
                     </>
                   )}

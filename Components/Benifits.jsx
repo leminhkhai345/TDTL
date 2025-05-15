@@ -6,28 +6,27 @@ import { motion } from 'framer-motion';
 const benefits = [
   {
     icon: faMoneyBillWave,
-    title: "Tiết kiệm chi phí",
-    description: "Mua sách với giá rẻ hơn và bán lại sách cũ để tiết kiệm.",
+    title: "Cost Savings",
+    description: "Buy books at lower prices and sell used books to save money.",
   },
   {
     icon: faLeaf,
-    title: "Bảo vệ môi trường",
-    description: "Tái sử dụng sách giúp giảm lượng rác thải và bảo vệ môi trường.",
+    title: "Eco-Friendly",
+    description: "Reusing books reduces waste and protects the environment.",
   },
   {
     icon: faHandshake,
-    title: "Trao đổi dễ dàng",
-    description: "Kết nối với những người có nhu cầu trao đổi sách nhanh chóng.",
+    title: "Easy Exchange",
+    description: "Connect with others to exchange books quickly and easily.",
   },
   {
     icon: faBookOpen,
-    title: "Kho sách phong phú",
-    description: "Tìm thấy đủ loại sách học tập, kỹ năng, tiểu thuyết,...",
+    title: "Diverse Collection",
+    description: "Find a wide variety of textbooks, novels, and more.",
   },
 ];
 
 const BenefitsSection = () => {
-  // Hiệu ứng animation cho các card
   const cardVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: (i) => ({
@@ -50,7 +49,7 @@ const BenefitsSection = () => {
           transition={{ duration: 0.8 }}
           className="text-4xl font-bold text-center text-blue-800 mb-12 drop-shadow-md"
         >
-          Lợi ích khi sử dụng BookStore
+          Benefits of Using BookStore
         </motion.h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {benefits.map((benefit, index) => (

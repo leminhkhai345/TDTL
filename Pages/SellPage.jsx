@@ -78,7 +78,7 @@ const SellPage = () => {
 
     try {
       await createDocument(documentData);
-      toast.success('Sell request submitted successfully!');
+      toast.success('Book added to inventory successfully! You can list it for sale from your inventory.');
       setFormData({
         Title: '',
         CategoryId: '',
@@ -88,6 +88,7 @@ const SellPage = () => {
         Description: '',
         ImageUrl: '',
       });
+      navigate('/inventory');
     } catch (err) {
       setError(err.message);
       toast.error(err.message);
@@ -111,11 +112,11 @@ const SellPage = () => {
         >
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-blue-800">Sell Your Book</h1>
-              <p className="text-gray-600 mt-2">List your book for sale in just a few steps.</p>
+              <h1 className="text-3xl font-bold text-blue-800">Add Book to Inventory</h1>
+              <p className="text-gray-600 mt-2">Add your book to your inventory. You can list it for sale later.</p>
             </div>
-            <Link to="/sell-history" className="text-blue-600 hover:underline font-semibold">
-              View Sell History
+            <Link to="/inventory" className="text-blue-600 hover:underline font-semibold">
+              View Inventory
             </Link>
           </div>
           {categoriesLoading ? (
@@ -242,7 +243,7 @@ const SellPage = () => {
               </div>
               <div className="flex justify-end gap-4">
                 <Link
-                  to="/sell-history"
+                  to="/inventory"
                   className="px-6 py-4 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600 transition-all duration-200"
                 >
                   Cancel
@@ -277,7 +278,7 @@ const SellPage = () => {
                       Submitting...
                     </span>
                   ) : (
-                    'Submit Sell Request'
+                    'Add to Inventory'
                   )}
                 </button>
               </div>

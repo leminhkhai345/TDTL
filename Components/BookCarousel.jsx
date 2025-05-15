@@ -20,20 +20,10 @@ const BookCarousel = () => {
         setLoading(true);
         setError(null);
 
-        const data = await getListedDocuments();
-        const mappedBooks = data.map((item) => ({
-          documentId: item.documentId,
-          title: item.title || 'Unknown Title',
-          author: item.author || 'Unknown Author',
-          price: item.price !== null ? item.price : (Math.random() * 20 + 5).toFixed(2),
-          image: item.imageUrl || 'https://via.placeholder.com/150',
-          categoryName: item.categoryName || 'Unknown Category',
-          description: item.description || 'No description available',
-        }));
-
+        const mappedBooks = await getListedDocuments(1, 20); // Lấy tối đa 20 sách
         setBooks(mappedBooks);
       } catch (err) {
-        setError(err.message || 'An error occurred while fetching books.');
+        setError(err.message || 'Đã xảy ra lỗi khi lấy danh sách sách.');
         toast.error(err.message);
       } finally {
         setLoading(false);
@@ -59,7 +49,7 @@ const BookCarousel = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-6">Loading...</div>;
+    return <div className="text-center py-6">Đang tải...</div>;
   }
 
   if (error) {
@@ -67,7 +57,7 @@ const BookCarousel = () => {
   }
 
   if (books.length === 0) {
-    return <div className="text-center text-gray-600 py-6">No books available.</div>;
+    return <div className="text-center text-gray-600 py-6">Không có sách nào để hiển thị.</div>;
   }
 
   return (
@@ -84,20 +74,20 @@ const BookCarousel = () => {
           >
             {displayedBooks.map((book) => (
               <Link
-                to={`/book-details/${book.documentId}`}
-                key={book.documentId}
+                to={`/books/${book.listingId}`}
+                key={book.listingId}
                 className="group relative bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
                 <div className="relative">
                   <img
-                    src={book.image}
+                    src={book.imageUrl}
                     alt={book.title}
                     className="w-full h-48 object-cover transition-opacity duration-300 group-hover:opacity-80"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <span className="text-white font-semibold bg-blue-600 px-4 py-2 rounded-lg">
-                      View Details
+                      Xem chi tiết
                     </span>
                   </div>
                 </div>
@@ -106,7 +96,7 @@ const BookCarousel = () => {
                   <p className="text-sm text-gray-600">{book.author}</p>
                   <p className="text-sm text-gray-600">{book.categoryName}</p>
                   <p className="text-lg font-bold text-blue-600 mt-2">
-                    {book.price !== null ? `$${parseFloat(book.price).toFixed(2)}` : 'Price not available'}
+                    {book.price !== null ? `$${parseFloat(book.price).toFixed(2)}` : 'Giá không có sẵn'}
                   </p>
                 </div>
               </Link>
