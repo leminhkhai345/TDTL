@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../src/contexts/AuthContext';
+import { useNotifications } from '../src/contexts/NotificationContext';
+import ChangePasswordModal from '../Pages/ChangePasswordModal';
+import NotificationsDropdown from '../Components/NotificationsDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome,
@@ -10,26 +13,25 @@ import {
   faUser,
   faSignOutAlt,
   faSignInAlt,
-  faUserShield,
+  faTachometerAlt,
+  faWarehouse,
+  faShoppingBag,
   faBars,
   faTimes,
   faKey,
-  faTachometerAlt,
-  faWarehouse,
-  faShoppingBag, // Thêm icon cho Orders
+  faBell,
 } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = () => {
   const { isLoggedIn, isAdmin, user, logout } = useAuth();
+  const { unreadCount } = useNotifications();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSellDropdownOpen, setIsSellDropdownOpen] = useState(false);
-  const [isOrdersDropdownOpen, setIsOrdersDropdownOpen] = useState(false); // Thêm state cho Orders dropdown
+  const [isOrdersDropdownOpen, setIsOrdersDropdownOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
 
   const handleLogout = () => {
     logout();
@@ -43,6 +45,7 @@ const Navbar = () => {
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+    setIsNotificationsOpen(false);
   };
 
   const toggleSellDropdown = () => {
@@ -50,36 +53,12 @@ const Navbar = () => {
   };
 
   const toggleOrdersDropdown = () => {
-    setIsOrdersDropdownOpen(!isOrdersDropdownOpen); // Thêm hàm cho Orders dropdown
+    setIsOrdersDropdownOpen(!isOrdersDropdownOpen);
   };
 
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-    setPasswordError('');
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError('Passwords do not match.');
-      return;
-    }
-
-    try {
-      const response = await fetch(`https://your-mockapi-id.mockapi.io/users/${user.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: newPassword }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to change password');
-      }
-
-      alert('Password changed successfully!');
-      setIsPasswordModalOpen(false);
-      setNewPassword('');
-      setConfirmPassword('');
-    } catch (err) {
-      setPasswordError(err.message || 'An error occurred while changing password.');
-    }
+  const toggleNotificationsDropdown = () => {
+    setIsNotificationsOpen(!isNotificationsOpen);
+    setIsDropdownOpen(false);
   };
 
   return (
@@ -119,7 +98,6 @@ const Navbar = () => {
                       <FontAwesomeIcon icon={faExchangeAlt} />
                       <span>Exchange</span>
                     </Link>
-                    {/* Dropdown cho Sell */}
                     <div className="relative">
                       <button
                         onClick={toggleSellDropdown}
@@ -157,7 +135,6 @@ const Navbar = () => {
                       <FontAwesomeIcon icon={faShoppingCart} />
                       <span>Cart</span>
                     </Link>
-                    {/* Dropdown cho Orders */}
                     <div className="relative">
                       <button
                         onClick={toggleOrdersDropdown}
@@ -201,12 +178,29 @@ const Navbar = () => {
                   <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-lg font-semibold">
                     {user?.email?.charAt(0).toUpperCase() || 'U'}
                   </div>
+                  {unreadCount > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                      {unreadCount}
+                    </span>
+                  )}
                 </button>
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg z-50">
+                    <button
+                      onClick={toggleNotificationsDropdown}
+                      className="flex items-center space-x-2 px-4 py-2 hover:bg-blue-100 rounded-t-lg w-full text-left"
+                    >
+                      <FontAwesomeIcon icon={faBell} />
+                      <span>Notifications</span>
+                      {unreadCount > 0 && (
+                        <span className="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                          {unreadCount}
+                        </span>
+                      )}
+                    </button>
                     <Link
                       to="/profile"
-                      className="flex items-center space-x-2 px-4 py-2 hover:bg-blue-100 rounded-t-lg"
+                      className="flex items-center space-x-2 px-4 py-2 hover:bg-blue-100"
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       <FontAwesomeIcon icon={faUser} />
@@ -230,6 +224,9 @@ const Navbar = () => {
                       <span>Logout</span>
                     </button>
                   </div>
+                )}
+                {isNotificationsOpen && (
+                  <NotificationsDropdown onClose={() => setIsNotificationsOpen(false)} />
                 )}
               </div>
             ) : (
@@ -262,6 +259,23 @@ const Navbar = () => {
                 <FontAwesomeIcon icon={faHome} />
                 <span>Home</span>
               </Link>
+              {isLoggedIn && (
+                <button
+                  onClick={() => {
+                    toggleNotificationsDropdown();
+                    toggleMenu();
+                  }}
+                  className="flex items-center space-x-2 hover:text-blue-200 transition-colors text-left"
+                >
+                  <FontAwesomeIcon icon={faBell} />
+                  <span>Notifications</span>
+                  {unreadCount > 0 && (
+                    <span className="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+              )}
 
               {isLoggedIn && isAdmin() ? (
                 <>
@@ -356,54 +370,10 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* Modal đổi mật khẩu */}
-      {isPasswordModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
-            <h2 className="text-xl font-bold mb-4 text-blue-800">Change Password</h2>
-            {passwordError && <p className="text-red-500 text-center mb-4">{passwordError}</p>}
-            <form onSubmit={handleChangePassword} className="space-y-4">
-              <div>
-                <label className="block font-medium mb-1">New Password</label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter new password"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Confirm Password</label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Confirm new password"
-                  required
-                />
-              </div>
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsPasswordModalOpen(false)}
-                  className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+      />
     </nav>
   );
 };

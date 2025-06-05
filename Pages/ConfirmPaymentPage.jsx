@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useNotifications } from '../src/contexts/NotificationContext';
 import { toast } from 'react-toastify';
-import { confirmPayment } from '../src/API/api';
+import { confirmPayment, createNotificationByTemplate } from '../src/API/api';
 
 const ConfirmPaymentPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { fetchNotifications, fetchUnreadCount } = useNotifications();
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const rowVersion = location.state?.rowVersion || ''; // Lấy RowVersion từ navigate state
+  const rowVersion = location.state?.rowVersion || '';
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -35,21 +37,26 @@ const ConfirmPaymentPage = () => {
     try {
       const proofData = {
         file,
-        rowVersion: btoa(String.fromCharCode(...rowVersion)), // Chuyển RowVersion sang Base64
+        rowVersion: btoa(String.fromCharCode(...rowVersion)),
       };
-      const response = await confirmPayment(orderId, proofData);
-      toast.success('Bằng chứng thanh toán đã được gửi!');
+      await confirmPayment(orderId, proofData);
+      await createNotificationByTemplate('PaymentConfirmed', parseInt(orderId));
+      toast.success('Bằng chứng thanh toán đã được gửi và thông báo đã được tạo!');
+      fetchNotifications();
+      fetchUnreadCount();
       navigate(`/orders/${orderId}`);
     } catch (error) {
       toast.error(error.message || 'Không thể gửi bằng chứng thanh toán');
       if (error.message.includes('Unauthorized')) {
         navigate('/login');
       }
+      console.error('Error confirming payment:', error);
     } finally {
       setLoading(false);
     }
   };
-
+    console.log('Confirm payment response:', response);
+    console.log('Notification created with template:', 'PaymentConfirmed');
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold mb-6">Xác nhận thanh toán cho đơn hàng #{orderId}</h1>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../src/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { getUserProfile, updateUserProfile, getMyListings } from "../src/API/api";
 
 const ProfilePage = () => {
   const { user, setUser } = useAuth();
@@ -9,8 +10,13 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("info");
   const [profile, setProfile] = useState({
     fullName: "",
-    phoneNumber: "",
+    phone: "",
     address: "",
+    birth: "",
+    bankAccountNumber: "",
+    bankAccountName: "",
+    bankName: "",
+    bankBranch: "",
   });
   const [sellItems, setSellItems] = useState([]);
   const [errors, setErrors] = useState({});
@@ -26,23 +32,22 @@ const ProfilePage = () => {
 
     const fetchProfileData = async () => {
       try {
-        // Lấy thông tin người dùng
-        const userResponse = await fetch(`https://680d2126c47cb8074d8fa188.mockapi.io/users/${user.id}`);
-        if (!userResponse.ok) throw new Error("Failed to fetch user profile");
-        const userData = await userResponse.json();
+        // Lấy thông tin người dùng từ API thực tế
+        const userData = await getUserProfile();
         setProfile({
           fullName: userData.fullName || "",
-          phoneNumber: userData.phoneNumber || "",
+          phone: userData.phone || "",
           address: userData.address || "",
+          birth: userData.birth ? new Date(userData.birth).toISOString().split("T")[0] : "",
+          bankAccountNumber: userData.bankAccountNumber || "",
+          bankAccountName: userData.bankAccountName || "",
+          bankName: userData.bankName || "",
+          bankBranch: userData.bankBranch || "",
         });
 
-        // Lấy bán sách
-        const sellResponse = await fetch(
-          `https://680d2126c47cb8074d8fa188.mockapi.io/sell?userId=${user.id}`
-        );
-        if (!sellResponse.ok) throw new Error("Failed to fetch sell items");
-        const sellData = await sellResponse.json();
-        setSellItems(sellData);
+        // Lấy danh sách sách đã đăng bán từ API thực tế
+        const listingsData = await getMyListings(1, 10);
+        setSellItems(listingsData.items);
 
         setLoading(false);
       } catch (err) {
@@ -58,8 +63,27 @@ const ProfilePage = () => {
   const validateForm = () => {
     const newErrors = {};
     if (!profile.fullName) newErrors.fullName = "Full name is required";
-    if (profile.phoneNumber && !/^\d{10}$/.test(profile.phoneNumber)) {
-      newErrors.phoneNumber = "Phone number must be 10 digits";
+    if (profile.fullName.length > 255) newErrors.fullName = "Full name must be less than 255 characters";
+    if (profile.phone && !/^\d{10,20}$/.test(profile.phone)) {
+      newErrors.phone = "Phone number must be 10-20 digits";
+    }
+    if (profile.address && profile.address.length > 500) {
+      newErrors.address = "Address must be less than 500 characters";
+    }
+    if (profile.birth && new Date(profile.birth) > new Date()) {
+      newErrors.birth = "Birth date must be today or earlier";
+    }
+    if (profile.bankAccountNumber && profile.bankAccountNumber.length > 50) {
+      newErrors.bankAccountNumber = "Bank account number must be less than 50 characters";
+    }
+    if (profile.bankAccountName && profile.bankAccountName.length > 100) {
+      newErrors.bankAccountName = "Bank account name must be less than 100 characters";
+    }
+    if (profile.bankName && profile.bankName.length > 100) {
+      newErrors.bankName = "Bank name must be less than 100 characters";
+    }
+    if (profile.bankBranch && profile.bankBranch.length > 100) {
+      newErrors.bankBranch = "Bank branch must be less than 100 characters";
     }
     return newErrors;
   };
@@ -73,34 +97,35 @@ const ProfilePage = () => {
     }
 
     try {
-      const response = await fetch(`https://680d2126c47cb8074d8fa188.mockapi.io/users/${user.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...profile, email: user.email }),
+      const updatedProfile = await updateUserProfile({
+        fullName: profile.fullName,
+        phone: profile.phone || null,
+        address: profile.address || null,
+        birth: profile.birth || null,
+        bankAccountNumber: profile.bankAccountNumber || null,
+        bankAccountName: profile.bankAccountName || null,
+        bankName: profile.bankName || null,
+        bankBranch: profile.bankBranch || null,
       });
-      if (!response.ok) throw new Error("Failed to update profile");
-      const updatedUser = await response.json();
-
-      // Cập nhật AuthContext
-      setUser(updatedUser);
+      setUser({ ...user, ...updatedProfile });
       toast.success("Profile updated successfully!");
     } catch (err) {
       toast.error(err.message);
     }
   };
 
-  const handleCancelSell = async (sellId) => {
+  const handleCancelSell = async (listingId) => {
     try {
-      const response = await fetch(`https://680d2126c47cb8074d8fa188.mockapi.io/sell/${sellId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "Cancelled" }),
-      });
-      if (!response.ok) throw new Error("Failed to cancel sell item");
-      setSellItems((prev) =>
-        prev.map((item) => (item.id === sellId ? { ...item, status: "Cancelled" } : item))
-      );
-      toast.success("Sell item cancelled successfully!");
+      // Placeholder: Cần endpoint thật từ backend để hủy listing
+      toast.warn("Cancel listing not implemented yet. Please provide backend API endpoint.");
+      // Ví dụ nếu có API:
+      // await cancelListing(listingId);
+      // setSellItems((prev) =>
+      //   prev.map((item) =>
+      //     item.listingId === listingId ? { ...item, statusName: "Cancelled" } : item
+      //   )
+      // );
+      // toast.success("Sell item cancelled successfully!");
     } catch (err) {
       toast.error(err.message);
     }
@@ -140,7 +165,7 @@ const ProfilePage = () => {
         <div>
           <h2 className="text-xl font-semibold">{profile.fullName || user.email}</h2>
           <p className="text-gray-600">{user.email}</p>
-          <p className="text-gray-600">{profile.phoneNumber || "No phone number"}</p>
+          <p className="text-gray-600">{profile.phone || "No phone number"}</p>
           <p className="text-gray-600">{profile.address || "No address"}</p>
         </div>
       </div>
@@ -170,7 +195,7 @@ const ProfilePage = () => {
         {activeTab === "info" && (
           <div>
             <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
-            <form onSubmit={handleUpdateProfile} className="space-y-4 max-w-md">
+            <form onSubmit={handleUpdateProfile} className="space-y-4 max-w-lg">
               <div>
                 <label className="block font-medium mb-1">Full Name</label>
                 <input
@@ -185,11 +210,11 @@ const ProfilePage = () => {
                 <label className="block font-medium mb-1">Phone Number</label>
                 <input
                   type="text"
-                  value={profile.phoneNumber}
-                  onChange={(e) => setProfile({ ...profile, phoneNumber: e.target.value })}
+                  value={profile.phone}
+                  onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                   className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                {errors.phoneNumber && <p className="text-red-600 text-sm">{errors.phoneNumber}</p>}
+                {errors.phone && <p className="text-red-600 text-sm">{errors.phone}</p>}
               </div>
               <div>
                 <label className="block font-medium mb-1">Address</label>
@@ -199,6 +224,57 @@ const ProfilePage = () => {
                   onChange={(e) => setProfile({ ...profile, address: e.target.value })}
                   className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                {errors.address && <p className="text-red-600 text-sm">{errors.address}</p>}
+              </div>
+              <div>
+                <label className="block font-medium mb-1">Birth Date</label>
+                <input
+                  type="date"
+                  value={profile.birth}
+                  onChange={(e) => setProfile({ ...profile, birth: e.target.value })}
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.birth && <p className="text-red-600 text-sm">{errors.birth}</p>}
+              </div>
+              <div>
+                <label className="block font-medium mb-1">Bank Account Number</label>
+                <input
+                  type="text"
+                  value={profile.bankAccountNumber}
+                  onChange={(e) => setProfile({ ...profile, bankAccountNumber: e.target.value })}
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.bankAccountNumber && <p className="text-red-600 text-sm">{errors.bankAccountNumber}</p>}
+              </div>
+              <div>
+                <label className="block font-medium mb-1">Bank Account Name</label>
+                <input
+                  type="text"
+                  value={profile.bankAccountName}
+                  onChange={(e) => setProfile({ ...profile, bankAccountName: e.target.value })}
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.bankAccountName && <p className="text-red-600 text-sm">{errors.bankAccountName}</p>}
+              </div>
+              <div>
+                <label className="block font-medium mb-1">Bank Name</label>
+                <input
+                  type="text"
+                  value={profile.bankName}
+                  onChange={(e) => setProfile({ ...profile, bankName: e.target.value })}
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.bankName && <p className="text-red-600 text-sm">{errors.bankName}</p>}
+              </div>
+              <div>
+                <label className="block font-medium mb-1">Bank Branch</label>
+                <input
+                  type="text"
+                  value={profile.bankBranch}
+                  onChange={(e) => setProfile({ ...profile, bankBranch: e.target.value })}
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.bankBranch && <p className="text-red-600 text-sm">{errors.bankBranch}</p>}
               </div>
               <button
                 type="submit"
@@ -222,8 +298,8 @@ const ProfilePage = () => {
                     <tr>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Book Title</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Author</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Condition</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Price</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Category</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Status</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Created At</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Actions</th>
@@ -231,31 +307,31 @@ const ProfilePage = () => {
                   </thead>
                   <tbody>
                     {sellItems.map((item) => (
-                      <tr key={item.id} className="border-b">
+                      <tr key={item.listingId} className="border-b">
                         <td className="px-6 py-4 text-sm text-gray-900">{item.title}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{item.author}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">{item.condition}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">${item.price.toFixed(2)}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900">${item.price?.toFixed(2) || "N/A"}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{item.categoryName}</td>
                         <td className="px-6 py-4 text-sm">
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                              item.status === "Listed"
+                              item.statusName === "Listed"
                                 ? "bg-blue-100 text-blue-800"
-                                : item.status === "Sold"
+                                : item.statusName === "Sold"
                                 ? "bg-green-100 text-green-800"
                                 : "bg-red-100 text-red-800"
                             }`}
                           >
-                            {item.status}
+                            {item.statusName}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
                           {new Date(item.createdAt).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 text-sm">
-                          {item.status === "Listed" && (
+                          {item.statusName === "Listed" && (
                             <button
-                              onClick={() => handleCancelSell(item.id)}
+                              onClick={() => handleCancelSell(item.listingId)}
                               className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                             >
                               Cancel

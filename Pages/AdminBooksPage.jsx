@@ -1,3 +1,4 @@
+// AdminBooksPage.jsx
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../src/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -108,7 +109,7 @@ const AdminBooksPage = () => {
         (listing.ownerName && listing.ownerName.toLowerCase().includes(search.toLowerCase()));
       const matchesCategory =
         categoryFilter === 'all' ||
-        listing.categoryName.toLowerCase() === categoryFilter.toLowerCase();
+        (listing.categoryName && listing.categoryName.toLowerCase() === categoryFilter.toLowerCase()); // Thêm kiểm tra listing.categoryName
       const price = Number(listing.price) || 0;
       const min = minPrice ? Number(minPrice) : -Infinity;
       const max = maxPrice ? Number(maxPrice) : Infinity;
@@ -328,12 +329,15 @@ const AdminBooksPage = () => {
               {paginatedListings.map((listing) => (
                 <div key={listing.listingId} className="border-b p-4">
                   <div className="flex items-center gap-2">
-                    {listing.imageUrl && (
+                    {listing.imageUrl ? (
                       <img
                         src={listing.imageUrl}
                         alt={listing.title || 'Sách'}
                         className="w-10 h-10 object-cover rounded"
+                        onError={(e) => (e.target.src = 'https://via.placeholder.com/150')}
                       />
+                    ) : (
+                      <span className="text-gray-500">Không có hình ảnh</span>
                     )}
                     <p>
                       <strong>Tiêu đề:</strong>{' '}
@@ -345,9 +349,9 @@ const AdminBooksPage = () => {
                       </button>
                     </p>
                   </div>
-                  <p><strong>Tác giả:</strong> {listing.author}</p>
+                  <p><strong>Tác giả:</strong> {listing.author || 'Không có thông tin'}</p>
                   <p><strong>Giá:</strong> {listing.price ? `$${Number(listing.price).toFixed(2)}` : 'Không có'}</p>
-                  <p><strong>Danh mục:</strong> {listing.categoryName}</p>
+                  <p><strong>Danh mục:</strong> {listing.categoryName || 'Không có thông tin'}</p>
                   <p><strong>Người đăng:</strong> {listing.ownerName}</p>
                   <p><strong>Loại:</strong> {listing.listingType === 0 ? 'Bán' : 'Trao đổi'}</p>
                   <p><strong>Trạng thái:</strong> {listing.statusName}</p>
@@ -398,9 +402,10 @@ const AdminBooksPage = () => {
                             src={listing.imageUrl}
                             alt={listing.title}
                             className="w-10 h-10 object-cover rounded"
+                            onError={(e) => (e.target.src = 'https://via.placeholder.com/150')}
                           />
                         ) : (
-                          <span>Không có hình</span>
+                          <span className="text-gray-500">Không có hình ảnh</span>
                         )}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900">
@@ -411,11 +416,11 @@ const AdminBooksPage = () => {
                           {listing.title}
                         </button>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{listing.author}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{listing.author || 'Không có thông tin'}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">
                         {listing.price ? `$${Number(listing.price).toFixed(2)}` : 'Không có'}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{listing.categoryName}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{listing.categoryName || 'Không có thông tin'}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{listing.ownerName}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{listing.listingType === 0 ? 'Bán' : 'Trao đổi'}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">
@@ -486,15 +491,16 @@ const AdminBooksPage = () => {
                       src={selectedListing.imageUrl}
                       alt={selectedListing.title}
                       className="w-full h-48 object-cover rounded-lg mb-4"
+                      onError={(e) => (e.target.src = 'https://via.placeholder.com/150')}
                     />
                   ) : (
                     <p className="text-gray-600 mb-4">Không có hình ảnh</p>
                   )}
                   <p><strong>ID:</strong> {selectedListing.listingId}</p>
                   <p><strong>Tiêu đề:</strong> {selectedListing.title}</p>
-                  <p><strong>Tác giả:</strong> {selectedListing.author}</p>
+                  <p><strong>Tác giả:</strong> {selectedListing.author || 'Không có thông tin'}</p>
                   <p><strong>Giá:</strong> {selectedListing.price ? `$${Number(selectedListing.price).toFixed(2)}` : 'Không có'}</p>
-                  <p><strong>Danh mục:</strong> {selectedListing.categoryName}</p>
+                  <p><strong>Danh mục:</strong> {selectedListing.categoryName || 'Không có thông tin'}</p>
                   <p><strong>Mô tả:</strong> {selectedListing.description || 'Không có'}</p>
                   <p><strong>Trạng thái:</strong> {selectedListing.statusName}</p>
                   <p><strong>Người đăng:</strong> {selectedListing.ownerName}</p>

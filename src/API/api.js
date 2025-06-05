@@ -100,7 +100,7 @@ export const createReview = async (bookId, reviewData) => {
 export const getReviews = async () => {
   try {
     checkAdminAccess();
-    const response = await fetch(`${API_URL}/admin/reviews`, {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/reviews`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
@@ -119,7 +119,7 @@ export const getReviews = async () => {
 export const deleteReview = async (reviewId) => {
   try {
     checkAdminAccess();
-    const response = await fetch(`${API_URL}/admin/reviews/${reviewId}`, {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/reviews/${reviewId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export const deleteReview = async (reviewId) => {
 export const getOrders = async () => {
   try {
     checkAdminAccess();
-    const response = await fetch(`${API_URL}/admin/orders`, {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/orders`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
@@ -154,7 +154,7 @@ export const getOrders = async () => {
 export const getOrderById = async (orderId) => {
   try {
     checkAdminAccess();
-    const response = await fetch(`${API_URL}/admin/orders/${orderId}`, {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/orders/${orderId}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
@@ -169,7 +169,7 @@ export const getOrderById = async (orderId) => {
 export const updateOrderStatus = async (orderId, status) => {
   try {
     checkAdminAccess();
-    const response = await fetch(`${API_URL}/admin/orders/${orderId}/status`, {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/orders/${orderId}/status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -186,7 +186,7 @@ export const updateOrderStatus = async (orderId, status) => {
 export const deleteOrder = async (orderId) => {
   try {
     checkAdminAccess();
-    const response = await fetch(`${API_URL}/admin/orders/${orderId}`, {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/orders/${orderId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -204,7 +204,7 @@ export const deleteOrder = async (orderId) => {
 export const getBookById = async (bookId) => {
   try {
     checkAdminAccess();
-    const response = await fetch(`${API_URL}/admin/books/${bookId}`, {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/books/${bookId}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
@@ -220,40 +220,11 @@ export const getBookById = async (bookId) => {
 
 
 
-//API quản lý user cho admin
-export const getUsers = async (page = 1, limit = 10, search = '') => {
-  const query = `?page=${page}&limit=${limit}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
-  const response = await fetch(`${API_URL}/admin/users${query}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-    },
-  });
-  const data = await handleResponse(response);
-  // Chuẩn hóa dữ liệu cho cả API local và mock API
-  return {
-    users: data.users || data, // API local trả về { users, total }, mock API trả về mảng
-    total: data.total || data.length, // Mock API không có total, dùng length
-  };
-};
 
-export const getUserById = async (userId) => {
-  try {
-    checkAdminAccess();
-    const response = await fetch(`${API_URL}/admin/users/${userId}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-      },
-    });
-    return handleResponse(response);
-  } catch (error) {
-    throw new Error(`Failed to fetch user details: ${error.message}`);
-  }
-};
+
 
 export const lockUser = async (userId, isLocked) => {
-  const response = await fetch(`${API_URL}/admin/users/${userId}/lock`, {
+  const response = await fetch(`${EXCHANGE_API_URL}/admin/users/${userId}/lock`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -464,20 +435,7 @@ export const searchBooks = async (searchQuery) => {
   };
 };
 
-// User APIs
-export const getUserProfile = async (userId) => {
-  const response = await fetch(`${MOCK_API_URL}/users/${userId}`);
-  return handleResponse(response);
-};
 
-export const updateUserProfile = async (userId, profileData) => {
-  const response = await fetch(`${MOCK_API_URL}/users/${userId}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(profileData),
-  });
-  return handleResponse(response);
-};
 
 // Order APIs
 
@@ -624,7 +582,7 @@ export const createDocument = async (documentData) => {
 };
 
 // Lấy danh sách sách trong kho của người dùng
-export const getMyInventory123 = async (page = 1, pageSize = 10) => {
+export const getMyInventory = async (page = 1, pageSize = 10) => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -639,9 +597,24 @@ export const getMyInventory123 = async (page = 1, pageSize = 10) => {
     });
 
     const data = await handleResponse(response);
-    // Ánh xạ dữ liệu để khớp với frontend
+    console.log('Raw API response for getMyInventory:', data); // Thêm log
+
     return {
-      items: data.items || [],
+      items: (data.items || []).map((item) => ({
+        documentId: item.documentId,
+        title: item.title || 'Unknown Title',
+        author: item.author || 'Unknown Author',
+        categoryName: item.categoryName || 'Unknown Category',
+        categoryId: item.categoryId || 0,
+        price: item.price !== null ? item.price : null,
+        imageUrl: item.imageUrl || 'https://via.placeholder.com/150',
+        description: item.description || 'No description available',
+        statusName: item.statusName || 'Unknown',
+        condition: item.condition || 'Good',
+        isbn: item.isbn || null,
+        edition: item.edition || null,
+        publicationYear: item.publicationYear || null,
+      })),
       total: data.totalCount || 0,
       page: data.page || 1,
       pageSize: data.pageSize || 10,
@@ -652,13 +625,6 @@ export const getMyInventory123 = async (page = 1, pageSize = 10) => {
     throw new Error(error.message || 'Failed to fetch inventory');
   }
 };
-
-
-
-
-
-
-
 
 // Lấy danh sách danh mục
 export const getCategories = async () => {
@@ -687,38 +653,12 @@ const checkAdminAccess = () => {
 };
 
 
-// Lấy danh sách danh mục
-export const getAdminCategories = async (search = '') => {
-  try {
-    checkAdminAccess();
-    const response = await fetch(
-      `${EXCHANGE_API_URL}/api/admin/categories${search ? `?search=${encodeURIComponent(search)}` : ''}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-        },
-      }
-    );
-    const data = await handleResponse(response);
-    return {
-      categories: Array.isArray(data) ? data : data.categories || [],
-      total: data.total || (Array.isArray(data) ? data.length : 0),
-    };
-  } catch (error) {
-    if (error.message.includes('Unauthorized')) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
-    throw new Error(error.message || 'Failed to fetch admin categories');
-  }
-};
+
 
 export const createAdminCategory = async (categoryData) => {
   try {
-    if (!categoryData?.name || typeof categoryData.name !== 'string' || categoryData.name.trim().length < 3) {
-      throw new Error('Category name must be a string with at least 3 characters');
+    if (!categoryData?.categoryName || typeof categoryData.categoryName !== 'string' || categoryData.categoryName.trim().length < 3) {
+      throw new Error('Tên danh mục phải là chuỗi có ít nhất 3 ký tự');
     }
     checkAdminAccess();
     const token = localStorage.getItem('token');
@@ -729,16 +669,16 @@ export const createAdminCategory = async (categoryData) => {
         Authorization: `Bearer ${token || ''}`,
       },
       body: JSON.stringify({ 
-        categoryName: categoryData.name.trim(),
+        categoryName: categoryData.categoryName.trim(), // Đổi từ name sang categoryName
         description: categoryData.description || '',
-        status: 'active' // Mặc định là active khi tạo mới
+        status: 'active'
       }),
     });
     return handleResponse(response);
   } catch (error) {
-    throw new Error(error.message || 'Failed to create admin category');
+    throw new Error(error.message || 'Không thể tạo danh mục admin');
   }
-};;
+};
 
 export const updateAdminCategory = async (categoryId, categoryData) => {
   try {
@@ -751,7 +691,7 @@ export const updateAdminCategory = async (categoryId, categoryData) => {
       },
       body: JSON.stringify({ 
         categoryId, 
-        categoryName: categoryData.name.trim(),
+        categoryName: categoryData.categoryName.trim(), // Change from categoryData.name to categoryData.categoryName
         description: categoryData.description || '',
         status: categoryData.status || 'active'
       }),
@@ -792,19 +732,25 @@ export const getListedDocuments = async (pageNumber = 1, pageSize = 50) => {
       },
     });
     const data = await handleResponse(response);
-    const items = data.items.map((item) => ({
-      listingId: item.listingId,
-      documentId: item.documentId,
-      title: item.documentTitle || 'Unknown Title',
-      author: item.author || 'Unknown Author',
-      categoryName: item.categoryName || 'Unknown Category',
-      price: item.price !== null ? item.price : (Math.random() * 20 + 5).toFixed(2),
-      imageUrl: item.imageUrl || 'https://via.placeholder.com/150', // Giữ giá trị mặc định
-      description: item.description || 'No description available',
-      createdAt: item.createdAt || new Date().toISOString(),
-    }));
+    console.log('Raw API response for getListedDocuments:', data);
+
+    const items = data.items.map((item) => {
+      console.log('Processing item:', item);
+      return {
+        listingId: item.listingId,
+        documentId: item.documentId,
+        title: item.documentTitle || 'Unknown Title',
+        author: item.document?.author || item.author || null,
+        categoryName: item.document?.categoryName || item.categoryName || null,
+        price: item.price !== null ? item.price : null,
+        imageUrl: item.document?.imageUrl || item.imageUrl || null,
+        description: item.description || 'No description available',
+        createdAt: item.createdAt || new Date().toISOString(),
+      };
+    });
     return items;
   } catch (error) {
+    console.error('Lấy danh sách sách thất bại:', error);
     throw new Error(error.message || 'Failed to fetch listed documents');
   }
 };
@@ -829,13 +775,15 @@ export const getListingById = async (listingId) => {
     });
 
     const data = await handleResponse(response);
+    console.log('Raw API response for getListingById:', data);
+
     return {
       listingId: data.listingId,
       documentId: data.documentId,
       title: data.documentTitle || 'Không rõ tiêu đề',
       ownerName: data.ownerName || 'Người dùng không xác định',
       ownerId: data.ownerId || 0,
-      listingType: data.listingType || 0, // 0 = Sell, 1 = Exchange
+      listingType: data.listingType || 0,
       price: data.price !== null ? data.price : null,
       description: data.description || 'Không có mô tả',
       listingStatusId: data.listingStatusId || 0,
@@ -844,9 +792,9 @@ export const getListingById = async (listingId) => {
       desiredDocumentIds: data.desiredDocumentIds || [],
       acceptedPaymentMethods: data.acceptedPaymentMethods || [],
       rowVersion: data.rowVersion || null,
-      imageUrl: data.imageUrl || 'https://via.placeholder.com/150',
-      categoryName: data.categoryName || 'Không rõ danh mục',
-      author: data.author || 'Không rõ tác giả',
+      imageUrl: data.document?.imageUrl || data.imageUrl || null,
+      categoryName: data.document?.categoryName || data.categoryName || null,
+      author: data.document?.author || data.author || null,
     };
   } catch (error) {
     console.error('Lấy chi tiết listing thất bại:', error);
@@ -897,48 +845,7 @@ export const adminGetListingById = async (listingId) => {
     throw new Error(error.message || 'Không thể lấy chi tiết listing admin');
   }
 };
-// Lấy danh sách sách trong kho cá nhân từ /api/Documents/mine
-export const getMyInventory = async (page = 1, pageSize = 10) => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('No authentication token found');
-    }
 
-    const response = await fetch(`${EXCHANGE_API_URL}/api/Documents/mine?Page=${page}&PageSize=${pageSize}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await handleResponse(response);
-    return {
-      items: (data.items || []).map((item) => ({
-        documentId: item.documentId,
-        title: item.title || 'Unknown Title',
-        author: item.author || 'Unknown Author',
-        categoryName: item.categoryName || 'Unknown Category',
-        categoryId: item.categoryId || 0,
-        price: item.price !== null ? item.price : null,
-        imageUrl: item.imageUrl || 'https://via.placeholder.com/150',
-        description: item.description || 'No description available',
-        statusName: item.statusName || 'Unknown',
-        condition: item.condition || 'Good',
-        isbn: item.isbn || null,
-        edition: item.edition || null,
-        publicationYear: item.publicationYear || null,
-      })),
-      total: data.totalCount || 0,
-      page: data.page || 1,
-      pageSize: data.pageSize || 10,
-      totalPages: data.totalPages || 0,
-    };
-  } catch (error) {
-    console.error('Get my inventory failed:', error); // Log chi tiết lỗi
-    throw new Error(error.message || 'Failed to fetch inventory');
-  }
-};
 
 // Xóa tài liệu từ /api/Documents/{id}
 export const deleteDocument = async (documentId) => {
@@ -1150,27 +1057,32 @@ export const getAdminListings = async (params = {}) => {
     });
 
     const data = await handleResponse(response);
+    console.log('Raw API response for getAdminListings:', data);
+
     return {
-      items: (data.items || []).map((item) => ({
-        listingId: item.listingId,
-        documentId: item.documentId,
-        title: item.documentTitle || 'Không rõ tiêu đề',
-        author: item.author || 'Không rõ tác giả',
-        categoryName: item.categoryName || 'Không rõ danh mục',
-        price: item.price !== null ? item.price : null,
-        imageUrl: item.imageUrl || 'https://via.placeholder.com/150',
-        description: item.description || 'Không có mô tả',
-        statusName: item.statusName || 'Không rõ trạng thái',
-        ownerName: item.ownerName || 'Người dùng không xác định',
-        listingType: item.listingType || 0, // 0 = Sell, 1 = Exchange
-        desiredDocumentId: item.desiredDocumentId || null,
-        createdAt: item.createdAt || new Date().toISOString(),
-        rowVersion: item.rowVersion || null, // Dùng cho kiểm soát đồng thời
-      })),
+      items: (data.items || []).map((item) => {
+        console.log('Processing item:', item); // Log từng item để kiểm tra
+        return {
+          listingId: item.listingId,
+          documentId: item.documentId,
+          title: item.documentTitle || 'Không rõ tiêu đề',
+          author: item.document?.author || item.author || null, // Gán null nếu không có
+          categoryName: item.document?.categoryName || item.categoryName || null, // Gán null
+          price: item.price !== null ? item.price : null,
+          imageUrl: item.document?.imageUrl || item.imageUrl || null, // Gán null
+          description: item.description || 'Không có mô tả',
+          statusName: item.statusName || 'Không rõ trạng thái',
+          ownerName: item.ownerName || 'Người dùng không xác định',
+          listingType: item.listingType || 0,
+          desiredDocumentId: item.desiredDocuments?.length ? item.desiredDocuments[0]?.documentId : null,
+          createdAt: item.createdAt || new Date().toISOString(),
+          rowVersion: item.rowVersion || null,
+        };
+      }),
       total: data.totalCount || 0,
       page: data.page || 1,
       pageSize: data.pageSize || 10,
-      totalPages: data.totalPages || 0,
+      totalPages: data.totalPages || 1,
     };
   } catch (error) {
     console.error('Lấy danh sách listings admin thất bại:', error);
@@ -1459,6 +1371,7 @@ export const confirmOrder = async (orderId, actionData) => {
     if (!token) {
       throw new Error('No authentication token found');
     }
+    console.log('Confirm order request:', { orderId, actionData, token: token.substring(0, 20) + '...' });
     const response = await fetch(`${EXCHANGE_API_URL}/api/Orders/${orderId}/confirm`, {
       method: 'PUT',
       headers: {
@@ -1467,9 +1380,364 @@ export const confirmOrder = async (orderId, actionData) => {
       },
       body: JSON.stringify(actionData),
     });
-    return handleResponse(response);
+    const data = await handleResponse(response);
+    console.log('Confirm order response:', data);
+    return data;
   } catch (error) {
     console.error('Confirm order failed:', error);
-    throw new Error(`Failed to confirm order: ${error.message}`);
+    throw new Error(error.message || `Failed to confirm order`);
   }
 };
+
+// API lấy thông tin hồ sơ người dùng
+export const getUserProfile = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Users/me`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Get user profile failed:', error);
+    throw new Error(error.message || 'Failed to fetch user profile');
+  }
+};
+
+// API cập nhật thông tin hồ sơ người dùng
+export const updateUserProfile = async (profileData) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Users/me`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileData),
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Update user profile failed:', error);
+    throw new Error(error.message || 'Failed to update user profile');
+  }
+};
+
+
+// API đổi mật khẩu người dùng
+export const changePassword = async (passwordData) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      throw new Error('Passwords do not match');
+    }
+    if (passwordData.newPassword.length < 8) {
+      throw new Error('Password must be at least 8 characters long');
+    }
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/.test(passwordData.newPassword)) {
+      throw new Error('Password must include uppercase, lowercase, digit, and special character');
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Users/me/change-password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        oldPassword: passwordData.oldPassword,
+        newPassword: passwordData.newPassword,
+        confirmPassword: passwordData.confirmPassword,
+      }),
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Change password failed:', error);
+    throw new Error(error.message || 'Failed to change password');
+  }
+};
+
+
+
+// API admin lấy danh sách người dùng
+export const getUsers = async (page = 1, pageSize = 10, search = '') => {
+  try {
+    checkAdminAccess();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const query = `?pageNumber=${page}&pageSize=${pageSize}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
+    const url = `${EXCHANGE_API_URL}/api/Users${query}`;
+    console.log('Fetching users:', { url, token: token.substring(0, 20) + '...' });
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await handleResponse(response);
+    console.log('Users API response:', { data });
+    // Ánh xạ đúng trường items
+    const users = Array.isArray(data.items) ? data.items : Array.isArray(data.users) ? data.users : Array.isArray(data) ? data : [];
+    return {
+      users,
+      total: data.totalCount || users.length || 0,
+    };
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    console.log('API call failed:', {
+      method: 'GET',
+      endpoint: '/api/Users',
+      status: 'Failed',
+      error: error.message,
+      timestamp: new Date().toLocaleString(),
+    });
+    return { users: [], total: 0 };
+  }
+};
+
+
+// API admin lấy chi tiết người dùng
+export const getUserById = async (userId) => {
+  try {
+    checkAdminAccess();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Users/${userId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Get user details failed:', error);
+    throw new Error(error.message || 'Failed to fetch user details');
+  }
+};
+
+// API admin cập nhật thông tin người dùng
+export const updateUser = async (userId, userData) => {
+  try {
+    checkAdminAccess();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Users/${userId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(userData),
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Update user failed:', error);
+    throw new Error(error.message || 'Failed to update user');
+  }
+};
+
+// API admin xóa người dùng
+export const deleteUser = async (userId) => {
+  try {
+    checkAdminAccess();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Users/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Delete user failed:', error);
+    throw new Error(error.message || 'Failed to delete user');
+  }
+};
+
+// API lấy danh sách sách người dùng đã đăng bán
+export const getMyListings = async (page = 1, pageSize = 10, params = {}) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    let url = `${EXCHANGE_API_URL}/api/Users/me/listings?pageNumber=${page}&pageSize=${pageSize}`;
+    if (params.userId) {
+      if (isNaN(parseInt(params.userId))) {
+        throw new Error('Invalid userId');
+      }
+      url = `${EXCHANGE_API_URL}/api/admin/users/${params.userId}/listings?pageNumber=${page}&pageSize=${pageSize}`;
+    }
+    console.log('Fetching listings:', { url, token: token.substring(0, 20) + '...', params });
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await handleResponse(response);
+    console.log('Listings API response:', { data });
+    return {
+      items: Array.isArray(data.items) ? data.items : [],
+      total: data.totalCount || 0,
+      page: data.page || 1,
+      pageSize: data.pageSize || 10,
+      totalPages: data.totalPages || 0,
+    };
+  } catch (error) {
+    console.error('Get my listings failed:', error);
+    logApiInfo('GET', params.userId ? `/api/admin/users/${params.userId}/listings` : '/api/Users/me/listings', 'Failed', null, error);
+    throw new Error(error.message || 'Failed to fetch my listings');
+  }
+};
+
+
+export const createNotificationByTemplate = async (template, referenceId) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Notifications/by-template`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ template, referenceId }),
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Create notification by template failed:', error);
+    throw new Error(error.message || 'Failed to create notification by template');
+  }
+};
+
+export const getNotifications = async (pageNumber = 1, pageSize = 10, onlyUnread = false) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(
+      `${EXCHANGE_API_URL}/api/Notifications?pageNumber=${pageNumber}&pageSize=${pageSize}&onlyUnread=${onlyUnread}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await handleResponse(response);
+    return {
+      items: data.items || [],
+      total: data.total || 0,
+    };
+  } catch (error) {
+    console.error('Get notifications failed:', error);
+    throw new Error(error.message || 'Failed to fetch notifications');
+  }
+};
+
+export const getUnreadNotificationCount = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Notifications/unread-count`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await handleResponse(response);
+    return data.count || 0;
+  } catch (error) {
+    console.error('Get unread notification count failed:', error);
+    throw new Error(error.message || 'Failed to fetch unread notification count');
+  }
+};
+
+export const markNotificationAsRead = async (notificationId) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Notifications/${notificationId}/read`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Mark notification as read failed:', error);
+    throw new Error(error.message || 'Failed to mark notification as read');
+  }
+};
+
+export const markAllNotificationsAsRead = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Notifications/mark-all-as-read`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Mark all notifications as read failed:', error);
+    throw new Error(error.message || 'Failed to mark all notifications as read');
+  }
+};
+
+// API thông báo
+export const createNotification = async (notificationData) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Notifications`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(notificationData),
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Create notification failed:', error);
+    throw new Error(error.message || 'Failed to create notification');
+  }
+};
+

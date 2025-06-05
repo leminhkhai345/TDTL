@@ -3,7 +3,6 @@ import { loginUser, registerUser } from '../API/api';
 
 const AuthContext = createContext();
 
-// Hàm giải mã JWT để tái sử dụng
 const decodeJwt = (token) => {
   try {
     const base64Url = token.split('.')[1];
@@ -136,7 +135,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, token, login, register, logout, isAdmin, loading, authLoading }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, token, login, register,setUser, logout, isAdmin, loading, authLoading }}>
       {children}
     </AuthContext.Provider>
   );
