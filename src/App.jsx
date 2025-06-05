@@ -22,9 +22,9 @@ import AdminDashboard from '../Pages/AdminDashboard';
 import AdminUsersPage from '../Pages/AdminUsersPage';
 import AdminBooksPage from '../Pages/AdminBooksPage';
 import AdminOrdersPage from '../Pages/AdminOrdersPage';
-import AdminReviewsPage from '../Pages/AdminReviewsPage';
 import AdminStatisticsPage from '../Pages/AdminStatisticsPage';
 import AdminCategoriesPage from '../Pages/AdminCategoriesPage';
+import AdminPaymentMethodsPage from '../Pages/AdminPaymentMethodsPage'; // Thêm import
 import OrderDetailsPage from '../Pages/OrderDetailsPage';
 import ConfirmPaymentPage from '../Pages/ConfirmPaymentPage';
 import MyPurchasesPage from '../Pages/MyPurchasesPage';
@@ -77,7 +77,7 @@ const App = () => {
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/otp" element={<OtpPage />} />
                 <Route path="/browse" element={<ProtectedRoute><BrowseBooksPage /></ProtectedRoute>} />
-                <Route path="/exchange" element={<ProtectedRoute><ExchangePage /></ProtectedRoute>} />
+                {/* <Route path="/exchange" element={<ProtectedRoute><ExchangePage /></ProtectedRoute>} /> */}
                 <Route path="/exchange-history" element={<ProtectedRoute><ExchangeHistoryPage /></ProtectedRoute>} />
                 <Route path="/sell" element={<ProtectedRoute><SellPage /></ProtectedRoute>} />
                 <Route path="/sell-history" element={<ProtectedRoute><SellHistoryPage /></ProtectedRoute>} />
@@ -85,7 +85,7 @@ const App = () => {
                 <Route path="/books/:listingId" element={<ProtectedRoute><BookDetailsPage /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-                <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+                {/* <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} /> */}
                 <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
                 <Route path="/my-listings" element={<ProtectedRoute><MyListingsPage /></ProtectedRoute>} />
                 <Route path="/orders/:orderId" element={<ProtectedRoute><OrderDetailsPage /></ProtectedRoute>} />
@@ -96,8 +96,9 @@ const App = () => {
                 <Route path="/admin/users" element={<AdminRoute><AdminUsersPage /></AdminRoute>} />
                 <Route path="/admin/books" element={<AdminRoute><AdminBooksPage /></AdminRoute>} />
                 <Route path="/admin/orders" element={<AdminRoute><AdminOrdersPage /></AdminRoute>} />
-                <Route path="/admin/reviews" element={<AdminRoute><AdminReviewsPage /></AdminRoute>} />
+                {/* <Route path="/admin/reviews" element={<AdminRoute><AdminReviewsPage /></AdminRoute>} /> */}
                 <Route path="/admin/categories" element={<AdminRoute><AdminCategoriesPage /></AdminRoute>} />
+                <Route path="/admin/payment-methods" element={<AdminRoute><AdminPaymentMethodsPage /></AdminRoute>} /> {/* Thêm route */}
                 <Route path="/admin/statistics" element={<AdminRoute><AdminStatisticsPage /></AdminRoute>} />
                 <Route path="/admin/users/:userId/listings" element={<AdminRoute><MyListingsPage /></AdminRoute>} />
                 <Route path="*" element={<NotFoundPage />} />

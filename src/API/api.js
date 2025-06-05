@@ -1741,3 +1741,51 @@ export const createNotification = async (notificationData) => {
   }
 };
 
+//API Payment Method.
+export const getAdminPaymentMethods = async () => {
+  try {
+    checkAdminAccess();
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/payment-methods`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    throw new Error(`Failed to fetch payment methods: ${error.message}`);
+  }
+};
+
+export const createPaymentMethod = async (paymentMethodData) => {
+  try {
+    checkAdminAccess();
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/payment-methods`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+      },
+      body: JSON.stringify(paymentMethodData),
+    });
+    return handleResponse(response);
+  } catch (error) {
+    throw new Error(`Failed to create payment method: ${error.message}`);
+  }
+};
+
+export const togglePaymentMethod = async (id, enable) => {
+  try {
+    checkAdminAccess();
+    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/payment-methods/${id}/${enable ? 'enable' : 'disable'}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    throw new Error(`Failed to toggle payment method: ${error.message}`);
+  }
+};

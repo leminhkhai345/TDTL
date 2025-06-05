@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome,
   faBook,
-  faExchangeAlt,
-  faShoppingCart,
+  // faExchangeAlt,
+  // faShoppingCart,
   faUser,
   faSignOutAlt,
   faSignInAlt,
@@ -94,10 +94,10 @@ const Navbar = () => {
                 </Link>
                 {isLoggedIn && (
                   <>
-                    <Link to="/exchange" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
+                    {/* <Link to="/exchange" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
                       <FontAwesomeIcon icon={faExchangeAlt} />
                       <span>Exchange</span>
-                    </Link>
+                    </Link> */}
                     <div className="relative">
                       <button
                         onClick={toggleSellDropdown}
@@ -121,8 +121,8 @@ const Navbar = () => {
                             className="flex items-center space-x-2 px-4 py-2 hover:bg-blue-100 rounded-b-lg"
                             onClick={() => setIsSellDropdownOpen(false)}
                           >
-                            <FontAwesomeIcon icon={faBook} />
-                            <span>Sell History</span>
+                            {/* <FontAwesomeIcon icon={faBook} />
+                            <span>Sell History</span> */}
                           </Link>
                         </div>
                       )}
@@ -131,10 +131,10 @@ const Navbar = () => {
                       <FontAwesomeIcon icon={faWarehouse} />
                       <span>Inventory</span>
                     </Link>
-                    <Link to="/cart" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
+                    {/* <Link to="/cart" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
                       <FontAwesomeIcon icon={faShoppingCart} />
                       <span>Cart</span>
-                    </Link>
+                    </Link> */}
                     <div className="relative">
                       <button
                         onClick={toggleOrdersDropdown}
@@ -292,26 +292,26 @@ const Navbar = () => {
                   </Link>
                   {isLoggedIn && (
                     <>
-                      <Link to="/exchange" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
+                      {/* <Link to="/exchange" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
                         <FontAwesomeIcon icon={faExchangeAlt} />
                         <span>Exchange</span>
-                      </Link>
+                      </Link> */}
                       <Link to="/sell" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
                         <FontAwesomeIcon icon={faBook} />
                         <span>Sell a Book</span>
                       </Link>
-                      <Link to="/sell-history" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
+                      {/* <Link to="/sell-history" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
                         <FontAwesomeIcon icon={faBook} />
                         <span>Sell History</span>
-                      </Link>
+                      </Link> */}
                       <Link to="/inventory" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
                         <FontAwesomeIcon icon={faWarehouse} />
                         <span>Inventory</span>
                       </Link>
-                      <Link to="/cart" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
+                      {/* <Link to="/cart" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
                         <FontAwesomeIcon icon={faShoppingCart} />
                         <span>Cart</span>
-                      </Link>
+                      </Link> */}
                       <Link to="/my-purchases" className="flex items-center space-x-2 hover:text-blue-200 transition-colors" onClick={toggleMenu}>
                         <FontAwesomeIcon icon={faShoppingBag} />
                         <span>My Purchases</span>

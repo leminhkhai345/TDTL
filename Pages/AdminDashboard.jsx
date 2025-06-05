@@ -5,7 +5,7 @@ import {
   faUsers,
   faBook,
   faShoppingCart,
-  faStar,
+  faCreditCard, // Thay faStar bằng faCreditCard cho Payment Methods
   faChartBar,
   faListAlt,
 } from '@fortawesome/free-solid-svg-icons';
@@ -63,17 +63,17 @@ const AdminDashboard = () => {
             </div>
           </Link>
 
-          {/* Manage Reviews Card */}
+          {/* Manage Payment Methods Card */}
           <Link
-            to="/admin/reviews"
+            to="/admin/payment-methods"
             className="group relative bg-white rounded-xl shadow-lg p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-700 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
             <div className="flex items-center space-x-4">
-              <FontAwesomeIcon icon={faStar} className="text-blue-600 text-3xl" />
+              <FontAwesomeIcon icon={faCreditCard} className="text-blue-600 text-3xl" />
               <div>
-                <h2 className="text-xl font-semibold text-blue-800">Manage Reviews</h2>
-                <p className="text-gray-600 mt-2">View and delete user reviews</p>
+                <h2 className="text-xl font-semibold text-blue-800">Manage Payment Methods</h2>
+                <p className="text-gray-600 mt-2">Add, enable, or disable payment methods</p>
               </div>
             </div>
           </Link>
