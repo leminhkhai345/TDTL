@@ -1,8 +1,8 @@
 import React from "react";
-import { motion } from 'framer-motion';
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Features = () => {
-  // Hiệu ứng animation cho section
   const sectionVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -31,29 +31,35 @@ const Features = () => {
 
   const features = [
     {
-      title: "Save Money",
-      description: "Buy used books at affordable prices or exchange them with others.",
+      title: "Affordable Prices",
+      description: "Get used books at a fraction of the cost or exchange with others for free.",
+      link: "/browse",
+      linkText: "Shop Now",
     },
     {
-      title: "Discover Rare Books",
-      description: "Find limited editions and out-of-print titles from fellow readers.",
+      title: "Rare Finds",
+      description: "Uncover limited editions and out-of-print books from our community.",
+      link: "/browse",
+      linkText: "Discover Now",
     },
     {
-      title: "Community Driven",
-      description: "Join a community of book lovers who care about reading and sharing.",
+      title: "Book Lovers' Community",
+      description: "Connect with readers worldwide to share stories and recommendations.",
+      link: "/signup",
+      linkText: "Join Now",
     },
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-100 to-gray-200">
+    <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4">
         <motion.h2
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-4xl font-bold text-center text-blue-800 mb-10 bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent"
+          className="text-4xl font-bold text-center text-blue-800 mb-10"
         >
-          Why Use Library Exchange?
+          What Makes Us Special?
         </motion.h2>
         <motion.div
           className="grid md:grid-cols-3 gap-8"
@@ -66,10 +72,16 @@ const Features = () => {
               key={index}
               custom={index}
               variants={cardVariants}
-              className="bg-white p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              className="bg-gray-50 p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
               <h3 className="text-xl font-semibold text-blue-600 mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <p className="text-gray-600 mb-4">{feature.description}</p>
+              <Link
+                to={feature.link}
+                className="inline-flex items-center bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-all"
+              >
+                {feature.linkText}
+              </Link>
             </motion.div>
           ))}
         </motion.div>

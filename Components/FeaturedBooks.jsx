@@ -1,9 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import BookCarousel from "./BookCarousel";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 const FeaturedBooks = () => {
-  // Hiệu ứng animation cho section
   const sectionVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -24,21 +24,29 @@ const FeaturedBooks = () => {
 
   return (
     <motion.section
-      className="py-16 bg-white"
+      className="py-16 bg-gray-50"
       variants={sectionVariants}
       initial="hidden"
       animate="visible"
     >
       <div className="max-w-7xl mx-auto px-4">
-        <motion.h2
-          variants={titleVariants}
-          className="text-4xl font-bold text-blue-700 mb-6 bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent text-center"
-        >
-          Featured Books
-        </motion.h2>
+        <motion.div variants={titleVariants} className="text-center mb-8">
+          <h2 className="text-4xl font-bold text-blue-800">Featured Books</h2>
+          <p className="text-gray-600 mt-2">
+            Explore our handpicked selection of bestsellers and hidden gems.
+          </p>
+        </motion.div>
         <motion.div variants={titleVariants}>
           <BookCarousel />
         </motion.div>
+        <div className="text-center mt-8">
+          <Link
+            to="/browse"
+            className="inline-flex items-center bg-blue-600 text-white text-base px-6 py-3 rounded-lg hover:bg-blue-700 transition-all"
+          >
+            View All Books
+          </Link>
+        </div>
       </div>
     </motion.section>
   );

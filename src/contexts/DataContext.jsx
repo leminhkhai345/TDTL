@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { getUsers, getOrders, getReviews, getCategories } from '../API/api'; // Thay getAdminCategories bằng getCategories
+import { getUsers, getOrders, getCategories } from '../API/api'; // Thay getAdminCategories bằng getCategories
 import { toast } from 'react-toastify';
 import { useAuth } from './AuthContext';
 
@@ -9,7 +9,6 @@ export const DataProvider = ({ children }) => {
   const { isLoggedIn, user, logout } = useAuth();
   const [users, setUsers] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [reviews, setReviews] = useState([]);
   const [categories, setCategories] = useState([]); // Vẫn giữ state categories
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -50,11 +49,6 @@ export const DataProvider = ({ children }) => {
         return { orders: [], total: 0 };
       });
 
-      const reviewsPromise = timeout(getReviews(), 5000).catch((err) => {
-        console.error('Error fetching reviews:', err.message);
-        toast.error(`Không thể tải danh sách đánh giá: ${err.message}`);
-        return { reviews: [], total: 0 };
-      });
 
       // Thay getAdminCategories bằng getCategories
       const categoriesPromise = timeout(getCategories(), 5000).catch((err) => {
@@ -63,24 +57,21 @@ export const DataProvider = ({ children }) => {
         return []; // getCategories trả về mảng
       });
 
-      const [usersData, ordersData, reviewsData, categoriesData] = await Promise.all([
+      const [usersData, ordersData, categoriesData] = await Promise.all([
         usersPromise,
         ordersPromise,
-        reviewsPromise,
         categoriesPromise,
       ]);
 
-      console.log('API responses:', { usersData, ordersData, reviewsData, categoriesData });
+      console.log('API responses:', { usersData, ordersData, categoriesData });
 
       setUsers(Array.isArray(usersData.users) ? usersData.users : []);
       setOrders(Array.isArray(ordersData.orders) ? ordersData.orders : []);
-      setReviews(Array.isArray(reviewsData.reviews) ? reviewsData.reviews : []);
       setCategories(Array.isArray(categoriesData) ? categoriesData : []); // getCategories trả về mảng trực tiếp
 
       if (
         !usersData.users.length &&
         !ordersData.orders.length &&
-        !reviewsData.reviews.length &&
         !categoriesData.length
       ) {
         setError('Không thể tải dữ liệu admin. Vui lòng kiểm tra kết nối hoặc API.');
@@ -93,7 +84,6 @@ export const DataProvider = ({ children }) => {
       toast.error(errorMsg);
       setUsers([]);
       setOrders([]);
-      setReviews([]);
       setCategories([]);
       if (errorMsg.includes('Unauthorized') || errorMsg.includes('401')) {
         logout();
@@ -124,7 +114,6 @@ export const DataProvider = ({ children }) => {
       value={{
         users,
         orders,
-        reviews,
         categories,
         loading,
         error,

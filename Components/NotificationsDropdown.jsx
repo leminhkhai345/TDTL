@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
-import { useNotifications } from '../src/contexts/NotificationContext';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBell, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { useNotifications } from "../src/contexts/NotificationContext";
 
 const NotificationsDropdown = ({ onClose }) => {
   const { notifications, loading, markAsRead, markAllAsRead, fetchNotifications } = useNotifications();
@@ -18,31 +18,31 @@ const NotificationsDropdown = ({ onClose }) => {
   return (
     <div className="absolute right-0 mt-2 w-80 bg-white text-gray-800 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
       <div className="flex justify-between items-center px-4 py-2 border-b">
-        <h3 className="font-semibold">Thông báo</h3>
+        <h3 className="font-semibold">Notifications</h3>
         {notifications.length > 0 && (
           <button
             onClick={markAllAsRead}
             className="text-sm text-blue-600 hover:underline"
           >
-            Đánh dấu tất cả là đã đọc
+            Mark All as Read
           </button>
         )}
       </div>
       {loading ? (
-        <div className="px-4 py-2 text-center text-gray-600">Đang tải...</div>
+        <div className="px-4 py-2 text-center text-gray-600">Loading...</div>
       ) : notifications.length === 0 ? (
-        <div className="px-4 py-2 text-center text-gray-600">Không có thông báo</div>
+        <div className="px-4 py-2 text-center text-gray-600">No notifications</div>
       ) : (
         <>
           {notifications.map((notification) => (
             <div
               key={notification.notificationId}
-              className={`px-4 py-2 hover:bg-blue-100 ${notification.isRead ? 'opacity-60' : ''}`}
+              className={`px-4 py-2 hover:bg-blue-100 ${notification.isRead ? "opacity-60" : ""}`}
             >
               <div className="flex items-start space-x-2">
                 <FontAwesomeIcon
                   icon={faBell}
-                  className={`mt-1 ${notification.isRead ? 'text-gray-400' : 'text-blue-600'}`}
+                  className={`mt-1 ${notification.isRead ? "text-gray-400" : "text-blue-600"}`}
                 />
                 <div className="flex-1">
                   <p className="text-sm">{notification.message}</p>
@@ -55,7 +55,7 @@ const NotificationsDropdown = ({ onClose }) => {
                       onClick={onClose}
                       className="text-xs text-blue-600 hover:underline"
                     >
-                      Xem chi tiết
+                      View Details
                     </Link>
                   )}
                 </div>
@@ -63,6 +63,7 @@ const NotificationsDropdown = ({ onClose }) => {
                   <button
                     onClick={() => markAsRead(notification.notificationId)}
                     className="text-blue-600 hover:text-blue-800"
+                    aria-label="Mark as Read"
                   >
                     <FontAwesomeIcon icon={faCheckCircle} />
                   </button>
@@ -76,7 +77,7 @@ const NotificationsDropdown = ({ onClose }) => {
                 onClick={loadMore}
                 className="text-sm text-blue-600 hover:underline"
               >
-                Tải thêm
+                Load More
               </button>
             </div>
           )}

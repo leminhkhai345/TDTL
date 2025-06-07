@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../src/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getUserProfile, updateUserProfile, getMyListings } from "../src/API/api";
+import { getUserProfile, updateUserProfile } from "../src/API/api";
+import Footer from "../Components/Footer";
 
 const ProfilePage = () => {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("info");
   const [profile, setProfile] = useState({
     fullName: "",
     phone: "",
@@ -18,7 +18,6 @@ const ProfilePage = () => {
     bankName: "",
     bankBranch: "",
   });
-  const [sellItems, setSellItems] = useState([]);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -32,7 +31,6 @@ const ProfilePage = () => {
 
     const fetchProfileData = async () => {
       try {
-        // Lấy thông tin người dùng từ API thực tế
         const userData = await getUserProfile();
         setProfile({
           fullName: userData.fullName || "",
@@ -44,11 +42,6 @@ const ProfilePage = () => {
           bankName: userData.bankName || "",
           bankBranch: userData.bankBranch || "",
         });
-
-        // Lấy danh sách sách đã đăng bán từ API thực tế
-        const listingsData = await getMyListings(1, 10);
-        setSellItems(listingsData.items);
-
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -114,30 +107,13 @@ const ProfilePage = () => {
     }
   };
 
-  const handleCancelSell = async (listingId) => {
-    try {
-      // Placeholder: Cần endpoint thật từ backend để hủy listing
-      toast.warn("Cancel listing not implemented yet. Please provide backend API endpoint.");
-      // Ví dụ nếu có API:
-      // await cancelListing(listingId);
-      // setSellItems((prev) =>
-      //   prev.map((item) =>
-      //     item.listingId === listingId ? { ...item, statusName: "Cancelled" } : item
-      //   )
-      // );
-      // toast.success("Sell item cancelled successfully!");
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
-
   if (!user) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-6 text-center">
-        <p className="text-red-600">Please log in to view your profile.</p>
+      <div className="max-w-3xl mx-auto px-4 py-12 text-center">
+        <p className="text-red-600 text-lg font-medium">Please log in to view your profile.</p>
         <button
           onClick={() => navigate("/login")}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition-all duration-200"
         >
           Log In
         </button>
@@ -146,207 +122,184 @@ const ProfilePage = () => {
   }
 
   if (loading) {
-    return <div className="text-center py-6">Loading...</div>;
+    return <div className="text-center py-12 text-gray-600 text-lg">Loading...</div>;
   }
 
   if (error) {
-    return <div className="text-center text-red-600 py-6">{error}</div>;
+    return <div className="text-center text-red-600 py-12 text-lg">{error}</div>;
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold mb-8">Your Profile</h1>
+    <div className="max-w-6xl mx-auto px-4 py-12">
+      <h1 className="text-3xl font-bold mb-8 text-blue-800">Profile Settings</h1>
 
-      {/* Header với avatar và thông tin cơ bản */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
-        <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-semibold text-gray-600">
-          {profile.fullName ? profile.fullName[0].toUpperCase() : user.email[0].toUpperCase()}
+      {/* Grid layout 1/3 và 2/3 */}
+      <div className="grid grid-cols-3 gap-8">
+        {/* Your Profile (1/3) */}
+        <div className="col-span-1 bg-white rounded-xl shadow-lg p-8 border-r-2 border-blue-600 min-h-[500px]">
+          <h2 className="text-2xl font-semibold mb-6 text-blue-800">Your Profile</h2>
+          <div className="flex justify-center mb-6">
+            <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-4xl font-semibold text-gray-600 border-4 border-gray-200">
+              {user.email[0].toUpperCase()}
+            </div>
+          </div>
+          <div className="space-y-3">
+            <p className="text-gray-600">
+              <span className="font-medium text-gray-800">Name: </span>
+              {profile.fullName || user.email}
+            </p>
+            <p className="text-gray-600">
+              <span className="font-medium text-gray-800">Email: </span>
+              {user.email}
+            </p>
+            <p className="text-gray-600">
+              <span className="font-medium text-gray-800">Phone: </span>
+              {profile.phone || "Not provided"}
+            </p>
+            <p className="text-gray-600">
+              <span className="font-medium text-gray-800">Address: </span>
+              {profile.address || "Not provided"}
+            </p>
+            <p className="text-gray-600">
+              <span className="font-medium text-gray-800">Birthday: </span>
+              {profile.birth ? new Date(profile.birth).toLocaleDateString() : "Not provided"}
+            </p>
+            <p className="text-gray-600">
+              <span className="font-medium text-gray-800">Bank Account: </span>
+              {profile.bankAccountNumber
+                ? `${profile.bankAccountNumber} (${profile.bankBranch || "No branch"})`
+                : "Not provided"}
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-xl font-semibold">{profile.fullName || user.email}</h2>
-          <p className="text-gray-600">{user.email}</p>
-          <p className="text-gray-600">{profile.phone || "No phone number"}</p>
-          <p className="text-gray-600">{profile.address || "No address"}</p>
-        </div>
-      </div>
 
-      {/* Tabs */}
-      <div className="border-b mb-6">
-        <nav className="flex flex-wrap space-x-4">
-          {["info", "sell"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`py-2 px-4 font-semibold ${
-                activeTab === tab
-                  ? "border-b-2 border-blue-600 text-blue-600"
-                  : "text-gray-600 hover:text-blue-600"
-              }`}
-            >
-              {tab === "info" && "Personal Info"}
-              {tab === "sell" && "Sell History"}
-            </button>
-          ))}
-        </nav>
-      </div>
+        {/* Personal Information (2/3) */}
+        <div className="col-span-2 bg-white rounded-xl shadow-lg p-8 min-h-[500px]">
+          <h2 className="text-2xl font-semibold mb-6 text-blue-800">Personal Information</h2>
+          <form onSubmit={handleUpdateProfile} className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
+              {/* Cột trái: Full Name, Phone Number, Address, Birth Date */}
+              <div className="space-y-6">
+                <div className="relative">
+                  <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.fullName}
+                    onChange={(e) => setProfile({ ...profile, fullName: e.target.value })}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                  />
+                  {errors.fullName && <p className="text-red-600 text-sm mt-1 italic">{errors.fullName}</p>}
+                </div>
+                <div className="relative">
+                  <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Phone Number
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.phone}
+                    onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                  />
+                  {errors.phone && <p className="text-red-600 text-sm mt-1 italic">{errors.phone}</p>}
+                </div>
+                <div className="relative">
+                  <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.address}
+                    onChange={(e) => setProfile({ ...profile, address: e.target.value })}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                  />
+                  {errors.address && <p className="text-red-600 text-sm mt-1 italic">{errors.address}</p>}
+                </div>
+                <div className="relative">
+                  <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Birth Date
+                  </label>
+                  <input
+                    type="date"
+                    value={profile.birth}
+                    onChange={(e) => setProfile({ ...profile, birth: e.target.value })}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                  />
+                  {errors.birth && <p className="text-red-600 text-sm mt-1 italic">{errors.birth}</p>}
+                </div>
+              </div>
 
-      {/* Nội dung tab */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        {activeTab === "info" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
-            <form onSubmit={handleUpdateProfile} className="space-y-4 max-w-lg">
-              <div>
-                <label className="block font-medium mb-1">Full Name</label>
-                <input
-                  type="text"
-                  value={profile.fullName}
-                  onChange={(e) => setProfile({ ...profile, fullName: e.target.value })}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {errors.fullName && <p className="text-red-600 text-sm">{errors.fullName}</p>}
+              {/* Cột phải: Bank Account Number, Bank Account Name, Bank Name, Bank Branch */}
+              <div className="space-y-6">
+                <div className="relative">
+                  <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Bank Account Number
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.bankAccountNumber}
+                    onChange={(e) => setProfile({ ...profile, bankAccountNumber: e.target.value })}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                  />
+                  {errors.bankAccountNumber && (
+                    <p className="text-red-600 text-sm mt-1 italic">{errors.bankAccountNumber}</p>
+                  )}
+                </div>
+                <div className="relative">
+                  <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Bank Account Name
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.bankAccountName}
+                    onChange={(e) => setProfile({ ...profile, bankAccountName: e.target.value })}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                  />
+                  {errors.bankAccountName && (
+                    <p className="text-red-600 text-sm mt-1 italic">{errors.bankAccountName}</p>
+                  )}
+                </div>
+                <div className="relative">
+                  <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Bank Name
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.bankName}
+                    onChange={(e) => setProfile({ ...profile, bankName: e.target.value })}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                  />
+                  {errors.bankName && <p className="text-red-600 text-sm mt-1 italic">{errors.bankName}</p>}
+                </div>
+                <div className="relative">
+                  <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Bank Branch
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.bankBranch}
+                    onChange={(e) => setProfile({ ...profile, bankBranch: e.target.value })}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                  />
+                  {errors.bankBranch && <p className="text-red-600 text-sm mt-1 italic">{errors.bankBranch}</p>}
+                </div>
               </div>
-              <div>
-                <label className="block font-medium mb-1">Phone Number</label>
-                <input
-                  type="text"
-                  value={profile.phone}
-                  onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {errors.phone && <p className="text-red-600 text-sm">{errors.phone}</p>}
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Address</label>
-                <input
-                  type="text"
-                  value={profile.address}
-                  onChange={(e) => setProfile({ ...profile, address: e.target.value })}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {errors.address && <p className="text-red-600 text-sm">{errors.address}</p>}
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Birth Date</label>
-                <input
-                  type="date"
-                  value={profile.birth}
-                  onChange={(e) => setProfile({ ...profile, birth: e.target.value })}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {errors.birth && <p className="text-red-600 text-sm">{errors.birth}</p>}
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Bank Account Number</label>
-                <input
-                  type="text"
-                  value={profile.bankAccountNumber}
-                  onChange={(e) => setProfile({ ...profile, bankAccountNumber: e.target.value })}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {errors.bankAccountNumber && <p className="text-red-600 text-sm">{errors.bankAccountNumber}</p>}
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Bank Account Name</label>
-                <input
-                  type="text"
-                  value={profile.bankAccountName}
-                  onChange={(e) => setProfile({ ...profile, bankAccountName: e.target.value })}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {errors.bankAccountName && <p className="text-red-600 text-sm">{errors.bankAccountName}</p>}
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Bank Name</label>
-                <input
-                  type="text"
-                  value={profile.bankName}
-                  onChange={(e) => setProfile({ ...profile, bankName: e.target.value })}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {errors.bankName && <p className="text-red-600 text-sm">{errors.bankName}</p>}
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Bank Branch</label>
-                <input
-                  type="text"
-                  value={profile.bankBranch}
-                  onChange={(e) => setProfile({ ...profile, bankBranch: e.target.value })}
-                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {errors.bankBranch && <p className="text-red-600 text-sm">{errors.bankBranch}</p>}
-              </div>
+            </div>
+            <div className="flex justify-end mt-4">
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition-all duration-200"
               >
                 Update Profile
               </button>
-            </form>
-          </div>
-        )}
-
-        {activeTab === "sell" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Sell History</h2>
-            {sellItems.length === 0 ? (
-              <p className="text-gray-600">No sell items found.</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full table-auto">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Book Title</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Author</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Price</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Category</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Status</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Created At</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sellItems.map((item) => (
-                      <tr key={item.listingId} className="border-b">
-                        <td className="px-6 py-4 text-sm text-gray-900">{item.title}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">{item.author}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">${item.price?.toFixed(2) || "N/A"}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">{item.categoryName}</td>
-                        <td className="px-6 py-4 text-sm">
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                              item.statusName === "Listed"
-                                ? "bg-blue-100 text-blue-800"
-                                : item.statusName === "Sold"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
-                            }`}
-                          >
-                            {item.statusName}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {new Date(item.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 text-sm">
-                          {item.statusName === "Listed" && (
-                            <button
-                              onClick={() => handleCancelSell(item.listingId)}
-                              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                            >
-                              Cancel
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
+            </div>
+          </form>
+        </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

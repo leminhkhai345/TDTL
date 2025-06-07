@@ -42,95 +42,105 @@ const decodeJwt = (token) => {
 };
 
 
-
-// Placeholder: Lấy danh sách đánh giá (mock data)
-export const getReviewsByBookId = async (bookId) => {
+// Trong api.js
+export const createReview = async (reviewData) => {
   try {
-    // Khi có API thật, thay bằng:
-    // const response = await fetch(`${API_URL}/books/${bookId}/reviews`, {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-    //   },
-    // });
-    // const data = await handleResponse(response);
-    // return {
-    //   reviews: data.reviews || data,
-    //   total: data.total || (Array.isArray(data) ? data.length : 0),
-    // };
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('No authentication token found');
 
-    // Mock data: Lọc đánh giá theo bookId
-    const reviews = mockReviews.filter((review) => review.bookId === bookId);
-    return {
-      reviews,
-      total: reviews.length,
-    };
-  } catch (error) {
-    throw new Error(`Failed to fetch reviews: ${error.message}`);
-  }
-};
+    const formData = new FormData();
+    formData.append('orderId', reviewData.orderId);
+    formData.append('rating', reviewData.rating);
+    formData.append('comment', reviewData.comment);
+    formData.append('reviewType', reviewData.reviewType);
+    if (reviewData.evidences) {
+      reviewData.evidences.forEach((file, index) => {
+        formData.append(`evidences[${index}]`, file);
+      });
+    }
 
-// Placeholder: Thêm đánh giá mới (mock data)
-export const createReview = async (bookId, reviewData) => {
-  try {
-    // Khi có API thật, thay bằng:
-    // const response = await fetch(`${API_URL}/books/${bookId}/reviews`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-    //   },
-    //   body: JSON.stringify(reviewData),
-    // });
-    // return handleResponse(response);
-
-    // Mock data: Thêm đánh giá mới vào danh sách
-    const newReview = {
-      id: String(mockReviews.length + 1),
-      ...reviewData,
-    };
-    mockReviews.push(newReview);
-    return newReview;
-  } catch (error) {
-    throw new Error(`Failed to create review: ${error.message}`);
-  }
-};
-
-// API quản lý đánh giá (Admin)
-export const getReviews = async () => {
-  try {
-    checkAdminAccess();
-    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/reviews`, {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/reviews`, {
+      method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        Authorization: `Bearer ${token}`,
       },
-    });
-    const data = await handleResponse(response);
-    return {
-      reviews: data.reviews || data,
-      total: data.total || (Array.isArray(data) ? data.length : 0),
-    };
-  } catch (error) {
-    throw new Error(`Failed to fetch reviews: ${error.message}`);
-  }
-};
-
-export const deleteReview = async (reviewId) => {
-  try {
-    checkAdminAccess();
-    const response = await fetch(`${EXCHANGE_API_URL}/api/admin/reviews/${reviewId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-      },
+      body: formData,
     });
     return handleResponse(response);
   } catch (error) {
-    throw new Error(`Failed to delete review: ${error.message}`);
+    console.error('Create review failed:', error);
+    throw new Error(error.message || 'Failed to create review');
   }
 };
+
+
+// Trong api.js
+export const getReviewByOrderId = async (orderId) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${EXCHANGE_API_URL}/api/reviews/order/${orderId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token || ''}`,
+      },
+    }); 
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Get review by order failed:', error);
+    throw new Error(error.message || 'Failed to fetch review');
+  }
+};
+
+export const updateReview = async (reviewId, reviewData) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('No authentication token found');
+
+    const formData = new FormData();
+    formData.append('rating', reviewData.rating);
+    formData.append('comment', reviewData.comment);
+    formData.append('reviewType', reviewData.reviewType);
+    if (reviewData.evidences) {
+      reviewData.evidences.forEach((file, index) => {
+        formData.append(`evidences[${index}]`, file);
+      });
+    }
+
+    const response = await fetch(`${EXCHANGE_API_URL}/api/reviews/${reviewId}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Update review failed:', error);
+    throw new Error(error.message || 'Failed to update review');
+  }
+};
+
+// Trong api.js
+export const deleteUserReview = async (reviewId, rowVersion) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('No authentication token found');
+
+    const response = await fetch(`${EXCHANGE_API_URL}/api/reviews/${reviewId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ rowVersion }),
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Delete user review failed:', error);
+    throw new Error(error.message || 'Failed to delete review');
+  }
+};
+
 // API quản lý giao dịch (Admin)
 export const getOrders = async () => {
   try {
@@ -216,13 +226,6 @@ export const getBookById = async (bookId) => {
   }
 };
 
-
-
-
-
-
-
-
 export const lockUser = async (userId, isLocked) => {
   const response = await fetch(`${EXCHANGE_API_URL}/admin/users/${userId}/lock`, {
     method: 'PUT',
@@ -234,7 +237,6 @@ export const lockUser = async (userId, isLocked) => {
   });
   return handleResponse(response);
 };
-
 
 // API đăng nhập
 export const loginUser = async (email, password) => {
@@ -746,6 +748,7 @@ export const getListedDocuments = async (pageNumber = 1, pageSize = 50) => {
         imageUrl: item.document?.imageUrl || item.imageUrl || null,
         description: item.description || 'No description available',
         createdAt: item.createdAt || new Date().toISOString(),
+        statusName: item.statusName || 'Unknown',
       };
     });
     return items;
@@ -1787,5 +1790,67 @@ export const togglePaymentMethod = async (id, enable) => {
     return handleResponse(response);
   } catch (error) {
     throw new Error(`Failed to toggle payment method: ${error.message}`);
+  }
+};
+
+export const getPublicPaymentMethods = async () => {
+  try {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/PaymentMethods`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await handleResponse(response);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Get public payment methods failed:', error);
+    throw new Error(error.message || 'Failed to fetch public payment methods');
+  }
+};
+
+export const getReviewById = async (reviewId) => {
+  try {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/reviews/${reviewId}`);
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Get review by id failed:', error);
+    throw new Error(error.message || 'Failed to fetch review');
+  }
+};
+
+export const getReviewsBySeller = async (sellerId, page = 1, size = 10) => {
+  try {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/reviews/seller/${sellerId}?page=${page}&size=${size}`);
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Get reviews by seller failed:', error);
+    throw new Error(error.message || 'Failed to fetch seller reviews');
+  }
+};
+
+export const getReviewsByReviewer = async (reviewerId, page = 1, size = 10) => {
+  try {
+    const token = localStorage.getItem('token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const response = await fetch(`${EXCHANGE_API_URL}/api/reviews/reviewer/${reviewerId}?page=${page}&size=${size}`, {
+      headers
+    });
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Get reviews by reviewer failed:', error);
+    throw new Error(error.message || 'Failed to fetch reviewer reviews');
+  }
+};
+
+// Lấy điểm đánh giá trung bình của người bán
+export const getSellerAverageRating = async (sellerId) => {
+  try {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/reviews/seller/${sellerId}/avg-rating`);
+    const data = await handleResponse(response);
+    console.log('Seller average rating response:', { sellerId, data });
+    const rating = typeof data === 'number' && !isNaN(data) ? data : 0;
+    return rating;
+  } catch (error) {
+    console.error('Get seller average rating failed:', error);
+    return 0;
   }
 };

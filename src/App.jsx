@@ -3,20 +3,17 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Navbar from '../Components/Navbar';
 import BrowseBooksPage from '../Pages/BrowseBooksPage';
 import LoginPage from '../Pages/LoginPage';
-import ExchangePage from '../Pages/ExchangePage';
 import HomePage from '../Pages/HomePage';
 import SignUpPage from '../Pages/SignUpPage';
 import ProfilePage from '../Pages/ProfilePage';
 import SettingsPage from '../Pages/SettingsPage';
 import BookDetailsPage from '../Pages/BookDetailsPage';
 import CartPage from '../Pages/CartPage';
-import ExchangeHistoryPage from '../Pages/ExchangeHistoryPage';
 import SellPage from '../Pages/SellPage';
 import SellHistoryPage from '../Pages/SellHistoryPage';
 import ForgotPasswordPage from '../Pages/ForgotPasswordPage';
 import ResetPasswordPage from '../Pages/ResetPasswordPage';
 import InventoryPage from '../Pages/InventoryPage';
-import CheckoutPage from '../Pages/CheckoutPage';
 import OtpPage from '../Pages/OtpPage';
 import AdminDashboard from '../Pages/AdminDashboard';
 import AdminUsersPage from '../Pages/AdminUsersPage';
@@ -24,12 +21,15 @@ import AdminBooksPage from '../Pages/AdminBooksPage';
 import AdminOrdersPage from '../Pages/AdminOrdersPage';
 import AdminStatisticsPage from '../Pages/AdminStatisticsPage';
 import AdminCategoriesPage from '../Pages/AdminCategoriesPage';
-import AdminPaymentMethodsPage from '../Pages/AdminPaymentMethodsPage'; // Thêm import
+import AdminPaymentMethodsPage from '../Pages/AdminPaymentMethodsPage';
 import OrderDetailsPage from '../Pages/OrderDetailsPage';
 import ConfirmPaymentPage from '../Pages/ConfirmPaymentPage';
 import MyPurchasesPage from '../Pages/MyPurchasesPage';
 import MySalesPage from '../Pages/MySalesPage';
 import MyListingsPage from '../Pages/MyListingsPage';
+import OrderPage from '../Pages/OrderPage';
+import SellerProfilePage from '../Pages/SellerProfilePage';
+import MyReviewsPage from '../Pages/MyReviewsPage';
 import NotFoundPage from '../Pages/NotFoundPage';
 import { AuthProvider, useAuth } from '../src/contexts/AuthContext';
 import { CartProvider } from '../src/contexts/CartContext';
@@ -77,28 +77,27 @@ const App = () => {
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/otp" element={<OtpPage />} />
                 <Route path="/browse" element={<ProtectedRoute><BrowseBooksPage /></ProtectedRoute>} />
-                {/* <Route path="/exchange" element={<ProtectedRoute><ExchangePage /></ProtectedRoute>} /> */}
-                <Route path="/exchange-history" element={<ProtectedRoute><ExchangeHistoryPage /></ProtectedRoute>} />
                 <Route path="/sell" element={<ProtectedRoute><SellPage /></ProtectedRoute>} />
                 <Route path="/sell-history" element={<ProtectedRoute><SellHistoryPage /></ProtectedRoute>} />
                 <Route path="/inventory" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
                 <Route path="/books/:listingId" element={<ProtectedRoute><BookDetailsPage /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
-                {/* <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} /> */}
-                <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+                <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+                <Route path="/order" element={<ProtectedRoute><OrderPage /></ProtectedRoute>} />
                 <Route path="/my-listings" element={<ProtectedRoute><MyListingsPage /></ProtectedRoute>} />
                 <Route path="/orders/:orderId" element={<ProtectedRoute><OrderDetailsPage /></ProtectedRoute>} />
                 <Route path="/orders/:orderId/confirm-payment" element={<ProtectedRoute><ConfirmPaymentPage /></ProtectedRoute>} />
                 <Route path="/my-purchases" element={<ProtectedRoute><MyPurchasesPage /></ProtectedRoute>} />
                 <Route path="/my-sales" element={<ProtectedRoute><MySalesPage /></ProtectedRoute>} />
+                <Route path="/seller/:sellerId" element={<ProtectedRoute><SellerProfilePage /></ProtectedRoute>} />
+                <Route path="/reviews" element={<ProtectedRoute><MyReviewsPage /></ProtectedRoute>} />
                 <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
                 <Route path="/admin/users" element={<AdminRoute><AdminUsersPage /></AdminRoute>} />
                 <Route path="/admin/books" element={<AdminRoute><AdminBooksPage /></AdminRoute>} />
                 <Route path="/admin/orders" element={<AdminRoute><AdminOrdersPage /></AdminRoute>} />
-                {/* <Route path="/admin/reviews" element={<AdminRoute><AdminReviewsPage /></AdminRoute>} /> */}
                 <Route path="/admin/categories" element={<AdminRoute><AdminCategoriesPage /></AdminRoute>} />
-                <Route path="/admin/payment-methods" element={<AdminRoute><AdminPaymentMethodsPage /></AdminRoute>} /> {/* Thêm route */}
+                <Route path="/admin/payment-methods" element={<AdminRoute><AdminPaymentMethodsPage /></AdminRoute>} />
                 <Route path="/admin/statistics" element={<AdminRoute><AdminStatisticsPage /></AdminRoute>} />
                 <Route path="/admin/users/:userId/listings" element={<AdminRoute><MyListingsPage /></AdminRoute>} />
                 <Route path="*" element={<NotFoundPage />} />

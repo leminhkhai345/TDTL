@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'react-toastify';
-import { getListedDocuments } from '../src/API/api';
+import React, { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify";
+import { getListedDocuments } from "../src/API/api";
 
 const BookCarousel = () => {
   const [books, setBooks] = useState([]);
@@ -12,24 +12,22 @@ const BookCarousel = () => {
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const booksPerPage = 4;
-  const transitionDuration = 0.8;
+  const transitionDuration = 0.6;
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         setLoading(true);
         setError(null);
-
-        const mappedBooks = await getListedDocuments(1, 20); // Lấy tối đa 20 sách
+        const mappedBooks = await getListedDocuments(1, 20);
         setBooks(mappedBooks);
       } catch (err) {
-        setError(err.message || 'Đã xảy ra lỗi khi lấy danh sách sách.');
-        toast.error(err.message);
+        setError(err.message || "Failed to fetch books.");
+        toast.error(err.message || "Failed to fetch books.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchBooks();
   }, []);
 
@@ -49,7 +47,7 @@ const BookCarousel = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-6">Đang tải...</div>;
+    return <div className="text-center py-6">Loading...</div>;
   }
 
   if (error) {
@@ -57,7 +55,7 @@ const BookCarousel = () => {
   }
 
   if (books.length === 0) {
-    return <div className="text-center text-gray-600 py-6">Không có sách nào để hiển thị.</div>;
+    return <div className="text-center text-gray-600 py-6">No books available.</div>;
   }
 
   return (
@@ -69,7 +67,7 @@ const BookCarousel = () => {
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: transitionDuration, ease: 'easeInOut' }}
+            transition={{ duration: transitionDuration, ease: "easeInOut" }}
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
           >
             {displayedBooks.map((book) => (
@@ -87,7 +85,7 @@ const BookCarousel = () => {
                   />
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <span className="text-white font-semibold bg-blue-600 px-4 py-2 rounded-lg">
-                      Xem chi tiết
+                      View Details
                     </span>
                   </div>
                 </div>
@@ -96,36 +94,37 @@ const BookCarousel = () => {
                   <p className="text-sm text-gray-600">{book.author}</p>
                   <p className="text-sm text-gray-600">{book.categoryName}</p>
                   <p className="text-lg font-bold text-blue-600 mt-2">
-                    {book.price !== null ? `$${parseFloat(book.price).toFixed(2)}` : 'Giá không có sẵn'}
+                    {book.price !== null ? `$${parseFloat(book.price).toFixed(2)}` : "Price not available"}
                   </p>
                 </div>
               </Link>
             ))}
           </motion.div>
         </AnimatePresence>
-
         <button
           onClick={handlePrev}
           className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+          aria-label="Previous Slide"
         >
           <FontAwesomeIcon icon={faChevronLeft} />
         </button>
         <button
           onClick={handleNext}
           className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+          aria-label="Next Slide"
         >
           <FontAwesomeIcon icon={faChevronRight} />
         </button>
       </div>
-
       <div className="flex justify-center mt-4 space-x-2">
         {Array.from({ length: totalSlides }).map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
             className={`w-3 h-3 rounded-full ${
-              currentIndex === index ? 'bg-blue-600' : 'bg-gray-300'
+              currentIndex === index ? "bg-blue-600" : "bg-gray-300"
             } transition-colors`}
+            aria-label={`Slide ${index + 1}`}
           />
         ))}
       </div>

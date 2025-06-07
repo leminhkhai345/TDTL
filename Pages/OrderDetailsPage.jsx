@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../src/contexts/AuthContext';
 import { toast } from 'react-toastify';
-import { getUserOrderById, confirmOrder, rejectOrder, shipOrder, deliverOrder, cancelOrder, confirmMoney } from '../src/API/api';
+import { getUserOrderById, confirmOrder, rejectOrder, shipOrder, deliverOrder, cancelOrder, confirmMoney, getReviewByOrderId } from '../src/API/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faStar } from '@fortawesome/free-solid-svg-icons';
+import ReviewForm from '../Components/ReviewForm';
+import { deleteUserReview } from '../src/API/api';
 
 const OrderDetailsPage = () => {
   const { orderId } = useParams();
@@ -17,11 +19,14 @@ const OrderDetailsPage = () => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isShipModalOpen, setIsShipModalOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [rejectReason, setRejectReason] = useState('');
   const [shippingProvider, setShippingProvider] = useState('');
   const [trackingNumber, setTrackingNumber] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [existingReview, setExistingReview] = useState(null);
 
   // Hàm chuẩn hóa orderStatus
   const normalizeStatus = (status) => {
@@ -42,8 +47,17 @@ const OrderDetailsPage = () => {
       console.log('Fetched order:', orderData);
       setOrder({
         ...orderData,
-        orderStatus: normalizeStatus(orderData.orderStatus) // Chuẩn hóa orderStatus
+        orderStatus: normalizeStatus(orderData.orderStatus),
       });
+
+      // Lấy đánh giá nếu có
+      try {
+        const reviewData = await getReviewByOrderId(orderId);
+        setExistingReview(reviewData);
+      } catch (err) {
+        console.log('No existing review found:', err.message);
+        setExistingReview(null);
+      }
     } catch (err) {
       console.error('Fetch order error:', err);
       setError(err.message || 'Không thể tải chi tiết đơn hàng');
@@ -78,7 +92,7 @@ const OrderDetailsPage = () => {
       const response = await confirmOrder(orderId, { rowVersion: order.rowVersion });
       setOrder({
         ...response,
-        orderStatus: normalizeStatus(response.orderStatus)
+        orderStatus: normalizeStatus(response.orderStatus),
       });
       setIsConfirmModalOpen(false);
       toast.success(`Đơn hàng đã được xác nhận! Trạng thái mới: ${response.orderStatus}`);
@@ -109,7 +123,7 @@ const OrderDetailsPage = () => {
       const response = await rejectOrder(orderId, { rowVersion: order.rowVersion, reason: rejectReason });
       setOrder({
         ...response,
-        orderStatus: normalizeStatus(response.orderStatus)
+        orderStatus: normalizeStatus(response.orderStatus),
       });
       setIsRejectModalOpen(false);
       setRejectReason('');
@@ -136,7 +150,7 @@ const OrderDetailsPage = () => {
       });
       setOrder({
         ...response,
-        orderStatus: normalizeStatus(response.orderStatus)
+        orderStatus: normalizeStatus(response.orderStatus),
       });
       setIsShipModalOpen(false);
       setShippingProvider('');
@@ -156,9 +170,11 @@ const OrderDetailsPage = () => {
       const response = await deliverOrder(orderId, { rowVersion: order.rowVersion });
       setOrder({
         ...response,
-        orderStatus: normalizeStatus(response.orderStatus)
+        orderStatus: normalizeStatus(response.orderStatus),
       });
       toast.success('Đã xác nhận nhận hàng!');
+      // Làm mới dữ liệu để kiểm tra trạng thái đánh giá
+      fetchOrderDetails();
     } catch (error) {
       console.error('Deliver order error:', error);
       toast.error(error.message || 'Không thể xác nhận nhận hàng');
@@ -181,7 +197,7 @@ const OrderDetailsPage = () => {
       const response = await cancelOrder(orderId, { rowVersion: order.rowVersion, reason: cancelReason });
       setOrder({
         ...response,
-        orderStatus: normalizeStatus(response.orderStatus)
+        orderStatus: normalizeStatus(response.orderStatus),
       });
       setIsCancelModalOpen(false);
       setCancelReason('');
@@ -200,12 +216,28 @@ const OrderDetailsPage = () => {
       const response = await confirmMoney(orderId, { rowVersion: order.rowVersion });
       setOrder({
         ...response,
-        orderStatus: normalizeStatus(response.orderStatus)
+        orderStatus: normalizeStatus(response.orderStatus),
       });
       toast.success('Đã xác nhận nhận tiền!');
     } catch (error) {
       console.error('Confirm money error:', error);
       toast.error(error.message || 'Không thể xác nhận nhận tiền');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteReview = async () => {
+    setIsSubmitting(true);
+    try {
+      await deleteUserReview(existingReview.reviewId, existingReview.rowVersion);
+      setExistingReview(null);
+      toast.success('Đánh giá đã được xóa!');
+      setIsDeleteModalOpen(false);
+      fetchOrderDetails();
+    } catch (error) {
+      console.error('Delete review error:', error);
+      toast.error(error.message || 'Không thể xóa đánh giá');
     } finally {
       setIsSubmitting(false);
     }
@@ -245,7 +277,7 @@ const OrderDetailsPage = () => {
     buyerIdConverted: String(order?.buyerId).trim(),
     userType: typeof user?.id,
     sellerIdType: typeof order?.sellerId,
-    buyerIdType: typeof order?.buyerId
+    buyerIdType: typeof order?.buyerId,
   });
 
   return (
@@ -322,7 +354,60 @@ const OrderDetailsPage = () => {
             </div>
           </div>
         </div>
-        <div className="mt-6 flex justify-end gap-4">
+
+        {/* Hiển thị đánh giá hiện có */}
+        {existingReview && (
+          <div className="mt-6">
+            <h2 className="text-xl font-semibold mb-4">Đánh giá của bạn</h2>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                {[...Array(5)].map((_, i) => (
+                  <FontAwesomeIcon
+                    key={i}
+                    icon={faStar}
+                    className={`text-xl ${i < existingReview.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                  />
+                ))}
+              </div>
+              <p><strong>Bình luận:</strong> {existingReview.comment}</p>
+              <p><strong>Loại:</strong> {existingReview.reviewType === 'Constructive' ? 'Phản hồi tích cực' : 'Báo cáo vi phạm'}</p>
+              {existingReview.evidences?.length > 0 && (
+                <div className="mt-2">
+                  <p><strong>Bằng chứng:</strong></p>
+                  <div className="flex gap-2 flex-wrap">
+                    {existingReview.evidences.map((evidence, index) => (
+                      <div key={index}>
+                        {evidence.fileType.includes('video') ? (
+                          <video src={evidence.fileUrl} className="w-20 h-20 object-cover rounded" controls />
+                        ) : (
+                          <img src={evidence.fileUrl} alt="Evidence" className="w-20 h-20 object-cover rounded" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="flex gap-4 mt-4">
+                <button
+                  onClick={() => setIsReviewModalOpen(true)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  aria-label="Chỉnh sửa đánh giá"
+                >
+                  Chỉnh sửa đánh giá
+                </button>
+                <button
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                  aria-label="Xóa đánh giá"
+                >
+                  Xóa đánh giá
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="mt-6 flex justify-end gap-4 flex-wrap">
           {isSeller && order.orderStatus === 'PendingSellerConfirmation' && (
             <>
               <button
@@ -394,6 +479,16 @@ const OrderDetailsPage = () => {
               aria-label="Hoàn tất thanh toán"
             >
               {isSubmitting ? 'Đang xử lý...' : 'Hoàn tất thanh toán'}
+            </button>
+          )}
+          {isBuyer && order.orderStatus === 'Delivered' && !existingReview && (
+            <button
+              onClick={() => setIsReviewModalOpen(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              disabled={isSubmitting}
+              aria-label="Viết đánh giá"
+            >
+              {isSubmitting ? 'Đang xử lý...' : 'Viết đánh giá'}
             </button>
           )}
           <button
@@ -609,6 +704,57 @@ const OrderDetailsPage = () => {
                 aria-label="Xác nhận hủy"
               >
                 {isSubmitting ? 'Đang xử lý...' : 'Xác nhận hủy'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal đánh giá */}
+      {isReviewModalOpen && (
+        <ReviewForm
+          isOpen={isReviewModalOpen}
+          onClose={() => setIsReviewModalOpen(false)}
+          order={order}
+          review={existingReview}
+          onSubmitSuccess={(review) => {
+            setExistingReview(review);
+            fetchOrderDetails();
+          }}
+        />
+      )}
+
+      {/* Modal xóa đánh giá */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" role="dialog" aria-labelledby="delete-modal-title">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl relative">
+            <button
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+              aria-label="Đóng modal xóa"
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+            <h2 id="delete-modal-title" className="text-xl font-bold mb-4 text-blue-700">Xóa đánh giá</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Bạn có chắc muốn xóa đánh giá cho đơn hàng #{order.orderId}? Hành động này không thể hoàn tác.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                disabled={isSubmitting}
+                aria-label="Hủy"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleDeleteReview}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                disabled={isSubmitting}
+                aria-label="Xác nhận xóa"
+              >
+                {isSubmitting ? 'Đang xử lý...' : 'Xác nhận xóa'}
               </button>
             </div>
           </div>

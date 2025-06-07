@@ -1,28 +1,28 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoneyBillWave, faLeaf, faHandshake, faBookOpen } from "@fortawesome/free-solid-svg-icons";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 const benefits = [
   {
     icon: faMoneyBillWave,
-    title: "Cost Savings",
-    description: "Buy books at lower prices and sell used books to save money.",
+    title: "Save Big",
+    description: "Buy used books at unbeatable prices or sell your own to earn cash.",
   },
   {
     icon: faLeaf,
-    title: "Eco-Friendly",
-    description: "Reusing books reduces waste and protects the environment.",
+    title: "Go Green",
+    description: "Reuse books to reduce waste and support a sustainable future.",
   },
   {
     icon: faHandshake,
-    title: "Easy Exchange",
-    description: "Connect with others to exchange books quickly and easily.",
+    title: "Seamless Exchange",
+    description: "Swap books effortlessly with readers near and far.",
   },
   {
     icon: faBookOpen,
-    title: "Diverse Collection",
-    description: "Find a wide variety of textbooks, novels, and more.",
+    title: "Endless Variety",
+    description: "Discover books of all genres, from classics to modern hits.",
   },
 ];
 
@@ -47,9 +47,9 @@ const BenefitsSection = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-4xl font-bold text-center text-blue-800 mb-12 drop-shadow-md"
+          className="text-4xl font-bold text-center text-blue-800 mb-12"
         >
-          Benefits of Using BookStore
+          Why Shop with BookStore?
         </motion.h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {benefits.map((benefit, index) => (
@@ -61,10 +61,10 @@ const BenefitsSection = () => {
               variants={cardVariants}
               className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
-              <div className="relative inline-block mb-4">
+              <div className="mb-4">
                 <FontAwesomeIcon
                   icon={benefit.icon}
-                  className="text-5xl text-blue-600 bg-gradient-to-r from-blue-100 to-blue-200 p-3 rounded-full"
+                  className="text-6xl text-blue-600 bg-blue-100 p-4 rounded-full transition-colors duration-300 hover:bg-blue-200"
                 />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-2">{benefit.title}</h3>
