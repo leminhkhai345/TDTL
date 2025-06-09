@@ -79,16 +79,16 @@ const OtpPage = () => {
 
   return (
     <div className="max-w-md mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6 text-center">Xác Nhận OTP</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">Confirm OTP</h1>
       <p className="text-center mb-4">
-        Một mã OTP đã được gửi đến email: <strong>{email || "Không xác định"}</strong>. Vui lòng nhập mã để xác nhận.
+        An OTP code has been sent to the email.: <strong>{email || "Không xác định"}</strong>.Please enter the code to confirm.
       </p>
       <p className="text-center mb-4">
         OTP expires in: {Math.floor(otpExpiry / 60)}:{(otpExpiry % 60).toString().padStart(2, '0')}
       </p>
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-600">Mã OTP</label>
+          <label className="block text-sm font-medium text-gray-600"> OTP code</label>
           <input
             type="text"
             value={otp}
@@ -119,9 +119,9 @@ const OtpPage = () => {
         </button>
         {!email && (
           <p className="text-center text-red-500 mt-4">
-            Không tìm thấy email. Vui lòng{" "}
+            Email not found. Please{" "}
             <Link to="/signup" className="text-blue-600 underline">
-              đăng ký lại
+              re-register
             </Link>.
           </p>
         )}

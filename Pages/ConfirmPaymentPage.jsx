@@ -94,11 +94,11 @@ const ConfirmPaymentPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6">Xác nhận thanh toán cho đơn hàng #{orderId}</h1>
+      <h1 className="text-2xl font-bold mb-6">Confirm payment for the order #{orderId}</h1>
       <div className="bg-white rounded-lg shadow-md p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600">Bằng chứng thanh toán (JPEG/PNG)</label>
+            <label className="block text-sm font-medium text-gray-600">Proof of payment (JPEG/PNG)</label>
             <input
               type="file"
               accept="image/jpeg,image/png"
@@ -111,7 +111,7 @@ const ConfirmPaymentPage = () => {
             disabled={loading}
             className={`w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            {loading ? 'Đang gửi...' : 'Gửi bằng chứng'}
+            {loading ? 'Sending...' : 'Submit proof'}
           </button>
         </form>
       </div>

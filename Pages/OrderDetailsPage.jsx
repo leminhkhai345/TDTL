@@ -31,7 +31,7 @@ const OrderDetailsPage = () => {
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [paymentMethodName, setPaymentMethodName] = useState('');
 
-  // Hàm chuẩn hóa orderStatus
+  // Function to normalize orderStatus
   const normalizeStatus = (status) => {
     return status?.trim().replace(/\s+/g, '');
   };
@@ -42,18 +42,18 @@ const OrderDetailsPage = () => {
         setLoading(true);
         setError(null);
         if (!orderId || isNaN(parseInt(orderId))) {
-          throw new Error('ID đơn hàng không hợp lệ.');
+          throw new Error('Invalid order ID.');
         }
-        // Lấy danh sách phương thức thanh toán
+        // Fetch payment methods
         const methods = await getPublicPaymentMethods();
         setPaymentMethods(methods);
 
         const orderData = await getUserOrderById(orderId);
         console.log(orderData);
         if (!orderData) {
-          throw new Error('Đơn hàng không tồn tại hoặc bạn không có quyền xem.');
+          throw new Error('Order does not exist or you do not have permission to view.');
         }
-        // Map tên phương thức thanh toán
+        // Map payment method name
         let methodName = orderData.paymentMethodName;
         if (!methodName && methods && Array.isArray(methods)) {
           const matched = methods.find(
@@ -63,7 +63,7 @@ const OrderDetailsPage = () => {
           );
           methodName = matched
             ? matched.name || matched.Name
-            : 'Không xác định';
+            : 'Not specified';
         }
         setPaymentMethodName(methodName);
 
@@ -72,7 +72,7 @@ const OrderDetailsPage = () => {
           orderStatus: normalizeStatus(orderData.orderStatus),
         });
 
-        // Lấy thông tin sản phẩm từ listingId
+        // Fetch product information from listingId
         if (orderData.listingId) {
           console.log('listingId:', orderData.listingId);
           try {
@@ -80,17 +80,17 @@ const OrderDetailsPage = () => {
             console.log('listing from getListingById:', listing);
             setProduct(listing);
           } catch (err) {
-             console.log('Error getListingById:', err);
+            console.log('Error getListingById:', err);
             setProduct(null);
           }
         }
 
-        // Kiểm tra review từ API
+        // Check review from API
         try {
           const reviewData = await getReviewByOrderId(orderId);
           setExistingReview(reviewData);
-          // Nếu có review, cập nhật state order
-          if(reviewData) {
+          // If review exists, update order state
+          if (reviewData) {
             setOrder(prev => ({
               ...prev,
               hasReview: true
@@ -102,10 +102,10 @@ const OrderDetailsPage = () => {
         }
       } catch (err) {
         console.error('Fetch order error:', err);
-        setError(err.message || 'Không thể tải chi tiết đơn hàng');
-        toast.error(err.message || 'Không thể tải chi tiết đơn hàng');
+        setError(err.message || 'Unable to load order details');
+        toast.error(err.message || 'Unable to load order details');
         if (err.message.includes('Unauthorized') || err.message.includes('No authentication token')) {
-          toast.info('Vui lòng đăng nhập để tiếp tục');
+          toast.info('Please log in to continue');
           navigate('/login');
         }
       } finally {
@@ -118,13 +118,12 @@ const OrderDetailsPage = () => {
 
   const handleConfirmOrder = async () => {
     if (!order || order.orderStatus !== 'PendingSellerConfirmation') {
-      toast.error('Đơn hàng không ở trạng thái chờ xác nhận');
+      toast.error('Order is not in a pending confirmation state');
       setIsConfirmModalOpen(false);
       return;
     }
     setIsSubmitting(true);
 
-    // Error messages for order operations
     try {
       const response = await confirmOrder(orderId, { RowVersion: order.rowVersion });
       
@@ -133,9 +132,9 @@ const OrderDetailsPage = () => {
         orderStatus: normalizeStatus(response.orderStatus),
       });
       setIsConfirmModalOpen(false);
-      toast.success(`Đơn hàng đã được xác nhận! Trạng thái mới: ${response.orderStatus}`);
+      toast.success(`Order confirmed! New status: ${response.orderStatus}`);
     } catch (error) {
-      toast.error(error.message || 'Không thể xác nhận đơn hàng');
+      toast.error(error.message || 'Unable to confirm order');
     } finally {
       setIsSubmitting(false);
     }
@@ -143,15 +142,15 @@ const OrderDetailsPage = () => {
 
   const handleRejectOrder = async () => {
     if (!rejectReason.trim()) {
-      toast.error('Vui lòng nhập lý do từ chối');
+      toast.error('Please enter a reason for rejection');
       return;
     }
     if (rejectReason.length > 500) {
-      toast.error('Lý do từ chối không được vượt quá 500 ký tự');
+      toast.error('Reason for rejection must not exceed 500 characters');
       return;
     }
     if (!order || order.orderStatus !== 'PendingSellerConfirmation') {
-      toast.error('Đơn hàng không ở trạng thái chờ xác nhận');
+      toast.error('Order is not in a pending confirmation state');
       setIsRejectModalOpen(false);
       return;
     }
@@ -164,10 +163,10 @@ const OrderDetailsPage = () => {
       });
       setIsRejectModalOpen(false);
       setRejectReason('');
-      toast.success('Đơn hàng đã được từ chối!');
+      toast.success('Order has been rejected!');
     } catch (error) {
       console.error('Reject order error:', error);
-      toast.error(error.message || 'Không thể từ chối đơn hàng');
+      toast.error(error.message || 'Unable to reject order');
     } finally {
       setIsSubmitting(false);
     }
@@ -175,7 +174,7 @@ const OrderDetailsPage = () => {
 
   const handleShipOrder = async () => {
     if (!shippingProvider.trim() || !trackingNumber.trim()) {
-      toast.error('Vui lòng nhập đầy đủ thông tin vận chuyển');
+      toast.error('Please enter all shipping information');
       return;
     }
     setIsSubmitting(true);
@@ -192,10 +191,10 @@ const OrderDetailsPage = () => {
       setIsShipModalOpen(false);
       setShippingProvider('');
       setTrackingNumber('');
-      toast.success('Đơn hàng đã được cập nhật trạng thái giao hàng!');
+      toast.success('Order shipping status updated!');
     } catch (error) {
       console.error('Ship order error:', error);
-      toast.error(error.message || 'Không thể cập nhật trạng thái giao hàng');
+      toast.error(error.message || 'Unable to update shipping status');
     } finally {
       setIsSubmitting(false);
     }
@@ -209,12 +208,12 @@ const OrderDetailsPage = () => {
         ...response,
         orderStatus: normalizeStatus(response.orderStatus),
       });
-      toast.success('Đã xác nhận nhận hàng!');
-      // Làm mới dữ liệu để kiểm tra trạng thái đánh giá
+      toast.success('Delivery confirmed!');
+      // Refresh data to check review status
       fetchOrderDetails();
     } catch (error) {
       console.error('Deliver order error:', error);
-      toast.error(error.message || 'Không thể xác nhận nhận hàng');
+      toast.error(error.message || 'Unable to confirm delivery');
     } finally {
       setIsSubmitting(false);
     }
@@ -222,26 +221,25 @@ const OrderDetailsPage = () => {
 
   const handleCancelOrder = async () => {
     if (!cancelReason.trim()) {
-      toast.error('Vui lòng nhập lý do hủy');
+      toast.error('Please enter a cancellation reason');
       return;
     }
     if (cancelReason.length > 500) {
-      toast.error('Lý do hủy không được vượt quá 500 ký tự');
+      toast.error('Cancellation reason must not exceed 500 characters');
       return;
     }
     setIsSubmitting(true);
-    // Cancel order
     try {
-      await cancelOrder(orderId);
+      const response = await cancelOrder(orderId);
       setOrder({
         ...response,
         orderStatus: normalizeStatus(response.orderStatus),
       });
       setIsCancelModalOpen(false);
       setCancelReason('');
-      toast.success('Đơn hàng đã được hủy!');
+      toast.success('Order has been canceled!');
     } catch (error) {
-      toast.error('Không thể hủy đơn hàng. Vui lòng thử lại.');
+      toast.error('Unable to cancel order. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -255,10 +253,10 @@ const OrderDetailsPage = () => {
         ...response,
         orderStatus: normalizeStatus(response.orderStatus),
       });
-      toast.success('Đã xác nhận nhận tiền!');
+      toast.success('Payment confirmed!');
     } catch (error) {
       console.error('Confirm money error:', error);
-      toast.error(error.message || 'Không thể xác nhận nhận tiền');
+      toast.error(error.message || 'Unable to confirm payment');
     } finally {
       setIsSubmitting(false);
     }
@@ -269,29 +267,29 @@ const OrderDetailsPage = () => {
     try {
       await deleteUserReview(existingReview.reviewId, existingReview.rowVersion);
       setExistingReview(null);
-      toast.success('Đánh giá đã được xóa!');
+      toast.success('Review has been deleted!');
       setIsDeleteModalOpen(false);
       fetchOrderDetails();
     } catch (error) {
       console.error('Delete review error:', error);
-      toast.error(error.message || 'Không thể xóa đánh giá');
+      toast.error(error.message || 'Unable to delete review');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (loading) return <div className="text-center py-6">Đang tải...</div>;
+  if (loading) return <div className="text-center py-6">Loading...</div>;
 
   if (error || !order) {
     return (
       <div className="text-center text-red-600 py-6">
-        {error || 'Không tìm thấy đơn hàng'}
+        {error || 'Order not found'}
         <button
           onClick={() => navigate('/browse')}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          aria-label="Quay lại duyệt sách"
+          aria-label="Return to browse"
         >
-          Quay lại duyệt sách
+          Return to browse
         </button>
       </div>
     );
@@ -534,7 +532,7 @@ const OrderDetailsPage = () => {
                 <p><strong>Evidence:</strong></p>
                 {existingReview.evidences?.length > 0 && (
                   <div className="mt-2">
-                    <p><strong>Bằng chứng:</strong></p>
+                    <p><strong>Evidence:</strong></p>
                     <div className="flex gap-2 flex-wrap">
                       {existingReview.evidences.map((evidence, index) => (
                         <div key={index}>
@@ -552,16 +550,16 @@ const OrderDetailsPage = () => {
                   <button
                     onClick={() => setIsReviewModalOpen(true)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                    aria-label="Chỉnh sửa đánh giá"
+                    aria-label="Edit review"
                   >
-                    Chỉnh sửa đánh giá
+                    Edit review
                   </button>
                   <button
                     onClick={() => setIsDeleteModalOpen(true)}
                     className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                    aria-label="Xóa đánh giá"
+                    aria-label="Delete review"
                   >
-                    Xóa đánh giá
+                    Delete review
                   </button>
                 </div>
               </div>
@@ -576,17 +574,17 @@ const OrderDetailsPage = () => {
                   onClick={() => setIsConfirmModalOpen(true)}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   disabled={isSubmitting}
-                  aria-label="Xác nhận đơn hàng"
+                  aria-label="Confirm order"
                 >
-                  {isSubmitting ? 'Processing...' : 'Xác nhận đơn hàng'}
+                  {isSubmitting ? 'Processing...' : 'Confirm order'}
                 </button>
                 <button
                   onClick={() => setIsRejectModalOpen(true)}
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   disabled={isSubmitting}
-                  aria-label="Từ chối đơn hàng"
+                  aria-label="Reject the order"
                 >
-                  {isSubmitting ? 'Processing...' : 'Từ chối đơn hàng'}
+                  {isSubmitting ? 'Processing...' : 'Reject the order'}
                 </button>
               </>
             )}
@@ -595,9 +593,9 @@ const OrderDetailsPage = () => {
                 onClick={() => setIsShipModalOpen(true)}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 disabled={isSubmitting}
-                aria-label="Gửi hàng"
+                aria-label="Send the order"
               >
-                {isSubmitting ? 'Processing...' : 'Gửi hàng'}
+                {isSubmitting ? 'Processing...' : 'Send the order'}
               </button>
             )}
             {isBuyer && order.orderStatus === 'Shipped' && (
@@ -605,9 +603,9 @@ const OrderDetailsPage = () => {
                 onClick={handleDeliverOrder}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 disabled={isSubmitting}
-                aria-label="Xác nhận nhận hàng"
+                aria-label="Confirm receipt of the order"
               >
-                {isSubmitting ? 'Processing...' : 'Xác nhận nhận hàng'}
+                {isSubmitting ? 'Processing...' : 'Confirm receipt of the order'}
               </button>
             )}
             {(isBuyer || isSeller) &&
@@ -616,9 +614,9 @@ const OrderDetailsPage = () => {
                   onClick={() => setIsCancelModalOpen(true)}
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   disabled={isSubmitting}
-                  aria-label="Hủy đơn hàng"
+                  aria-label="Cancel the order"
                 >
-                  {isSubmitting ? 'Processing...' : 'Hủy đơn hàng'}
+                  {isSubmitting ? 'Processing...' : 'Cancel the order'}
                 </button>
               )}
             {isSeller &&
@@ -628,9 +626,9 @@ const OrderDetailsPage = () => {
                 onClick={handleConfirmMoney}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 disabled={isSubmitting}
-                aria-label="Xác nhận nhận tiền"
+                aria-label="Confirm received money"
               >
-                {isSubmitting ? 'Processing...' : 'Xác nhận nhận tiền'}
+                {isSubmitting ? 'Processing...' : 'Confirm received money'}
               </button>
             )}
             {isBuyer && order.orderStatus === 'AwaitingOfflinePayment' && (!order.paymentMethodName || order.paymentMethodName === 'BankTransfer') && (
@@ -644,96 +642,117 @@ const OrderDetailsPage = () => {
               </button>
             )}
             {isBuyer && 
-  (order.orderStatus === 'Delivered' || order.orderStatus === 'Completed') && (
-    <>
-      {(!existingReview && !order.hasReview) ? (
-        <button
-          onClick={() => setIsReviewModalOpen(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          Write a review
-        </button>
-      ) : (
-        <button 
-          disabled
-          className="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed"
-        >
-          Đã đánh giá
-        </button>
-      )}
-    </>
-)}
+              (order.orderStatus === 'Delivered' || order.orderStatus === 'Completed') && (
+                <>
+                  {(!existingReview && !order.hasReview) ? (
+                    <button
+                      onClick={() => setIsReviewModalOpen(true)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    >
+                      Write a review
+                    </button>
+                  ) : (
+                    <button 
+                      disabled
+                      className="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed"
+                    >
+                      Reviewed
+                    </button>
+                  )}
+                </>
+              )}
             <button
               onClick={() => navigate('/browse')}
               className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
-              aria-label="Quay lại duyệt sách"
+              aria-label="Return to browse"
             >
-              Return to book review
+              Return to browse
             </button>
           </div>
 
-          {/* Modal xác nhận đơn hàng */}
+          {/* Modal confirm order */}
           {isConfirmModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" role="dialog" aria-labelledby="confirm-modal-title">
-              <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl relative">
+            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-md flex items-center justify-center z-50" role="dialog" aria-labelledby="confirm-modal-title">
+              <div className="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative transform transition-all duration-300 scale-100 hover:scale-105">
                 <button
                   onClick={() => setIsConfirmModalOpen(false)}
-                  className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-                  aria-label="Đóng modal xác nhận"
+                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors"
+                  aria-label="Close confirm modal"
                 >
-                  <FontAwesomeIcon icon={faTimes} />
+                  <FontAwesomeIcon icon={faTimes} className="text-xl" />
                 </button>
-                <h2 id="confirm-modal-title" className="text-xl font-bold mb-4 text-blue-700">Xác nhận đơn hàng</h2>
-                <p className="text-sm text-gray-600 mb-2">
-                  <strong>Đơn hàng:</strong> #{order.orderId}
-                </p>
-                <p className="text-sm text-gray-600 mb-2">
-                  <strong>Sách:</strong> {order.title}
-                </p>
-                <p className="text-sm text-gray-600 mb-2">
-                  <strong>Tổng tiền:</strong> ${parseFloat(order.totalAmount).toFixed(2)}
-                </p>
-                <p className="text-sm text-gray-600 mb-4">
-                  Bạn có chắc chắn muốn xác nhận đơn hàng này? Trạng thái sẽ chuyển thành{' '}
-                  {order.paymentMethodName === 'BankTransfer' ? 'Đang chờ thanh toán' : 'Đang chờ gửi hàng'}.
-                </p>
-                <div className="flex justify-end gap-2">
+                <h2 id="confirm-modal-title" className="text-2xl font-bold text-blue-800 mb-6">Confirm Order</h2>
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-700">
+                    <strong className="font-semibold">Order:</strong> #{order.orderId}
+                  </p>
+                  <p className="text-sm text-gray-700">
+                    <strong className="font-semibold">Product:</strong> {order.title}
+                  </p>
+                  <p className="text-sm text-gray-700">
+                    <strong className="font-semibold">Total Amount:</strong> ${parseFloat(order.totalAmount).toFixed(2)}
+                  </p>
+                  {order.paymentMethodName === 'BankTransfer' ? (
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <p className="text-sm text-blue-800 font-medium">
+                        You are confirming the order with the payment method <strong>Bank Transfer</strong>.
+                      </p>
+                      <p className="text-sm text-blue-800 mt-2">
+                        After confirmation, the order status will change to <strong>Awaiting Payment</strong>. The buyer will be required to complete the payment via bank transfer.
+                      </p>
+                    </div>
+                  ) : order.paymentMethodName === 'COD' ? (
+                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                      <p className="text-sm text-green-800 font-medium">
+                        You are confirming the order with the payment method <strong>Cash on Delivery (COD)</strong>.
+                      </p>
+                      <p className="text-sm text-green-800 mt-2">
+                        After confirmation, the order status will change to <strong>Pending Shipment</strong>. Payment will be collected upon delivery.
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-700">
+                      After confirmation, the order status will change to <strong>Pending Shipment</strong>.
+                    </p>
+                  )}
+                </div>
+                <div className="flex justify-end gap-4 mt-8">
                   <button
                     onClick={() => setIsConfirmModalOpen(false)}
-                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
-                    aria-label="Hủy"
+                    aria-label="Cancel"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     onClick={handleConfirmOrder}
-                    className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
-                    aria-label="Xác nhận đơn hàng"
+                    aria-label="Confirm order"
                   >
-                    {isSubmitting ? 'Đang xử lý...' : 'Xác nhận'}
+                    {isSubmitting ? 'Processing...' : 'Confirm'}
                   </button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Modal từ chối đơn hàng */}
+          {/* Modal reject order */}
           {isRejectModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" role="dialog" aria-labelledby="reject-modal-title">
+            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-md flex items-center justify-center z-50" role="dialog" aria-labelledby="reject-modal-title">
               <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl relative">
                 <button
                   onClick={() => setIsRejectModalOpen(false)}
                   className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-                  aria-label="Đóng modal từ chối"
+                  aria-label="Close reject modal"
                 >
                   <FontAwesomeIcon icon={faTimes} />
                 </button>
-                <h2 id="reject-modal-title" className="text-xl font-bold mb-4 text-blue-700">Từ chối đơn hàng</h2>
+                <h2 id="reject-modal-title" className="text-xl font-bold mb-4 text-blue-700">Reject Order</h2>
                 <div className="mb-4">
                   <label htmlFor="rejectReason" className="block text-sm font-medium text-gray-600">
-                    Lý do từ chối
+                    Reason for rejection
                   </label>
                   <textarea
                     id="rejectReason"
@@ -741,49 +760,49 @@ const OrderDetailsPage = () => {
                     onChange={(e) => setRejectReason(e.target.value)}
                     className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows="4"
-                    placeholder="Nhập lý do từ chối..."
+                    placeholder="Enter reason for rejection..."
                     maxLength={500}
                     aria-required="true"
                   />
-                  <p className="text-xs text-gray-500 mt-1">{rejectReason.length}/500 ký tự</p>
+                  <p className="text-xs text-gray-500 mt-1">{rejectReason.length}/500 characters</p>
                 </div>
                 <div className="flex justify-end gap-2">
                   <button
                     onClick={() => setIsRejectModalOpen(false)}
                     className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
-                    aria-label="Hủy"
+                    aria-label="Cancel"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     onClick={handleRejectOrder}
                     className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
-                    aria-label="Xác nhận từ chối"
+                    aria-label="Confirm rejection"
                   >
-                    {isSubmitting ? 'Đang xử lý...' : 'Xác nhận từ chối'}
+                    {isSubmitting ? 'Processing...' : 'Confirm rejection'}
                   </button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Modal gửi hàng */}
+          {/* Modal ship order */}
           {isShipModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" role="dialog" aria-labelledby="ship-modal-title">
+            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-md flex items-center justify-center z-50" role="dialog" aria-labelledby="ship-modal-title">
               <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl relative">
                 <button
                   onClick={() => setIsShipModalOpen(false)}
                   className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-                  aria-label="Đóng modal giao hàng"
+                  aria-label="Close shipping modal"
                 >
                   <FontAwesomeIcon icon={faTimes} />
                 </button>
-                <h2 id="ship-modal-title" className="text-xl font-bold mb-4 text-blue-700">Cập nhật thông tin giao hàng</h2>
+                <h2 id="ship-modal-title" className="text-xl font-bold mb-4 text-blue-700">Update Shipping Information</h2>
                 <div className="mb-4">
                   <label htmlFor="shippingProvider" className="block text-sm font-medium text-gray-600">
-                    Nhà vận chuyển
+                    Shipping provider
                   </label>
                   <input
                     id="shippingProvider"
@@ -791,13 +810,13 @@ const OrderDetailsPage = () => {
                     value={shippingProvider}
                     onChange={(e) => setShippingProvider(e.target.value)}
                     className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Nhập tên nhà vận chuyển..."
+                    placeholder="Enter shipping provider..."
                     aria-required="true"
                   />
                 </div>
                 <div className="mb-4">
                   <label htmlFor="trackingNumber" className="block text-sm font-medium text-gray-600">
-                    Mã theo dõi
+                    Tracking number
                   </label>
                   <input
                     id="trackingNumber"
@@ -805,7 +824,7 @@ const OrderDetailsPage = () => {
                     value={trackingNumber}
                     onChange={(e) => setTrackingNumber(e.target.value)}
                     className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Nhập mã theo dõi..."
+                    placeholder="Enter tracking number..."
                     aria-required="true"
                   />
                 </div>
@@ -814,38 +833,38 @@ const OrderDetailsPage = () => {
                     onClick={() => setIsShipModalOpen(false)}
                     className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
-                    aria-label="Hủy"
+                    aria-label="Cancel"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     onClick={handleShipOrder}
                     className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
-                    aria-label="Xác nhận giao hàng"
+                    aria-label="Confirm shipping"
                   >
-                    {isSubmitting ? 'Đang xử lý...' : 'Xác nhận giao hàng'}
+                    {isSubmitting ? 'Processing...' : 'Confirm shipping'}
                   </button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Modal hủy đơn hàng */}
+          {/* Modal cancel order */}
           {isCancelModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" role="dialog" aria-labelledby="cancel-modal-title">
+            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-md flex items-center justify-center z-50" role="dialog" aria-labelledby="cancel-modal-title">
               <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl relative">
                 <button
                   onClick={() => setIsCancelModalOpen(false)}
                   className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-                  aria-label="Đóng modal hủy"
+                  aria-label="Close cancel modal"
                 >
                   <FontAwesomeIcon icon={faTimes} />
                 </button>
-                <h2 id="cancel-modal-title" className="text-xl font-bold mb-4 text-blue-700">Hủy đơn hàng</h2>
+                <h2 id="cancel-modal-title" className="text-xl font-bold mb-4 text-blue-700">Cancel Order</h2>
                 <div className="mb-4">
                   <label htmlFor="cancelReason" className="block text-sm font-medium text-gray-600">
-                    Lý do hủy
+                    Reason for cancellation
                   </label>
                   <textarea
                     id="cancelReason"
@@ -853,35 +872,35 @@ const OrderDetailsPage = () => {
                     onChange={(e) => setCancelReason(e.target.value)}
                     className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows="4"
-                    placeholder="Nhập lý do hủy..."
+                    placeholder="Enter reason for cancellation..."
                     maxLength={500}
                     aria-required="true"
                   />
-                  <p className="text-xs text-gray-500 mt-1">{cancelReason.length}/500 ký tự</p>
+                  <p className="text-xs text-gray-500 mt-1">{cancelReason.length}/500 characters</p>
                 </div>
                 <div className="flex justify-end gap-2">
                   <button
                     onClick={() => setIsCancelModalOpen(false)}
                     className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
-                    aria-label="Hủy"
+                    aria-label="Cancel"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     onClick={handleCancelOrder}
                     className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
-                    aria-label="Xác nhận hủy"
+                    aria-label="Confirm cancellation"
                   >
-                    {isSubmitting ? 'Đang xử lý...' : 'Xác nhận hủy'}
+                    {isSubmitting ? 'Processing...' : 'Confirm cancellation'}
                   </button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Modal đánh giá */}
+          {/* Modal review */}
           {isReviewModalOpen && (
             <ReviewForm
               isOpen={isReviewModalOpen}
@@ -890,48 +909,47 @@ const OrderDetailsPage = () => {
               review={existingReview}
               onSubmitSuccess={(review) => {
                 setExistingReview(review);
-                // Cập nhật order để lưu trạng thái đã review
                 setOrder(prev => ({
                   ...prev,
-                  hasReview: true // Thêm trường để đánh dấu đã có review
+                  hasReview: true
                 }));
                 setIsReviewModalOpen(false);
-                toast.success('Đánh giá thành công');
+                toast.success('Review submitted successfully');
               }}
             />
           )}
 
-          {/* Modal xóa đánh giá */}
+          {/* Modal delete review */}
           {isDeleteModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" role="dialog" aria-labelledby="delete-modal-title">
+            <div className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-md flex items-center justify-center z-50" role="dialog" aria-labelledby="delete-modal-title">
               <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl relative">
                 <button
                   onClick={() => setIsDeleteModalOpen(false)}
                   className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-                  aria-label="Đóng modal xóa"
+                  aria-label="Close delete modal"
                 >
                   <FontAwesomeIcon icon={faTimes} />
                 </button>
-                <h2 id="delete-modal-title" className="text-xl font-bold mb-4 text-blue-700">Xóa đánh giá</h2>
+                <h2 id="delete-modal-title" className="text-xl font-bold mb-4 text-blue-700">Delete Review</h2>
                 <p className="text-sm text-gray-600 mb-4">
-                  Bạn có chắc muốn xóa đánh giá cho đơn hàng #{order.orderId}? Hành động này không thể hoàn tác.
+                  Are you sure you want to delete the review for order #{order.orderId}? This action cannot be undone.
                 </p>
                 <div className="flex justify-end gap-2">
                   <button
                     onClick={() => setIsDeleteModalOpen(false)}
                     className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
-                    aria-label="Hủy"
+                    aria-label="Cancel"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     onClick={handleDeleteReview}
                     className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
-                    aria-label="Xác nhận xóa"
+                    aria-label="Confirm deletion"
                   >
-                    {isSubmitting ? 'Đang xử lý...' : 'Xác nhận xóa'}
+                    {isSubmitting ? 'Processing...' : 'Confirm deletion'}
                   </button>
                 </div>
               </div>
