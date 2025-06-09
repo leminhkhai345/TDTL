@@ -523,12 +523,10 @@ const AdminBooksPage = () => {
                 )}
 
                 {isRejectModalOpen && rejectListingId && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl"
-                    >
+                  <div className="fixed inset-0 z-50 flex items-center justify-center">
+                    {/* Nền trắng mờ */}
+                    <div className="fixed inset-0 backdrop-blur-[6px] bg-white/30"></div>
+                    <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-6 w-full max-w-md shadow-2xl">
                       <h2 className="text-xl font-bold mb-4 text-blue-800">Reject Listing</h2>
                       <div className="space-y-4">
                         <div>
@@ -560,7 +558,7 @@ const AdminBooksPage = () => {
                           </button>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   </div>
                 )}
               </>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faCheckCircle, faCheckDouble } from "@fortawesome/free-solid-svg-icons";
 import { useNotifications } from "../src/contexts/NotificationContext";
@@ -8,11 +8,31 @@ const NotificationsDropdown = ({ onClose }) => {
   const { notifications, loading, markAsRead, markAllAsRead, fetchNotifications } = useNotifications();
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const navigate = useNavigate();
 
   const loadMore = async () => {
     const nextPage = page + 1;
     const data = await fetchNotifications(nextPage, pageSize);
     if (data.items.length > 0) setPage(nextPage);
+  };
+
+  const handleNotificationClick = (notification) => {
+    if (
+      notification.message === 'Your listing has been approved.' ||
+      notification.message === 'Your listing has been rejected.'
+    ) {
+      const data = notification.data ? JSON.parse(notification.data) : {};
+      navigate('/my-listings', {
+        state: {
+          showDetails: true,
+          listingId: data.listingId,
+          // rejectReason: notification.message === 'Your listing has been rejected.' ? data.rejectReason : undefined,
+        },
+      });
+      onClose && onClose();
+      return;
+    }
+    // ...xử lý các loại notification khác...
   };
 
   return (
@@ -43,7 +63,8 @@ const NotificationsDropdown = ({ onClose }) => {
           {notifications.map((notification) => (
             <div
               key={notification.notificationId}
-              className={`px-5 py-4 border-b last:border-b-0 hover:bg-blue-50 transition-all flex gap-3 items-start ${
+              onClick={() => handleNotificationClick(notification)}
+              className={`px-5 py-4 border-b last:border-b-0 hover:bg-blue-50 transition-all flex gap-3 items-start cursor-pointer ${
                 notification.isRead ? "opacity-60" : ""
               }`}
             >
