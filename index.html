@@ -7,7 +7,20 @@
     <title>BOOK STORE</title>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+
+  <!-- Add Dialogflow messenger -->
+  <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+  <df-messenger
+    intent="WELCOME"
+    chat-title="Book AI Assistant"
+    agent-id="c3ebfffb-54d5-486e-8a6e-9fc48ab84bab"
+    language-code="vi"
+    wait-open="true"
+    expand="true"
+    chat-icon="./src//assets/chatbox.jpg"
+  ></df-messenger>
+
+</body>
 </html>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../src/contexts/AuthContext';
 import { toast } from 'react-toastify';
-import { getMyPurchases } from '../src/API/api';
+import { getMyPurchases, getPublicUserProfile } from '../src/API/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt, faFileImport } from '@fortawesome/free-solid-svg-icons';
 
@@ -10,6 +10,7 @@ const MyPurchasesPage = () => {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const [orders, setOrders] = useState([]);
+  const [sellerNames, setSellerNames] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
@@ -65,6 +66,28 @@ const MyPurchasesPage = () => {
   const filteredOrders = useMemo(() => {
     return orders.filter(order => statusFilter ? order.orderStatus === statusFilter : true);
   }, [orders, statusFilter]);
+
+  // Fetch seller names
+  useEffect(() => {
+    const fetchOrdersAndSellers = async () => {
+      const data = await getMyPurchases({ page, pageSize }); // Sửa ở đây
+      setOrders(data.items || []);
+      // Lấy tên seller cho từng đơn hàng
+      const names = {};
+      for (const order of data.items || []) {
+        if (order.sellerId && !names[order.sellerId]) {
+          try {
+            const seller = await getPublicUserProfile(order.sellerId);
+            names[order.sellerId] = seller.fullName || seller.email || "Unknown";
+          } catch {
+            names[order.sellerId] = "Unknown";
+          }
+        }
+      }
+      setSellerNames(names);
+    };
+    fetchOrdersAndSellers();
+  }, [page, pageSize]);
 
   return (
     <div className="bg-gray-50 min-h-screen py-12">
@@ -154,7 +177,7 @@ const MyPurchasesPage = () => {
               <table className="min-w-full table-auto">
                 <thead className="bg-blue-50">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">ID</th>
+                    {/* <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">ID</th> */}
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Seller Name</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Order Date</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Total Amount</th>
@@ -165,15 +188,15 @@ const MyPurchasesPage = () => {
                 <tbody>
                   {filteredOrders.map((order) => (
                     <tr key={order.orderId} className="border-b hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-lg text-gray-900">
+                      {/* <td className="px-6 py-4 text-lg text-gray-900">
                         <button
                           onClick={() => navigate(`/orders/${order.orderId}`)}
                           className="text-blue-600 hover:underline"
                         >
                           #{order.orderId}
                         </button>
-                      </td>
-                      <td className="px-6 py-4 text-lg text-gray-900">{order.sellerName || 'Unknown'}</td>
+                      </td> */}
+                      <td className="px-6 py-4 text-lg text-gray-900">{sellerNames[order.sellerId] || 'Loading...'}</td>
                       <td className="px-6 py-4 text-lg text-gray-900">
                         {new Date(order.orderDate).toLocaleString()}
                       </td>

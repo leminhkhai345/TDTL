@@ -105,6 +105,10 @@ export const updateReview = async (reviewId, reviewData) => {
         formData.append(`evidences[${index}]`, file);
       });
     }
+    // Đổi key thành RowVersion khi append, bất kể đầu vào là rowVersion hay RowVersion
+    if (reviewData.RowVersion || reviewData.rowVersion) {
+      formData.append('RowVersion', reviewData.RowVersion || reviewData.rowVersion);
+    }
 
     const response = await fetch(`${EXCHANGE_API_URL}/api/reviews/${reviewId}`, {
       method: 'PUT',
@@ -605,11 +609,11 @@ export const getMyInventory = async (page = 1, pageSize = 10) => {
       items: (data.items || []).map((item) => ({
         documentId: item.documentId,
         title: item.title || 'Unknown Title',
-        author: item.author || 'Unknown Author',
+        author: item.document?.author || item.author || 'Unknown Author',
         categoryName: item.categoryName || 'Unknown Category',
         categoryId: item.categoryId || 0,
         price: item.price !== null ? item.price : null,
-        imageUrl: item.imageUrl || 'https://via.placeholder.com/150',
+        imageUrl: item.document?.imageUrl || item.imageUrl || 'https://via.placeholder.com/150',
         description: item.description || 'No description available',
         statusName: item.statusName || 'Unknown',
         condition: item.condition || 'Good',
@@ -746,7 +750,7 @@ export const getListedDocuments = async (pageNumber = 1, pageSize = 50) => {
         categoryName: item.document?.categoryName || item.categoryName || null,
         price: item.price !== null ? item.price : null,
         imageUrl: item.document?.imageUrl || item.imageUrl || null,
-        description: item.description || 'No description available',
+        description: item.description || null, // Return null if no description
         createdAt: item.createdAt || new Date().toISOString(),
         statusName: item.statusName || 'Unknown',
       };
@@ -1381,7 +1385,7 @@ export const confirmOrder = async (orderId, actionData) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(actionData),
+        body: JSON.stringify({ RowVersion: actionData.RowVersion }), 
     });
     const data = await handleResponse(response);
     console.log('Confirm order response:', data);
@@ -1555,6 +1559,16 @@ export const updateUser = async (userId, userData) => {
   }
 };
 
+export const getPublicUserProfile = async (userId) => {
+  try {
+    const response = await fetch(`${EXCHANGE_API_URL}/api/Users/${userId}/public-profile`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    throw new Error(error.message || 'Failed to fetch public user profile');
+  }
+};
 // API admin xóa người dùng
 export const deleteUser = async (userId) => {
   try {
@@ -1853,4 +1867,59 @@ export const getSellerAverageRating = async (sellerId) => {
     console.error('Get seller average rating failed:', error);
     return 0;
   }
+};
+
+
+// Lấy tổng quan thống kê người dùng
+export const getUserOverviewStats = async () => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${EXCHANGE_API_URL}/api/users/me/statistics/overview`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return handleResponse(response);
+};
+
+// Lấy top giao dịch doanh thu cao nhất
+export const getUserTopRevenueTransactions = async (count = 3) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${EXCHANGE_API_URL}/api/users/me/statistics/top-revenue-transactions?count=${count}`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return handleResponse(response);
+};
+
+// Lấy top sách bán chạy nhất
+export const getUserTopSellingTitles = async (count = 3) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${EXCHANGE_API_URL}/api/users/me/statistics/top-selling-titles?count=${count}`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return handleResponse(response);
+};
+
+// Lấy thống kê tổng quan admin
+export const getAdminOverviewStats = async () => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${EXCHANGE_API_URL}/api/admin/statistics/overview`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return handleResponse(response);
+};
+
+// Lấy top danh mục nhiều listing nhất
+export const getAdminTopCategories = async (count = 5) => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${EXCHANGE_API_URL}/api/admin/statistics/top-categories?count=${count}`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return handleResponse(response);
+};
+
+// Lấy top seller theo doanh thu hoặc số đơn hàng
+export const getAdminTopSellers = async (count = 5, sortBy = 'Revenue') => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${EXCHANGE_API_URL}/api/admin/statistics/top-sellers?count=${count}&sortBy=${sortBy}`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return handleResponse(response);
 };

@@ -1,7 +1,24 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { loginUser, registerUser } from '../API/api';
+import { toast } from 'react-toastify';
 
-const AuthContext = createContext();
+const publicRoutes = [
+  '/browse', // Chỉ cho phép xem danh sách
+  '/'       // Trang chủ
+];
+
+export const AuthContext = createContext({
+  isLoggedIn: false,
+  user: null,
+  token: null,
+  login: () => {},
+  register: () => {},
+  logout: () => {},
+  isAdmin: () => false,
+  loading: false,
+  authLoading: false,
+  requiresAuth: () => true
+});
 
 const decodeJwt = (token) => {
   try {
@@ -20,6 +37,29 @@ const decodeJwt = (token) => {
   }
 };
 
+const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const decoded = decodeJwt(token);
+    if (!decoded || !decoded.exp) return true;
+    // exp is in seconds, convert to milliseconds
+    return decoded.exp * 1000 < Date.now();
+  } catch (error) {
+    console.error("Error checking token expiration:", error);
+    return true;
+  }
+};
+
+const checkTokenExpiration = () => {
+  const token = localStorage.getItem('token');
+  if (isTokenExpired(token)) {
+    console.log('Token expired, logging out...');
+    logout();
+    return false;
+  }
+  return true;
+};
+
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
@@ -27,17 +67,42 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(false);
 
+  // Add requiresAuth function
+  const requiresAuth = (route) => {
+    return !publicRoutes.some(path => route.startsWith(path));
+  };
+
+  // Add token check interval
+  useEffect(() => {
+    if (isLoggedIn) {
+      // Check token every minute
+      const interval = setInterval(() => {
+        if (!checkTokenExpiration()) {
+          toast.error('Your session has expired. Please login again.');
+        }
+      }, 60000); // 1 minute
+
+      return () => clearInterval(interval);
+    }
+  }, [isLoggedIn]);
+
+  // Update initial auth check
   useEffect(() => {
     const storedLogin = localStorage.getItem('isLoggedIn') === 'true';
     const storedUser = JSON.parse(localStorage.getItem('user'));
     const storedToken = localStorage.getItem('token');
-    if (storedLogin && storedUser && storedToken) {
+    
+    if (storedLogin && storedUser && storedToken && !isTokenExpired(storedToken)) {
       setIsLoggedIn(true);
       setUser({
         ...storedUser,
         role: storedUser.role ? storedUser.role.toLowerCase() : 'user',
       });
       setToken(storedToken);
+    } else if (storedLogin) {
+      // If token is expired but user was logged in, clear everything
+      logout();
+      toast.error('Your session has expired. Please login again.');
     }
     setLoading(false);
   }, []);
@@ -46,7 +111,11 @@ export const AuthProvider = ({ children }) => {
     try {
       setAuthLoading(true);
       const userData = await loginUser(email, password);
-      console.log('Login userData:', userData);
+      
+      // Check if token is valid and not expired
+      if (!userData.Token || isTokenExpired(userData.Token)) {
+        throw new Error('Invalid or expired token received');
+      }
 
       // Xóa localStorage cũ
       localStorage.removeItem('isLoggedIn');
@@ -128,6 +197,8 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setToken(null);
     localStorage.clear();
+    // Optional: Redirect to login page
+    window.location.href = '/login';
   };
 
   const isAdmin = () => {
@@ -135,7 +206,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, token, login, register,setUser, logout, isAdmin, loading, authLoading }}>
+    <AuthContext.Provider value={{ 
+      isLoggedIn, 
+      user, 
+      token, 
+      login, 
+      register,
+      setUser, 
+      logout, 
+      isAdmin, 
+      loading, 
+      authLoading,
+      requiresAuth // Add this
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -75,6 +75,26 @@ const SignUpPage = () => {
     visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
   };
 
+  // Signup validation messages
+  const validateForm = () => {
+    const errors = {};
+    if (!fullName) errors.name = "Please enter your full name";
+    if (!email) {
+      errors.email = "Please enter your email";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = "Please enter a valid email address";
+    }
+    if (!password) {
+      errors.password = "Please enter a password";
+    } else if (password.length < 8) {
+      errors.password = "Password must be at least 8 characters long";
+    }
+    if (password !== confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+    return errors;
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="flex w-full max-w-5xl mx-auto shadow-2xl rounded-xl overflow-hidden">

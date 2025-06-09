@@ -24,7 +24,8 @@ const ConfirmPaymentPage = () => {
           throw new Error('Đơn hàng không tồn tại.');
         }
         setOrderStatus(order.orderStatus);
-        if (order.orderStatus !== 'AwaitingOfflinePayment') {
+        const normalizeStatus = (status) => status?.trim().replace(/\s+/g, '');
+        if (normalizeStatus(order.orderStatus) !== 'AwaitingOfflinePayment') {
           toast.error('Đơn hàng không ở trạng thái chờ thanh toán offline. Vui lòng kiểm tra lại.');
           navigate(`/orders/${orderId}`);
         }
@@ -53,24 +54,28 @@ const ConfirmPaymentPage = () => {
       toast.error('Vui lòng chọn file bằng chứng thanh toán.');
       return;
     }
-    if (!rowVersion) {
-      toast.error('Không tìm thấy thông tin phiên bản đơn hàng.');
-      return;
-    }
 
     setLoading(true);
     try {
+      // Lấy rowVersion mới nhất từ API
+      const order = await getUserOrderById(orderId);
+      const latestRowVersion = order.rowVersion;
+      if (!latestRowVersion) {
+        toast.error('Không tìm thấy thông tin phiên bản đơn hàng.');
+        setLoading(false);
+        return;
+      }
+
       const proofData = {
         file,
-        rowVersion: btoa(String.fromCharCode(...rowVersion)),
+        rowVersion: latestRowVersion, // Gửi đúng base64 string từ API
       };
       const response = await confirmPayment(orderId, proofData);
       console.log('Confirm payment response:', response);
-      await createNotificationByTemplate('PaymentConfirmed', parseInt(orderId));
-      console.log('Notification created with template:', 'PaymentConfirmed');
+      // await createNotificationByTemplate('PaymentConfirmed', parseInt(orderId)); // Tạm thời bỏ qua nếu backend chưa có API này
       toast.success('Bằng chứng thanh toán đã được gửi thành công!');
-      fetchNotifications();
-      fetchUnreadCount();
+      // fetchNotifications();
+      // fetchUnreadCount();
       navigate(`/orders/${orderId}`);
     } catch (error) {
       toast.error(error.message || 'Không thể gửi bằng chứng thanh toán. Vui lòng thử lại.');

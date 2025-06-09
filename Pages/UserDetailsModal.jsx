@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useContext } from "react";
 import { getUserById, updateUser, deleteUser } from "../src/API/api";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash, faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash, faSave, faTimes, faUserCog, faPhone, faLock } from "@fortawesome/free-solid-svg-icons";
 
 // Fallback for AuthContext import
 let AuthContext;
@@ -23,7 +23,7 @@ const UserDetailsModal = ({ userId, onClose, refreshUsers }) => {
     fullName: "",
     phone: "",
     email: "",
-    roleId: 1,
+    roleId: "",
     isLocked: false,
   });
   const [formErrors, setFormErrors] = useState({});
@@ -65,13 +65,13 @@ const UserDetailsModal = ({ userId, onClose, refreshUsers }) => {
       const userData = await getUserById(userId);
       console.log('User details fetched:', userData);
       setUserData(userData);
-      setEditForm({
-        fullName: userData.fullName || "",
-        phone: userData.phone || "",
-        email: userData.email || "",
-        roleId: userData.roleId || 1,
-        isLocked: userData.isLocked || false,
-      });
+     setEditForm({
+  fullName: userData.fullName || "",
+  phone: userData.phone || "",
+  email: userData.email || "",
+  roleId: userData.roleId ? Number(userData.roleId) : 1, // Luôn là 1 hoặc 2
+  isLocked: userData.isLocked || false,
+});
       logApiInfo('GET', `/api/Users/${userId}`, 'Success', userData);
     } catch (err) {
       console.error('Error fetching user details:', err);
@@ -108,8 +108,9 @@ const UserDetailsModal = ({ userId, onClose, refreshUsers }) => {
         phone: editForm.phone || null,
         email: editForm.email,
         roleId: Number(editForm.roleId),
-        isLocked: editForm.isLocked,
+        isLocked: editForm.isLocked, // should be true if checked
       });
+      console.log('User data after update:', userData);
       toast.success("Cập nhật người dùng thành công!");
       refreshUsers();
       setIsEditing(false);
@@ -130,23 +131,23 @@ const UserDetailsModal = ({ userId, onClose, refreshUsers }) => {
 
   // Delete user
   const handleDelete = useCallback(async () => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa người dùng này?")) return;
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
     setLoading(true);
     try {
-      console.log('Deleting user:', userId);
-      const response = await deleteUser(userId);
-      toast.success("Xóa người dùng thành công!");
+      await deleteUser(userId);
+      toast.success("User deleted successfully!");
+      // Update local state to show deleted status without removing the user
+      setUserData(prev => ({...prev, isDeleted: true}));
+      // Update parent component's data
       refreshUsers();
-      onClose();
-      logApiInfo('DELETE', `/api/Users/${userId}`, 'Success', response);
+      setIsEditing(false); // Return to view mode
     } catch (err) {
       console.error('Error deleting user:', err);
-      toast.error(`Xóa người dùng thất bại: ${err.message}`);
-      logApiInfo('DELETE', `/api/Users/${userId}`, 'Failed', null, err);
+      toast.error(`Failed to delete user: ${err.message}`);
     } finally {
       setLoading(false);
     }
-  }, [userId, refreshUsers, onClose]);
+  }, [userId, refreshUsers]);
 
   // Check if the user is trying to edit themselves (fallback if AuthContext is unavailable)
   const isSelf = user && (user.id === userId || user.userId === userId);
@@ -161,143 +162,271 @@ const UserDetailsModal = ({ userId, onClose, refreshUsers }) => {
     );
   }
 
+  // Status display component
+  const UserStatusBadge = ({ isLocked, isDeleted }) => {
+    if (isDeleted) {
+      return (
+        <span className="px-3 py-1 rounded-full text-sm font-semibold bg-gray-100 text-gray-800">
+          Deleted
+        </span>
+      );
+    }
+    return (
+      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+        isLocked ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+      }`}>
+        {isLocked ? "Locked" : "Active"}
+      </span>
+    );
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-2xl">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-blue-700">
-            {isEditing ? "Chỉnh sửa người dùng" : "Chi tiết người dùng"}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-600 hover:text-gray-800 transition-colors"
-            aria-label="Đóng modal"
-          >
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
-        </div>
-        {isEditing ? (
-          <div className="space-y-4">
+      {isEditing ? (
+        <div className="space-y-4 bg-white rounded-xl p-6 w-full max-w-4xl shadow-2xl">
+          <div className="flex justify-end">
+            <button
+              onClick={onClose}
+              className="text-gray-600 hover:text-gray-800 transition-colors"
+              aria-label="Close modal"
+            >
+              <FontAwesomeIcon icon={faTimes} className="text-xl" />
+            </button>
+          </div>
+
+          {/* Add User Avatar and Title */}
+          <div className="flex flex-col items-center border-b pb-6 mb-6">
+            <div className="h-32 w-32 rounded-full bg-blue-600 flex items-center justify-center mb-4">
+              <span className="text-6xl text-white font-bold">
+                {userData.fullName?.[0]?.toUpperCase() || "U"}
+              </span>
+            </div>
+            <h2 className="text-3xl font-bold text-blue-800">Edit User Information</h2>
+            <p className="text-gray-600">Update user details</p>
+          </div>
+
+          <div className="space-y-6">
             {isSelf && (
               <p className="text-red-600 text-sm">
-                Bạn không thể chỉnh sửa thông tin của chính mình trong chế độ này. Vui lòng sử dụng trang Hồ sơ.
+                You cannot edit your own information in this mode. Please use the Profile page.
               </p>
             )}
-            <div>
-              <label className="block font-medium text-gray-700 mb-1">Họ tên</label>
-              <input
-                type="text"
-                value={editForm.fullName}
-                onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
-                disabled={loading || isSelf}
-              />
-              {formErrors.fullName && <p className="text-red-600 text-sm">{formErrors.fullName}</p>}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Left Column */}
+              <div className="space-y-6">
+                <div className="relative">
+                  <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.fullName}
+                    onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+                    disabled={loading || isSelf}
+                  />
+                  {formErrors.fullName && <p className="text-red-600 text-sm mt-1">{formErrors.fullName}</p>}
+                </div>
+
+                <div className="relative">
+                  <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={editForm.email}
+                    className="w-full p-4 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                    disabled
+                  />
+                </div>
+              </div>
+
+              {/* Right Column */}
+              <div className="space-y-6">
+                <div className="relative">
+                  <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Phone Number
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.phone}
+                    onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+                    disabled={loading || isSelf}
+                  />
+                  {formErrors.phone && <p className="text-red-600 text-sm mt-1">{formErrors.phone}</p>}
+                </div>
+
+                <div className="relative">
+                  <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Role
+                  </label>
+                  <select
+                    value={Number(editForm.roleId)}
+                    onChange={(e) => setEditForm({ ...editForm, roleId: Number(e.target.value) })}
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+                    disabled={loading || isSelf}
+                  >
+                    <option value={2}>User</option>
+                    <option value={1}>Administrator</option>
+                  </select>
+                </div>
+
+                <div className="relative">
+                  <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Account Status
+                  </label>
+                  <div className="w-full p-4 border border-gray-300 rounded-lg bg-gray-50">
+                    <label className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={editForm.isLocked}
+                          onChange={(e) => setEditForm({ ...editForm, isLocked: e.target.checked })}
+                          className="mr-2"
+                          disabled={loading || isSelf}
+                        />
+                        <span className="text-gray-700">Lock Account</span>
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                        editForm.isLocked ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+                      }`}>
+                        {editForm.isLocked ? "Locked" : "Active"}
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <label className="block font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                value={editForm.email}
-                onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
-                disabled={loading || isSelf}
-              />
-              {formErrors.email && <p className="text-red-600 text-sm">{formErrors.email}</p>}
-            </div>
-            <div>
-              <label className="block font-medium text-gray-700 mb-1">Số điện thoại</label>
-              <input
-                type="text"
-                value={editForm.phone}
-                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
-                disabled={loading || isSelf}
-              />
-              {formErrors.phone && <p className="text-red-600 text-sm">{formErrors.phone}</p>}
-            </div>
-            <div>
-              <label className="block font-medium text-gray-700 mb-1">Vai trò</label>
-              <select
-                value={editForm.roleId}
-                onChange={(e) => setEditForm({ ...editForm, roleId: Number(e.target.value) })}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
-                disabled={loading || isSelf}
-              >
-                <option value={1}>Người dùng</option>
-                <option value={2}>Admin</option>
-              </select>
-              {formErrors.roleId && <p className="text-red-600 text-sm">{formErrors.roleId}</p>}
-            </div>
-            <div>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={editForm.isLocked}
-                  onChange={(e) => setEditForm({ ...editForm, isLocked: e.target.checked })}
-                  className="mr-2"
-                  disabled={loading || isSelf}
-                />
-                <span className="text-gray-700">Khóa tài khoản</span>
-              </label>
-            </div>
-            <div className="flex justify-end space-x-2">
+
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-3 pt-6 border-t mt-6">
               <button
                 onClick={handleUpdate}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors"
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-all"
                 disabled={loading || isSelf}
               >
                 <FontAwesomeIcon icon={faSave} />
-                Lưu
+                Save
               </button>
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center gap-2 transition-colors"
+                className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center gap-2 transition-all"
                 disabled={loading}
               >
-                Hủy
+                Cancel
               </button>
             </div>
           </div>
-        ) : (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-2">
-              <p><strong>ID:</strong> {userData.id || userData.userId}</p>
-              <p><strong>Họ tên:</strong> {userData.fullName || "N/A"}</p>
-              <p><strong>Email:</strong> {userData.email || "N/A"}</p>
-              <p><strong>Số điện thoại:</strong> {userData.phone || "Chưa có"}</p>
-              <p><strong>Vai trò:</strong> {userData.roleId === 1 ? "Người dùng" : userData.roleId === 2 ? "Admin" : userData.role || "N/A"}</p>
-              <p><strong>Trạng thái:</strong> {userData.isLocked ? "Đã khóa" : "Hoạt động"}</p>
-              <p><strong>Ngày tạo:</strong> {userData.createdAt ? new Date(userData.createdAt).toLocaleString() : "N/A"}</p>
+        </div>
+      ) : (
+        <div className="space-y-6 p-8 bg-white rounded-xl shadow-lg w-full max-w-4xl">
+          <div className="flex justify-end">
+            <button
+              onClick={onClose}
+              className="text-gray-600 hover:text-gray-800 transition-colors"
+              aria-label="Close modal"
+            >
+              <FontAwesomeIcon icon={faTimes} className="text-xl" />
+            </button>
+          </div>
+
+          {/* Header with Avatar */}
+          <div className="flex flex-col items-center border-b pb-6">
+            <div className="h-32 w-32 rounded-full bg-blue-600 flex items-center justify-center mb-4">
+              <span className="text-6xl text-white font-bold">
+                {userData.fullName?.[0]?.toUpperCase() || "U"}
+              </span>
             </div>
-            <div className="mt-4 flex justify-end space-x-2">
-              <button
-                onClick={handleEdit}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center gap-2 transition-colors"
-                disabled={loading}
-              >
-                <FontAwesomeIcon icon={faEdit} />
-                Chỉnh sửa
-              </button>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2 transition-colors"
-                disabled={loading}
-              >
-                <FontAwesomeIcon icon={faTrash} />
-                Xóa
-              </button>
-              <button
-                onClick={onClose}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center gap-2 transition-colors"
-                disabled={loading}
-              >
-                Đóng
-              </button>
+            <h2 className="text-3xl font-bold text-blue-800">User Information</h2>
+            <p className="text-gray-600">Personal Details</p>
+          </div>
+
+          {/* Grid layout with wider columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8"> {/* Increased gap from 6 to 8 */}
+            {/* Left Column */}
+            <div className="space-y-6 w-full"> {/* Added w-full */}
+              <div className="relative">
+                <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  User ID
+                </label>
+                <div className="w-full p-4 border border-gray-300 rounded-lg bg-gray-50">
+                  {userData.id || userData.userId}
+                </div>
+              </div>
+
+              <div className="relative">
+                <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  Full Name
+                </label>
+                <div className="w-full p-4 border border-gray-300 rounded-lg bg-gray-50">
+                  {userData.fullName || "N/A"}
+                </div>
+              </div>
+
+              <div className="relative">
+                <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  Email
+                </label>
+                <div className="w-full p-4 border border-gray-300 rounded-lg bg-gray-50">
+                  {userData.email || "N/A"}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column */}
+            <div className="space-y-6 w-full"> {/* Added w-full */}
+              <div className="relative">
+                <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  Phone Number
+                </label>
+                <div className="w-full p-4 border border-gray-300 rounded-lg bg-gray-50">
+                  {userData.phone || "Not Set"}
+                </div>
+              </div>
+
+              <div className="relative">
+                <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  Role
+                </label>
+                <div className="w-full p-4 border border-gray-300 rounded-lg bg-gray-50">
+                  {userData.roleId === 1 ? "Administrator" : userData.roleId === 2 ? "User" : userData.role || "N/A"}
+                </div>
+              </div>
+
+              <div className="relative">
+                <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  Status
+                </label>
+                <div className="w-full p-4 border border-gray-300 rounded-lg bg-gray-50 flex items-center justify-center"> {/* Added flex and centering */}
+                  <UserStatusBadge isLocked={userData.isLocked} isDeleted={userData.isDeleted} />
+                </div>
+              </div>
             </div>
           </div>
-        )}
-      </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end space-x-3 pt-6 border-t mt-6">
+            <button
+              onClick={handleEdit}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-all"
+              disabled={loading || isSelf}
+            >
+              <FontAwesomeIcon icon={faEdit} />
+              Edit
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2 transition-all"
+              disabled={loading || isSelf}
+            >
+              <FontAwesomeIcon icon={faTrash} />
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

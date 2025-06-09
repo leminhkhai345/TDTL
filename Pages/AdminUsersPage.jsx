@@ -2,8 +2,16 @@ import React, { useState, useEffect, useMemo, useCallback, useContext } from "re
 import { DataContext } from "../src/contexts/DataContext";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSyncAlt } from "@fortawesome/free-solid-svg-icons";
+import { 
+  faSyncAlt, 
+  faSearch, 
+  faFilter,
+  faUserCog,
+  faChevronLeft,
+  faChevronRight
+} from "@fortawesome/free-solid-svg-icons";
 import UserDetailsModal from "./UserDetailsModal";
+import { motion } from "framer-motion";
 
 const AdminUsersPage = () => {
   const { users: allUsers, refreshData, loading, error } = useContext(DataContext);
@@ -15,11 +23,11 @@ const AdminUsersPage = () => {
   const limit = 10;
 
   // Log thông tin API
-  const logApiInfo = (method, endpoint, status, responseData = null, error = null) => {
+  const logApiInfo = (method, endpoint, status, responseData = null, err = null) => {
     console.log(`API Call: ${method} ${endpoint}`, {
       status,
       responseData: responseData || "No data",
-      error: error ? error.message : null,
+      error: err ? err.message : null,
       timestamp: new Date().toLocaleString(),
     });
   };
@@ -44,10 +52,9 @@ const AdminUsersPage = () => {
     if (!search) return usersArray;
     const filtered = usersArray.filter(
       (user) =>
-        (user.fullName && user.fullName.toLowerCase().includes(search.toLowerCase())) ||
-        (user.email && user.email.toLowerCase().includes(search.toLowerCase()))
+        ((user.fullName && user.fullName.toLowerCase().includes(search.toLowerCase())) ||
+        (user.email && user.email.toLowerCase().includes(search.toLowerCase())))
     );
-    logApiInfo("FILTER", "Client-side search", "Success", filtered, null);
     return filtered;
   }, [allUsers, search]);
 
@@ -84,146 +91,187 @@ const AdminUsersPage = () => {
     refreshData();
   }, [refreshData]);
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      {loading ? (
-        <p className="text-center text-gray-600">Đang tải dữ liệu...</p>
-      ) : error ? (
-        <p className="text-center text-red-600">Lỗi: {error}</p>
-      ) : !Array.isArray(allUsers) || allUsers.length === 0 ? (
-        <p className="text-center text-gray-600">Không có người dùng nào trong hệ thống. Vui lòng kiểm tra cơ sở dữ liệu hoặc API.</p>
-      ) : (
-        <>
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-blue-700">Quản lý người dùng</h1>
-            <button
-              onClick={handleRefresh}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors"
-            >
-              <FontAwesomeIcon icon={faSyncAlt} />
-              Làm mới
-            </button>
-          </div>
-          <div className="mb-6 flex flex-wrap gap-4 items-center">
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo tên hoặc email..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="p-2 border border-gray-300 rounded-lg w-full max-w-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
-            />
-          </div>
-          <p className="mb-6 text-gray-600">Tổng số người dùng: {total} (Đã lọc: {filteredTotal})</p>
+  // Update the UserStatusBadge component
+  const UserStatusBadge = ({ isLocked, isDeleted }) => {
+    if (isDeleted) {
+      return (
+        <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+          Deleted
+        </span>
+      );
+    }
+    return (
+      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+        isLocked ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+      }`}>
+        {isLocked ? "Locked" : "Active"}
+      </span>
+    );
+  };
 
-          {paginatedUsers.length === 0 ? (
-            <p className="text-center text-gray-600">
-              {search ? "Không có người dùng nào khớp với tìm kiếm." : "Không có người dùng trong trang này."}
-            </p>
-          ) : (
-            <div>
-              {/* Giao diện mobile */}
-              <div className="md:hidden">
-                {paginatedUsers.map((user) => (
-                  <div key={user.userId} className="border-b border-gray-200 p-4 bg-white rounded-lg mb-2 shadow-sm">
-                    <p>
-                      <strong>Tên:</strong>{" "}
-                      <button
-                        onClick={() => handleViewDetails(user.userId)}
-                        className="text-blue-600 hover:underline"
-                      >
-                        {user.fullName || "N/A"}
-                      </button>
-                    </p>
-                    <p>
-                      <strong>Email:</strong> {user.email || "N/A"}
-                    </p>
-                    <p>
-                      <strong>Số điện thoại:</strong> {user.phone || "N/A"}
-                    </p>
-                    <p>
-                      <strong>Trạng thái:</strong> {user.isLocked ? "Đã khóa" : "Hoạt động"}
-                    </p>
-                    <div className="mt-2">
-                      <button
-                        onClick={() => handleViewDetails(user.userId)}
-                        className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                      >
-                        Chi tiết
-                      </button>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-white to-purple-100 py-12">
+      <div className="max-w-6xl mx-auto bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+        <div className="p-8">
+          <div className="relative mb-8 pb-4 border-b border-gray-200">
+            <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 text-center">
+              Admin Dashboard
+            </h1>
+            <p className="text-gray-500 text-center mt-2">User Management System</p>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            {loading ? (
+              <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              </div>
+            ) : error ? (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6"
+              >
+                Error: {error}
+              </motion.div>
+            ) : (
+              <>
+                {/* Header Section */}
+                <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+                  <motion.h1 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-3xl font-bold text-blue-800 mb-4 sm:mb-0"
+                  >
+                    <FontAwesomeIcon icon={faUserCog} className="mr-3" />
+                    User Management
+                  </motion.h1>
+                  <motion.button
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    onClick={handleRefresh}
+                    className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
+                    disabled={loading}
+                  >
+                    <FontAwesomeIcon icon={faSyncAlt} className={loading ? "animate-spin" : ""} />
+                    Refresh Data
+                  </motion.button>
+                </div>
+
+                {/* Search and Filter Section */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-xl shadow-md p-6 mb-8"
+                >
+                  <div className="flex flex-col md:flex-row gap-4 items-center">
+                    <div className="relative flex-1">
+                      <FontAwesomeIcon icon={faSearch} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Search by name or email..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <FontAwesomeIcon icon={faFilter} />
+                      <span>Total Users: <strong>{total}</strong> (Filtered: <strong>{filteredTotal}</strong>)</span>
                     </div>
                   </div>
-                ))}
-              </div>
-              {/* Giao diện desktop */}
-              <div className="hidden md:block bg-white rounded-lg shadow overflow-x-auto">
-                <table className="min-w-full table-auto">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">ID</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Họ tên</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Email</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Số điện thoại</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Trạng thái</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Hành động</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paginatedUsers.map((user) => (
-                      <tr key={user.userId} className="border-b hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 text-sm text-gray-900">{user.userId}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          <button
-                            onClick={() => handleViewDetails(user.userId)}
-                            className="text-blue-600 hover:underline"
-                          >
-                            {user.fullName || "N/A"}
-                          </button>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">{user.email || "N/A"}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">{user.phone || "N/A"}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs ${
-                              user.isLocked ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+                </motion.div>
+
+                {/* Users Table */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-xl shadow-md overflow-hidden"
+                >
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Phone</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {paginatedUsers.map((user) => (
+                          <tr 
+                            key={user.userId} 
+                            className={`hover:bg-gray-50 transition-colors ${
+                              user.isDeleted ? 'bg-gray-50' : ''
                             }`}
                           >
-                            {user.isLocked ? "Đã khóa" : "Hoạt động"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-sm">
-                          <button
-                            onClick={() => handleViewDetails(user.userId)}
-                            className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                          >
-                            Chi tiết
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-          <div className="mt-6 flex justify-between items-center">
-            <button
-              onClick={() => setPage(page - 1)}
-              disabled={page === 1}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-            >
-              Trang trước
-            </button>
-            <span className="text-gray-600">
-              Trang {page} / {Math.ceil(filteredTotal / limit) || 1}
-            </span>
-            <button
-              onClick={() => setPage(page + 1)}
-              disabled={paginatedUsers.length < limit || page * limit >= filteredTotal}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-            >
-              Trang sau
-            </button>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#{user.userId}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center">
+                                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
+                                  {user.fullName?.[0]?.toUpperCase() || "U"}
+                                </div>
+                                <div className="ml-4">
+                                  <div className="text-sm font-medium text-gray-900">{user.fullName || "N/A"}</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.phone || "N/A"}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <UserStatusBadge isLocked={user.isLocked} isDeleted={user.isDeleted} />
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                              <button
+                                onClick={() => handleViewDetails(user.userId)}
+                                className={`bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200 ${
+                                  user.isDeleted ? 'opacity-50' : ''
+                                }`}
+                              >
+                                View Details
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </motion.div>
+
+                {/* Pagination */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-6 flex justify-between items-center"
+                >
+                  <button
+                    onClick={() => setPage(page - 1)}
+                    disabled={page === 1}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <FontAwesomeIcon icon={faChevronLeft} />
+                    Previous
+                  </button>
+                  <span className="text-sm text-gray-700">
+                    Page <span className="font-medium">{page}</span> of{" "}
+                    <span className="font-medium">{Math.ceil(filteredTotal / limit) || 1}</span>
+                  </span>
+                  <button
+                    onClick={() => setPage(page + 1)}
+                    disabled={paginatedUsers.length < limit || page * limit >= filteredTotal}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                    <FontAwesomeIcon icon={faChevronRight} />
+                  </button>
+                </motion.div>
+              </>
+            )}
           </div>
+
+          {/* User Details Modal */}
           {selectedUserId && (
             <UserDetailsModal
               userId={selectedUserId}
@@ -231,8 +279,8 @@ const AdminUsersPage = () => {
               refreshUsers={refreshData}
             />
           )}
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 };

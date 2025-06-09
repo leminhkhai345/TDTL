@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
 import BrowseBooksPage from '../Pages/BrowseBooksPage';
 import LoginPage from '../Pages/LoginPage';
@@ -31,6 +31,9 @@ import OrderPage from '../Pages/OrderPage';
 import SellerProfilePage from '../Pages/SellerProfilePage';
 import MyReviewsPage from '../Pages/MyReviewsPage';
 import NotFoundPage from '../Pages/NotFoundPage';
+
+import UserStatisticsPage from '../Pages/UserStatisticsPage';
+
 import { AuthProvider, useAuth } from '../src/contexts/AuthContext';
 import { CartProvider } from '../src/contexts/CartContext';
 import { DataProvider } from '../src/contexts/DataContext';
@@ -39,13 +42,14 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ProtectedRoute = ({ children }) => {
-  const { isLoggedIn, loading } = useAuth();
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-gray-600 text-lg">Đang tải...</div>
-    </div>
-  );
-  if (!isLoggedIn) return <Navigate to="/login" />;
+  const { isLoggedIn, requiresAuth } = useAuth();
+  const location = useLocation();
+
+  if (!isLoggedIn && requiresAuth(location.pathname)) {
+    toast.info('Please log in to access this page');
+    return <Navigate to="/login" state={{ from: location }} />;
+  }
+
   return children;
 };
 
@@ -70,22 +74,29 @@ const App = () => {
             <Router>
               <Navbar />
               <Routes>
+                {/* Public routes */}
                 <Route path="/" element={<HomePage />} />
+                <Route path="/browse" element={<BrowseBooksPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/otp" element={<OtpPage />} />
-                <Route path="/browse" element={<ProtectedRoute><BrowseBooksPage /></ProtectedRoute>} />
+
+                {/* Protected routes */}
+                <Route path="/books/:listingId" element={
+                  <ProtectedRoute>
+                    <BookDetailsPage />
+                  </ProtectedRoute>
+                } />
                 <Route path="/sell" element={<ProtectedRoute><SellPage /></ProtectedRoute>} />
                 <Route path="/sell-history" element={<ProtectedRoute><SellHistoryPage /></ProtectedRoute>} />
                 <Route path="/inventory" element={<ProtectedRoute><InventoryPage /></ProtectedRoute>} />
-                <Route path="/books/:listingId" element={<ProtectedRoute><BookDetailsPage /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
                 <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
                 <Route path="/order" element={<ProtectedRoute><OrderPage /></ProtectedRoute>} />
-                <Route path="/my-listings" element={<ProtectedRoute><MyListingsPage /></ProtectedRoute>} />
+                <Route path="/my-listings" element={<MyListingsPage />} />
                 <Route path="/orders/:orderId" element={<ProtectedRoute><OrderDetailsPage /></ProtectedRoute>} />
                 <Route path="/orders/:orderId/confirm-payment" element={<ProtectedRoute><ConfirmPaymentPage /></ProtectedRoute>} />
                 <Route path="/my-purchases" element={<ProtectedRoute><MyPurchasesPage /></ProtectedRoute>} />
@@ -100,8 +111,10 @@ const App = () => {
                 <Route path="/admin/payment-methods" element={<AdminRoute><AdminPaymentMethodsPage /></AdminRoute>} />
                 <Route path="/admin/statistics" element={<AdminRoute><AdminStatisticsPage /></AdminRoute>} />
                 <Route path="/admin/users/:userId/listings" element={<AdminRoute><MyListingsPage /></AdminRoute>} />
+                <Route path="/statistics" element={<UserStatisticsPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
+             
               <ToastContainer position="top-right" autoClose={3000} />
             </Router>
           </NotificationProvider>

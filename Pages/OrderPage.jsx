@@ -40,22 +40,30 @@ const OrderPage = () => {
   try {
     setLoading(true);
     const listingResponse = await getListingById(listing.listingId);
-    console.log('Listing Response:', listingResponse);
     if (!listingResponse) {
       throw new Error('Sách không tồn tại hoặc chưa được phê duyệt.');
     }
     setListingData(listingResponse);
 
+    // Lấy tất cả payment methods available
     const paymentMethods = await getPublicPaymentMethods();
-    console.log('Public Payment Methods:', paymentMethods);
+    
+    // Nếu listing không có acceptedPaymentMethods hoặc mảng rỗng 
+    // => hiển thị tất cả payment methods
+    if (!listingResponse.acceptedPaymentMethods || listingResponse.acceptedPaymentMethods.length === 0) {
+      setAvailablePaymentMethods(paymentMethods);
+      return;
+    }
+
+    // Nếu có chỉ định payment methods thì filter theo đó
     const validMethods = paymentMethods.filter(method =>
-      listingResponse.acceptedPaymentMethods?.some(
+      listingResponse.acceptedPaymentMethods.some(
         listingMethod => listingMethod.paymentMethodId === method.paymentMethodId
       )
     );
-    console.log('Valid Payment Methods:', validMethods);
     setAvailablePaymentMethods(validMethods);
 
+    // Auto select nếu chỉ có 1 phương thức
     if (validMethods.length === 1) {
       setPaymentMethodId(validMethods[0].paymentMethodId);
     }
@@ -111,15 +119,9 @@ const OrderPage = () => {
 
     try {
       const response = await createOrder(orderData);
-      toast.success(`Đơn hàng #${response.orderId} đã được tạo thành công!`);
+      toast.success(`Order #${response.orderId} has been created successfully!`);
       setIsConfirmModalOpen(false);
-      if (response.paymentMethodName === 'BankTransfer') {
-        navigate(`/orders/${response.orderId}/confirm-payment`, {
-          state: { rowVersion: response.rowVersion },
-        });
-      } else {
-        navigate(`/orders/${response.orderId}`);
-      }
+      navigate(`/orders/${response.orderId}`); // Luôn chuyển về trang chi tiết đơn hàng
     } catch (error) {
       toast.error(error.message || 'Không thể tạo đơn hàng.');
       if (error.message.includes('Unauthorized')) {
@@ -148,56 +150,64 @@ const OrderPage = () => {
 
   return (
     <>
-      {/* Modal thông tin giao hàng */}
+      {/* Shipping Info Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" role="dialog" aria-labelledby="modal-title">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl relative">
+        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-[3px] bg-white/30" role="dialog" aria-labelledby="modal-title">
+          <div className="bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl relative animate-fade-in">
             <button
               onClick={handleModalClose}
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-              aria-label="Đóng modal"
+              className="absolute top-3 right-3 text-gray-500 hover:text-blue-700 transition-colors text-xl"
+              aria-label="Close modal"
             >
               <FontAwesomeIcon icon={faTimes} />
             </button>
-            <h2 id="modal-title" className="text-xl font-bold mb-4 text-blue-700">Thông tin giao hàng</h2>
-            <div className="mb-4">
-              <p className="text-sm text-gray-600">
-                <strong>Sách:</strong> {listingData.title}
-              </p>
-              <p className="text-sm text-gray-600">
-                <strong>Giá:</strong> ${parseFloat(listingData.price).toFixed(2)}
-              </p>
+            <h2 id="modal-title" className="text-2xl font-bold mb-6 text-blue-700 text-center tracking-tight">
+              Shipping Information
+            </h2>
+            <div className="mb-6">
+              <div className="flex items-center gap-4 mb-2">
+                <div className="flex-1">
+                  <p className="text-base text-gray-700 font-semibold truncate">
+                    <span className="text-gray-500 font-normal">Book:</span>{" "}
+                    <span className="text-blue-700 font-bold">{listingData.title}</span>
+                  </p>
+                  <p className="text-base text-gray-700 font-semibold">
+                    <span className="text-gray-500 font-normal">Price:</span>{" "}
+                    <span className="text-green-600 font-bold">${parseFloat(listingData.price).toFixed(2)}</span>
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="mb-4">
-              <label htmlFor="shippingAddress" className="block text-sm font-medium text-gray-600">
-                Địa chỉ giao hàng
+            <div className="mb-5">
+              <label htmlFor="shippingAddress" className="block text-sm font-medium text-gray-600 mb-1">
+                Shipping Address <span className="text-red-500">*</span>
               </label>
               <textarea
                 id="shippingAddress"
                 value={shippingAddress}
                 onChange={(e) => setShippingAddress(e.target.value)}
-                className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
                 rows="4"
-                placeholder="Nhập địa chỉ giao hàng..."
+                placeholder="Enter your shipping address..."
                 maxLength={255}
                 aria-required="true"
               />
-              <p className="text-xs text-gray-500 mt-1">{shippingAddress.length}/255 ký tự</p>
+              <p className="text-xs text-gray-400 mt-1">{shippingAddress.length}/255 characters</p>
             </div>
-            <div className="mb-4">
-              <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-600">
-                Phương thức thanh toán
+            <div className="mb-8">
+              <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-600 mb-1">
+                Payment Method <span className="text-red-500">*</span>
               </label>
               {availablePaymentMethods.length > 0 ? (
                 <select
                   id="paymentMethod"
                   value={paymentMethodId || ''}
                   onChange={(e) => setPaymentMethodId(Number(e.target.value))}
-                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
                   aria-required="true"
                 >
                   <option value="" disabled>
-                    Chọn phương thức
+                    Select payment method
                   </option>
                   {availablePaymentMethods.map((method) => (
                     <option key={method.paymentMethodId} value={method.paymentMethodId}>
@@ -206,76 +216,87 @@ const OrderPage = () => {
                   ))}
                 </select>
               ) : (
-                <p className="text-sm text-red-600">Không có phương thức thanh toán nào khả dụng.</p>
+                <p className="text-sm text-red-600">No payment methods available.</p>
               )}
             </div>
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={handleModalClose}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-                aria-label="Hủy"
+                className="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold transition-colors"
+                aria-label="Cancel"
               >
-                Hủy
+                Cancel
               </button>
               <button
                 onClick={handleProceedToConfirm}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                 disabled={isSubmitting || availablePaymentMethods.length === 0}
-                aria-label="Tiếp tục"
+                aria-label="Continue"
               >
-                Tiếp tục
+                Continue
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal xác nhận đơn hàng */}
+      {/* Order Confirm Modal */}
       {isConfirmModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" role="dialog" aria-labelledby="confirm-modal-title">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl relative">
+        <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-[3px] bg-white/30" role="dialog" aria-labelledby="confirm-modal-title">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl relative animate-fade-in">
             <button
               onClick={handleModalClose}
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-              aria-label="Đóng modal xác nhận"
+              aria-label="Close confirm modal"
             >
               <FontAwesomeIcon icon={faTimes} />
             </button>
-            <h2 id="confirm-modal-title" className="text-xl font-bold mb-4 text-blue-700">Xác nhận đơn hàng</h2>
+            <h2 id="confirm-modal-title" className="text-xl font-bold mb-4 text-blue-700">Order Confirmation</h2>
             <p className="text-sm text-gray-600 mb-2">
-              <strong>Sách:</strong> {listingData.title}
+              <strong>Book:</strong>{" "}
+              <span className="text-blue-700 font-bold">{listingData.title}</span>
             </p>
             <p className="text-sm text-gray-600 mb-2">
-              <strong>Giá:</strong> ${parseFloat(listingData.price).toFixed(2)}
+              <strong>Price:</strong>{" "}
+              <span className="text-green-600 font-bold">${parseFloat(listingData.price).toFixed(2)}</span>
             </p>
             <p className="text-sm text-gray-600 mb-2">
-              <strong>Địa chỉ giao hàng:</strong> {shippingAddress}
+              <strong>Shipping Address:</strong> {shippingAddress}
             </p>
             <p className="text-sm text-gray-600 mb-4">
-              <strong>Phương thức thanh toán:</strong>{' '}
-              {availablePaymentMethods.find((m) => m.paymentMethodId === paymentMethodId)?.name || 'Không rõ'}
+              <strong>Payment Method:</strong>{" "}
+              {availablePaymentMethods.find((m) => m.paymentMethodId === paymentMethodId)?.name || 'Unknown'}
             </p>
-            <p className="text-sm text-gray-600 mb-4">Bạn có chắc chắn muốn tạo đơn hàng này?</p>
+            <p className="text-sm text-gray-600 mb-4">Are you sure you want to place this order?</p>
             <div className="flex justify-end gap-2">
               <button
                 onClick={handleModalClose}
                 className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-                aria-label="Hủy"
+                aria-label="Cancel"
               >
-                Hủy
+                Cancel
               </button>
               <button
                 onClick={handleModalSubmit}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                 disabled={isSubmitting}
-                aria-label="Xác nhận đơn hàng"
+                aria-label="Confirm order"
               >
-                {isSubmitting ? 'Đang xử lý...' : 'Xác nhận'}
+                {isSubmitting ? 'Processing...' : 'Confirm'}
               </button>
             </div>
           </div>
         </div>
       )}
+      <style jsx>{`
+        .animate-fade-in {
+          animation: fadeInDropdown 0.18s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes fadeInDropdown {
+          0% { opacity: 0; transform: translateY(-10px) scale(0.98);}
+          100% { opacity: 1; transform: translateY(0) scale(1);}
+        }
+      `}</style>
     </>
   );
 };

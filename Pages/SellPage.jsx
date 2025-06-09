@@ -313,10 +313,6 @@ const SellPage = () => {
           </motion.div>
         </div>
 
-        {/* Footer */}
-        <div className="max-w-7xl mx-auto px-4">
-          <Footer />
-        </div>
       </div>
     </>
   );

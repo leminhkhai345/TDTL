@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../src/contexts/AuthContext';
 import { toast } from 'react-toastify';
-import { getMySales, confirmOrder, rejectOrder } from '../src/API/api';
+import { getMySales, confirmOrder, rejectOrder, getPublicUserProfile } from '../src/API/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSyncAlt, faFileExport } from '@fortawesome/free-solid-svg-icons';
 
@@ -10,6 +10,7 @@ const MySalesPage = () => {
   const navigate = useNavigate();
   const { isLoggedIn, user } = useAuth();
   const [orders, setOrders] = useState([]);
+  const [buyerNames, setBuyerNames] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
@@ -96,6 +97,27 @@ const MySalesPage = () => {
     }
     fetchSales();
   }, [page, isLoggedIn, navigate]);
+
+  // Fetch buyer names
+  useEffect(() => {
+    const fetchOrdersAndBuyers = async () => {
+      const data = await getMySales({ page, pageSize });
+      setOrders(data.items || []);
+      const names = {};
+      for (const order of data.items || []) {
+        if (order.buyerId && !names[order.buyerId]) {
+          try {
+            const buyer = await getPublicUserProfile(order.buyerId);
+            names[order.buyerId] = buyer.fullName || buyer.email || "Unknown";
+          } catch {
+            names[order.buyerId] = "Unknown";
+          }
+        }
+      }
+      setBuyerNames(names);
+    };
+    fetchOrdersAndBuyers();
+  }, [page, pageSize]);
 
   // Get unique statuses
   const statuses = useMemo(() => {
@@ -196,7 +218,7 @@ const MySalesPage = () => {
               <table className="min-w-full table-auto">
                 <thead className="bg-blue-50">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">ID</th>
+                    {/* <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">ID</th> */}
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Buyer Name</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Order Date</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Total Amount</th>
@@ -209,15 +231,8 @@ const MySalesPage = () => {
                     const isSeller = user?.id && order?.sellerId ? String(user.id).trim() === String(order.sellerId).trim() : false;
                     return (
                       <tr key={order.orderId} className="border-b hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 text-lg text-gray-900">
-                          <button
-                            onClick={() => navigate(`/orders/${order.orderId}`)}
-                            className="text-blue-600 hover:underline"
-                          >
-                            #{order.orderId}
-                          </button>
-                        </td>
-                        <td className="px-6 py-4 text-lg text-gray-900">{order.buyerName || 'Unknown'}</td>
+                        {/* <td className="px-6 py-4 text-lg text-gray-900">#{order.orderId}</td> */}
+                        <td className="px-6 py-4 text-lg text-gray-900">{buyerNames[order.buyerId] || 'Loading...'}</td>
                         <td className="px-6 py-4 text-lg text-gray-900">
                           {new Date(order.orderDate).toLocaleString()}
                         </td>
@@ -237,29 +252,13 @@ const MySalesPage = () => {
                             {order.orderStatus}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-lg flex gap-3">
+                        <td className="px-6 py-4 text-lg">
                           <button
                             onClick={() => navigate(`/orders/${order.orderId}`)}
                             className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:scale-105 hover:shadow-lg transition-all duration-200"
                           >
                             View Details
                           </button>
-                          {isSeller && order.orderStatus === 'PendingSellerConfirmation' && (
-                            <>
-                              <button
-                                onClick={() => handleConfirmOrder(order.orderId, order.rowVersion)}
-                                className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:scale-105 hover:shadow-lg transition-all duration-200"
-                              >
-                                Confirm
-                              </button>
-                              <button
-                                onClick={() => setRejectModalOrderId(order.orderId)}
-                                className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:scale-105 hover:shadow-lg transition-all duration-200"
-                              >
-                                Reject
-                              </button>
-                            </>
-                          )}
                         </td>
                       </tr>
                     );

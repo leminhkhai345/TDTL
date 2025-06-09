@@ -1,106 +1,83 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faPhone, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
-import { faFacebook, faInstagram, faTwitter } from "@fortawesome/free-brands-svg-icons";
-import logo from "../src/assets/book-shop.png";
+import { faEnvelope, faPhone, faMapMarkerAlt, faBookOpen } from "@fortawesome/free-solid-svg-icons";
+import { faFacebookF, faInstagram, faTwitter } from "@fortawesome/free-brands-svg-icons";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
   const handleSubscribe = (e) => {
     e.preventDefault();
-    // TODO: Handle newsletter subscription
+    if (!email.trim()) return;
     alert(`Subscribed with ${email}`);
     setEmail("");
   };
 
   return (
-    <footer className="bg-blue-900 text-white py-12 mt-16">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div>
-          <div className="flex items-center space-x-2 mb-4">
-            <img src={logo} alt="BookStore Logo" className="w-8 h-8" />
-            <span className="text-2xl font-bold">BookStore</span>
-          </div>
-          <p className="text-sm">
-            Your one-stop platform for buying, selling, and exchanging used books. Save money and read sustainably.
+    <footer className="bg-gradient-to-r from-blue-700 to-blue-900 text-white mt-12">
+      <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row md:justify-between gap-8">
+        {/* Logo & Mission */}
+        <div className="flex-1 flex flex-col items-center md:items-start">
+          <Link to="/" className="flex items-center gap-2 mb-2">
+            <FontAwesomeIcon icon={faBookOpen} className="text-yellow-400 text-2xl" />
+            <span className="text-xl font-bold tracking-wide">Book Exchange</span>
+          </Link>
+          <p className="text-gray-200 max-w-xs text-center md:text-left mb-2 text-sm">
+            Discover, exchange, and give books a second life. Join our community of passionate readers!
           </p>
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <a href="/" className="hover:text-yellow-300">
-                Home
-              </a>
-            </li>
-            <li>
-              <a href="/browse" className="hover:text-yellow-300">
-                Browse Books
-              </a>
-            </li>
-            <li>
-              <a href="/exchange" className="hover:text-yellow-300">
-                Exchange
-              </a>
-            </li>
-            <li>
-              <a href="/sell" className="hover:text-yellow-300">
-                Sell a Book
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold mb-3">Contact Us</h3>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
-              Hanoi, Vietnam
-            </li>
-            <li>
-              <FontAwesomeIcon icon={faPhone} className="mr-2" />
-              +84 123 456 789
-            </li>
-            <li>
-              <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
-              support@bookstore.com
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-lg en-semibold mb-3">Stay Connected</h3>
-          <div className="flex space-x-4 text-xl mb-4">
-            <a href="#" className="hover:text-yellow-300">
-              <FontAwesomeIcon icon={faFacebook} />
+          <div className="flex gap-3 mt-2">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-yellow-400 transition">
+              <FontAwesomeIcon icon={faFacebookF} />
             </a>
-            <a href="#" className="hover:text-yellow-300">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-yellow-400 transition">
               <FontAwesomeIcon icon={faInstagram} />
             </a>
-            <a href="#" className="hover:text-yellow-300">
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="hover:text-yellow-400 transition">
               <FontAwesomeIcon icon={faTwitter} />
             </a>
           </div>
-          <h3 className="text-lg font-semibold mb-3">Newsletter</h3>
-          <form onSubmit={handleSubscribe} className="flex">
+        </div>
+        {/* Quick Links */}
+        <div className="flex-1 flex flex-col gap-2 items-center md:items-start">
+          <h3 className="font-semibold text-lg mb-2 text-yellow-400">Quick Links</h3>
+          <Link to="/about" className="hover:text-yellow-400 transition text-gray-200 text-sm">About</Link>
+          <Link to="/features" className="hover:text-yellow-400 transition text-gray-200 text-sm">Features</Link>
+          <Link to="/contact" className="hover:text-yellow-400 transition text-gray-200 text-sm">Contact</Link>
+          <Link to="/faq" className="hover:text-yellow-400 transition text-gray-200 text-sm">FAQ</Link>
+        </div>
+        {/* Newsletter */}
+        <div className="flex-1 flex flex-col items-center md:items-end">
+          <h3 className="font-semibold text-lg mb-2 text-yellow-400">Subscribe for Updates</h3>
+          <form onSubmit={handleSubscribe} className="flex w-full max-w-xs">
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full p-2 text-gray-800 rounded-l-lg focus:outline-none"
+              className="rounded-l-lg px-4 py-2 text-gray-800 focus:outline-none w-full"
               required
+              aria-label="Email address"
             />
             <button
               type="submit"
-              className="bg-yellow-500 text-white px-4 py-2 rounded-r-lg hover:bg-yellow-600"
+              className="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-semibold px-4 py-2 rounded-r-lg transition"
+              aria-label="Subscribe"
             >
               Subscribe
             </button>
           </form>
+          <span className="text-xs text-gray-300 mt-2 text-right block">
+            Get news, book deals, and community stories.
+          </span>
+          <div className="flex flex-col gap-1 mt-4 text-gray-300 text-xs">
+            <span><FontAwesomeIcon icon={faEnvelope} className="text-yellow-300 mr-1" />support@bookexchange.com</span>
+            <span><FontAwesomeIcon icon={faPhone} className="text-yellow-300 mr-1" />+84 123 456 789</span>
+            <span><FontAwesomeIcon icon={faMapMarkerAlt} className="text-yellow-300 mr-1" />Hanoi, Vietnam</span>
+          </div>
         </div>
       </div>
-      <div className="mt-10 text-center text-sm text-gray-300">
-        &copy; {new Date().getFullYear()} BookStore. All rights reserved.
+      <div className="border-t border-blue-800 text-center py-3 text-gray-300 text-xs bg-blue-900 bg-opacity-80">
+        &copy; {new Date().getFullYear()} Book Exchange. All rights reserved.
       </div>
     </footer>
   );

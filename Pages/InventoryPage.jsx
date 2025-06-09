@@ -4,7 +4,7 @@ import { useAuth } from '../src/contexts/AuthContext';
 import { getMyInventory, deleteDocument, updateDocument, createListing, getCategories, getListingTypes,getPublicPaymentMethods } from '../src/API/api';
 import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSyncAlt, faTrash, faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faSyncAlt, faTrash, faEdit, faPlus, faBook } from '@fortawesome/free-solid-svg-icons';
 
 const getValidImageUrl = (url) => {
   if (!url || typeof url !== 'string' || !url.startsWith('http')) {
@@ -14,7 +14,6 @@ const getValidImageUrl = (url) => {
 };
 
 const InventoryPage = () => {
-  // ... (Giữ nguyên state, useEffect từ Bước 4)
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const [inventory, setInventory] = useState([]);
@@ -141,23 +140,24 @@ const InventoryPage = () => {
   }, []);
 
   // Fetch inventory
-  const fetchInventory = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getMyInventory(page, pageSize);
-      setInventory(data.items || []);
-      setTotalPages(data.totalPages || 1);
-    } catch (err) {
-      setError(err.message || 'Failed to load inventory');
-      toast.error(err.message);
-      if (err.message.includes('Unauthorized')) {
-        navigate('/login');
-      }
-    } finally {
-      setLoading(false);
+ const fetchInventory = async () => {
+  setLoading(true);
+  setError(null);
+  try {
+    const data = await getMyInventory(page, pageSize);
+    console.log('Raw response from getMyInventory:', data); // <--- Thêm dòng này để kiểm tra dữ liệu thực tế
+    setInventory(data.items || []);
+    setTotalPages(data.totalPages || 1);
+  } catch (err) {
+    setError(err.message || 'Failed to load inventory');
+    toast.error(err.message);
+    if (err.message.includes('Unauthorized')) {
+      navigate('/login');
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -326,9 +326,10 @@ const handleListForSale = useCallback((item) => {
       Description: listFormData.Description || null,
       ListingType: parseInt(listFormData.ListingType),
       DesiredDocumentId: listFormData.ListingType === '1' ? parseInt(listFormData.DesiredDocumentId) : null,
-      PaymentMethodIds: listFormData.ListingType === '0' && listFormData.PaymentMethodIds.length > 0
-        ? listFormData.PaymentMethodIds
-        : null,
+      // Chỉ gửi PaymentMethodIds khi có chọn phương thức thanh toán
+      PaymentMethodIds: listFormData.ListingType === '0' && listFormData.PaymentMethodIds.length > 0 
+        ? listFormData.PaymentMethodIds 
+        : null // Khi không chọn thì gửi null để backend hiểu là chấp nhận tất cả
     };
     console.log('Sending createListing data:', listingData);
     await createListing(listingData);
@@ -358,51 +359,75 @@ const handleListForSale = useCallback((item) => {
     fetchInventory();
   }, []);
 
+  // Add logging to check data
+  console.log('Inventory items:', inventory);
+
   return (
     <div className="bg-gray-50 min-h-screen py-12">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-semibold text-blue-800">My Inventory</h1>
-          <button
-            onClick={handleRefresh}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:scale-105 hover:shadow-lg transition-all duration-200 flex items-center gap-2"
-          >
-            <FontAwesomeIcon icon={faSyncAlt} />
-            Refresh
-          </button>
+          <div className="flex gap-3">
+  <button
+    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors shadow-md disabled:opacity-50"
+    onClick={handleRefresh}
+    disabled={loading}
+  >
+    <FontAwesomeIcon icon={faSyncAlt} />
+    Refresh
+  </button>
+  <button
+    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 transition-colors shadow-md"
+    onClick={() => navigate('/sell')}
+  >
+    <FontAwesomeIcon icon={faBook} />
+    Add Document
+  </button>
+</div>
         </div>
 
         {/* Search and Status Filter */}
-        <div className="mb-8 grid grid-cols-2 gap-6">
-          <div className="relative">
-            <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-              Search by Title
-            </label>
-            <input
-              type="text"
-              placeholder="Enter book title..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm hover:shadow-md transition-all duration-200 text-lg"
-            />
-          </div>
-          <div className="relative">
-            <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-              Filter by Status
-            </label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm hover:shadow-md transition-all duration-200 text-lg"
-            >
-              <option value="">All Statuses</option>
-              {statuses.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
+        <div className="mb-6">
+          <div className="bg-gradient-to-r from-blue-50 via-white to-blue-100 rounded-2xl shadow-md px-4 py-3">
+            <div className="grid grid-cols-4 gap-4 items-end">
+              {/* Search chiếm 3 phần */}
+              <div className="relative col-span-3">
+                <label className="absolute -top-3 left-4 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide pointer-events-none z-10">
+                  Search by Title
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter book title..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full p-3 pl-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm hover:shadow-md transition-all duration-200 text-base bg-white"
+                />
+                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+                  </svg>
+                </span>
+              </div>
+              {/* Filter chiếm 1 phần */}
+              <div className="relative col-span-1">
+                <label className="absolute -top-3 left-4 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide pointer-events-none z-10">
+                  Filter by Status
+                </label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm hover:shadow-md transition-all duration-200 text-base bg-white"
+                >
+                  <option value="">All Statuses</option>
+                  {statuses.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -443,34 +468,34 @@ const handleListForSale = useCallback((item) => {
               <table className="min-w-full table-auto">
                 <thead className="bg-blue-50">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Image</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Title</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Author</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Price</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Category</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Actions</th>
+                    <th className="px-6 py-2 text-left text-sm font-semibold text-gray-700">Image</th>
+                    <th className="px-6 py-2 text-left text-sm font-semibold text-gray-700">Title</th>
+                    <th className="px-6 py-2 text-left text-sm font-semibold text-gray-700">Author</th>
+                    <th className="px-6 py-2 text-left text-sm font-semibold text-gray-700">Price</th>
+                    <th className="px-6 py-2 text-left text-sm font-semibold text-gray-700">Category</th>
+                    <th className="px-6 py-2 text-left text-sm font-semibold text-gray-700">Status</th>
+                    <th className="px-6 py-2 text-left text-sm font-semibold text-gray-700">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredInventory.map((item) => (
                     <tr key={item.documentId} className="border-b hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-2">
                         <img
                           src={getValidImageUrl(item.imageUrl)}
                           alt={item.title}
-                          className="w-16 h-16 object-cover rounded"
+                          className="w-12 h-12 object-cover rounded"
                           onError={(e) => (e.target.src = 'https://via.placeholder.com/150')}
                         />
                       </td>
-                      <td className="px-6 py-4 text-lg text-gray-900">{item.title}</td>
-                      <td className="px-6 py-4 text-lg text-gray-900">{item.author}</td>
-                      <td className="px-6 py-4 text-lg text-gray-900">
+                      <td className="px-6 py-2 text-base text-gray-900">{item.title}</td>
+                      <td className="px-6 py-2 text-base text-gray-900">{item.author}</td>
+                      <td className="px-6 py-2 text-base text-gray-900">
                         {item.price !== null ? `$${parseFloat(item.price).toFixed(2)}` : 'N/A'}
                       </td>
-                      <td className="px-6 py-4 text-lg text-gray-900">{item.categoryName}</td>
-                      <td className="px-6 py-4 text-lg text-gray-900">{item.statusName}</td>
-                      <td className="px-6 py-4 flex space-x-3">
+                      <td className="px-6 py-2 text-base text-gray-900">{item.categoryName}</td>
+                      <td className="px-6 py-2 text-base text-gray-900">{item.statusName}</td>
+                      <td className="px-6 py-2 flex space-x-3">
                         <button
                           onClick={() => handleEdit(item)}
                           className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:scale-105 hover:shadow-lg transition-all duration-200"
@@ -548,161 +573,129 @@ const handleListForSale = useCallback((item) => {
 
         {/* Edit Book Modal */}
         {isEditModalOpen && (
-          <div className="fixed inset-0 bg-white flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-8 w-[90%] shadow-xl">
-              <h2 className="text-2xl font-semibold mb-6 text-blue-800">Edit Book</h2>
-              <form onSubmit={handleEditSubmit} className="space-y-6">
-                <div className="grid grid-cols-2 gap-6">
-                  {/* Left Column */}
-                  <div className="space-y-6">
-                    <div className="relative">
-                      <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                        Book Title *
-                      </label>
-                      <input
-                        type="text"
-                        name="Title"
-                        value={editFormData.Title}
-                        onChange={handleEditChange}
-                        className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                        required
-                        maxLength={255}
-                      />
-                    </div>
-                    <div className="relative">
-                      <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                        Category *
-                      </label>
-                      <select
-                        name="CategoryId"
-                        value={editFormData.CategoryId}
-                        onChange={handleEditChange}
-                        className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                        required
-                      >
-                        <option value="">Select category</option>
-                        {categories.map((cat) => (
-                          <option key={cat.categoryId} value={cat.categoryId}>
-                            {cat.categoryName}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="relative">
-                      <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                        Author
-                      </label>
-                      <input
-                        type="text"
-                        name="Author"
-                        value={editFormData.Author}
-                        onChange={handleEditChange}
-                        className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                        maxLength={100}
-                      />
-                    </div>
-                    <div className="relative">
-                      <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                        Condition *
-                      </label>
-                      <select
-                        name="Condition"
-                        value={editFormData.Condition}
-                        onChange={handleEditChange}
-                        className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                        required
-                      >
-                        <option value="New">New</option>
-                        <option value="Like New">Like New</option>
-                        <option value="Good">Good</option>
-                        <option value="Fair">Fair</option>
-                        <option value="Poor">Poor</option>
-                      </select>
-                    </div>
-                    <div className="relative">
-                      <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                        ISBN
-                      </label>
-                      <input
-                        type="text"
-                        name="Isbn"
-                        value={editFormData.Isbn}
-                        onChange={handleEditChange}
-                        className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                        maxLength={20}
-                      />
-                    </div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 backdrop-blur-[6px] bg-white/30"></div>
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 animate-fade-in">
+              <button
+                type="button"
+                onClick={cancelEdit}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl focus:outline-none"
+                aria-label="Close"
+              >
+                &times;
+              </button>
+              <h2 className="text-3xl font-bold mb-8 text-blue-800 text-center">Edit Book</h2>
+              <form onSubmit={handleEditSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Left column */}
+                <div className="space-y-6">
+                  <div className="relative">
+                    <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                      Book Title <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="Title"
+                      value={editFormData.Title}
+                      onChange={handleEditChange}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                      required
+                      maxLength={255}
+                    />
                   </div>
-                  {/* Right Column */}
-                  <div className="space-y-6">
-                    <div className="relative">
-                      <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                        Price ($)
-                      </label>
-                      <input
-                        type="number"
-                        name="Price"
-                        value={editFormData.Price}
-                        onChange={handleEditChange}
-                        className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                        min="0"
-                        step="0.01"
-                      />
-                    </div>
-                    <div className="relative">
-                      <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                        Description
-                      </label>
-                      <textarea
-                        name="Description"
-                        value={editFormData.Description}
-                        onChange={handleEditChange}
-                        className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                        rows={4}
-                      />
-                    </div>
-                    <div className="relative">
-                      <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                        Image URL
-                      </label>
-                      <input
-                        type="url"
-                        name="ImageUrl"
-                        value={editFormData.ImageUrl}
-                        onChange={handleEditChange}
-                        className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                      />
-                    </div>
-                    <div className="relative">
-                      <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                        Edition
-                      </label>
-                      <input
-                        type="text"
-                        name="Edition"
-                        value={editFormData.Edition}
-                        onChange={handleEditChange}
-                        className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                        maxLength={50}
-                      />
-                    </div>
-                    <div className="relative">
-                      <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                        Publication Year
-                      </label>
-                      <input
-                        type="number"
-                        name="PublicationYear"
-                        value={editFormData.PublicationYear}
-                        onChange={handleEditChange}
-                        className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                        min="1800"
-                        max="2026"
-                      />
-                    </div>
+                  <div className="relative">
+                    <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                      Author
+                    </label>
+                    <input
+                      type="text"
+                      name="Author"
+                      value={editFormData.Author}
+                      onChange={handleEditChange}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                      maxLength={100}
+                    />
+                  </div>
+                  <div className="relative">
+                    <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                      Category <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="CategoryId"
+                      value={editFormData.CategoryId}
+                      onChange={handleEditChange}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                      required
+                    >
+                      <option value="">Select category</option>
+                      {categories.map((cat) => (
+                        <option key={cat.categoryId} value={cat.categoryId}>
+                          {cat.categoryName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="relative">
+                    <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                      Condition <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="Condition"
+                      value={editFormData.Condition}
+                      onChange={handleEditChange}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                      required
+                    >
+                      <option value="New">New</option>
+                      <option value="Like New">Like New</option>
+                      <option value="Good">Good</option>
+                      <option value="Fair">Fair</option>
+                      <option value="Poor">Poor</option>
+                    </select>
                   </div>
                 </div>
-                <div className="flex justify-end gap-4 mt-4">
+                {/* Right column */}
+                <div className="space-y-6">
+                  <div className="relative">
+                    <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                      Price ($)
+                    </label>
+                    <input
+                      type="number"
+                      name="Price"
+                      value={editFormData.Price}
+                      onChange={handleEditChange}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+                  <div className="relative">
+                    <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                      Description
+                    </label>
+                    <textarea
+                      name="Description"
+                      value={editFormData.Description}
+                      onChange={handleEditChange}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                      rows={4}
+                    />
+                  </div>
+                  <div className="relative">
+                    <label className="absolute -top-3 left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                      Image URL
+                    </label>
+                    <input
+                      type="url"
+                      name="ImageUrl"
+                      value={editFormData.ImageUrl}
+                      onChange={handleEditChange}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200"
+                    />
+                  </div>
+                </div>
+                {/* Action buttons */}
+                <div className="col-span-1 md:col-span-2 flex justify-end gap-4 mt-4">
                   <button
                     type="button"
                     onClick={cancelEdit}
@@ -724,156 +717,129 @@ const handleListForSale = useCallback((item) => {
 
         {/* List Book Modal */}
        {isListModalOpen && itemToList && (
-    <div className="fixed inset-0 bg-white flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-8 w-full max-w-md shadow-xl">
-        <h2 className="text-2xl font-semibold mb-6 text-blue-800">List Book for Sale</h2>
-        <form onSubmit={handleListSubmit} className="space-y-6">
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent">
+    <div className="absolute inset-0 backdrop-blur-[6px] bg-white/30"></div>
+    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 animate-fade-in">
+      <button
+        type="button"
+        onClick={cancelList}
+        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl focus:outline-none"
+        aria-label="Close"
+      >
+        &times;
+      </button>
+      <h2 className="text-3xl font-bold mb-6 text-blue-800 text-center">List Book for Sale</h2>
+      <form onSubmit={handleListSubmit} className="space-y-6">
+        <div className="relative">
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Book Title</label>
+          <input
+            type="text"
+            value={itemToList.title}
+            className="w-full p-4 border border-gray-300 rounded-lg bg-gray-100 text-lg cursor-not-allowed"
+            disabled
+          />
+        </div>
+        <div className="relative">
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Price ($)</label>
+          <input
+            type="number"
+            name="Price"
+            value={listFormData.Price}
+            onChange={handleListChange}
+            className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg transition"
+            min="0"
+            step="0.01"
+            placeholder="Enter price (required for sell)"
+            required={listFormData.ListingType === '0'}
+          />
+        </div>
+        <div className="relative">
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+          <textarea
+            name="Description"
+            value={listFormData.Description}
+            onChange={handleListChange}
+            className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg transition"
+            rows={3}
+            placeholder="Describe the book (optional)"
+          />
+        </div>
+        <div className="relative">
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Listing Type *</label>
+          <select
+            name="ListingType"
+            value={listFormData.ListingType}
+            onChange={handleListChange}
+            className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg transition"
+            required
+          >
+            <option value="">Select listing type</option>
+            {listingTypes.map((type) => (
+              <option key={type.value} value={String(type.value)}>
+                {type.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        {listFormData.ListingType === '0' && (
           <div className="relative">
-            <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-              Book Title
-            </label>
-            <input
-              type="text"
-              value={itemToList.title}
-              className="w-full p-4 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed text-lg"
-              disabled
-            />
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Payment Methods</label>
+            {availablePaymentMethods.length === 0 ? (
+              <p className="text-red-600 text-sm">No payment methods available.</p>
+            ) : (
+              <div className="flex flex-wrap gap-3">
+                {availablePaymentMethods.map((method) => (
+                  <label key={method.paymentMethodId} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      value={method.paymentMethodId}
+                      checked={listFormData.PaymentMethodIds.includes(method.paymentMethodId)}
+                      onChange={handlePaymentMethodChange}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span className="text-gray-700">{method.name}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+            <p className="text-xs text-gray-500 mt-1">Leave unchecked to default to COD.</p>
           </div>
+        )}
+        {listFormData.ListingType === '1' && (
           <div className="relative">
-            <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-              Price ($)
-            </label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Desired Book ID *</label>
             <input
               type="number"
-              name="Price"
-              value={listFormData.Price}
+              name="DesiredDocumentId"
+              value={listFormData.DesiredDocumentId}
               onChange={handleListChange}
-              className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-              min="0"
-              step="0.01"
-              placeholder="Enter price (required for sell)"
+              className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg transition"
+              min="1"
+              placeholder="Enter ID of desired book for exchange"
+              required
             />
           </div>
-          <div className="relative">
-            <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-              Description
-            </label>
-            <textarea
-              name="Description"
-              value={listFormData.Description}
-              onChange={handleListChange}
-              className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-              rows={4}
-              placeholder="Describe the book (optional)"
-            />
-          </div>
-          <div className="relative">
-            <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-              Listing Type *
-            </label>
-            {listingTypes.length === 0 ? (
-              <div>
-                <p className="text-red-600 text-sm">Failed to load listing types.</p>
-                <button
-                  type="button"
-                  onClick={fetchMetadata}
-                  className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200"
-                >
-                  Retry
-                </button>
-              </div>
-            ) : (
-              <select
-                name="ListingType"
-                value={listFormData.ListingType}
-                onChange={handleListChange}
-                className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                required
-              >
-                <option value="">Select listing type</option>
-                {listingTypes.map((type) => (
-                  <option key={type.value} value={String(type.value)}>
-                    {type.name}
-                  </option>
-                ))}
-              </select>
-            )}
-            <p className="text-xs text-gray-500 mt-1">Debug: listingTypes = {JSON.stringify(listingTypes)}</p>
-          </div>
-          {listFormData.ListingType === '0' && (
-            <div className="relative">
-              <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                Payment Methods
-              </label>
-              {availablePaymentMethods.length === 0 ? (
-                <p className="text-red-600 text-sm">No payment methods available.</p>
-              ) : (
-                <div className="space-y-2">
-                  {availablePaymentMethods.map((method) => (
-                    <div key={method.paymentMethodId} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id={`payment-method-${method.paymentMethodId}`}
-                        value={method.paymentMethodId}
-                        checked={listFormData.PaymentMethodIds.includes(method.paymentMethodId)}
-                        onChange={handlePaymentMethodChange}
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      />
-                      <label
-                        htmlFor={`payment-method-${method.paymentMethodId}`}
-                        className="text-sm text-gray-700"
-                      >
-                        {method.name}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <p className="text-xs text-gray-500 mt-1">
-                Leave unchecked to default to COD.
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Debug: availablePaymentMethods = {JSON.stringify(availablePaymentMethods)}
-              </p>
-            </div>
-          )}
-          {listFormData.ListingType === '1' && (
-            <div className="relative">
-              <label className="absolute top-[-10px] left-3 bg-white px-2 text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                Desired Book ID *
-              </label>
-              <input
-                type="number"
-                name="DesiredDocumentId"
-                value={listFormData.DesiredDocumentId}
-                onChange={handleListChange}
-                className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all duration-200 text-lg"
-                min="1"
-                placeholder="Enter ID of desired book for exchange"
-                required
-              />
-            </div>
-          )}
-          <div className="flex justify-end gap-4">
-            <button
-              type="button"
-              onClick={cancelList}
-              className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all duration-200"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:scale-105 hover:shadow-lg transition-all duration-200"
-              disabled={listingTypes.length === 0}
-            >
-              List
-            </button>
-          </div>
-        </form>
-      </div>
+        )}
+        <div className="flex justify-end gap-4 mt-6">
+          <button
+            type="button"
+            onClick={cancelList}
+            className="px-6 py-3 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-all text-lg font-semibold"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:scale-105 hover:shadow-lg transition-all text-lg font-semibold"
+            disabled={listingTypes.length === 0}
+          >
+            List
+          </button>
+        </div>
+      </form>
     </div>
-  )}
+  </div>
+)}
       </div>
     </div>
   );

@@ -32,3 +32,144 @@ button:focus-visible {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Chatbox container styling */
+df-messenger {
+  z-index: 999;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  --df-messenger-bot-message: #2563eb;
+  --df-messenger-button-titlebar-color: #2563eb;
+  --df-messenger-chat-background-color: #fafafa;
+  --df-messenger-font-color: white;
+  --df-messenger-user-message: #60a5fa;
+  --df-messenger-minimized-chat-close-icon-color: #374151;
+  --df-messenger-send-icon: #2563eb;
+  --df-messenger-input-box-color: #fff;
+  --df-messenger-input-font-color: #374151;
+  --df-messenger-input-placeholder-font-color: #9ca3af;
+  --df-messenger-button-titlebar-font-color: white;
+}
+
+/* Chat window styling */
+df-messenger-chat {
+  width: 380px !important;
+  height: 520px !important;
+  border-radius: 24px !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(37, 99, 235, 0.2) !important;
+  border: 2px solid rgba(37, 99, 235, 0.1) !important;
+  animation: slideUp 0.4s ease-out;
+}
+
+/* Slide up animation for chat window */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Chat messages */
+.message {
+  margin: 8px 0;
+  padding: 12px 16px;
+  border-radius: 16px;
+  max-width: 80%;
+  animation: fadeInSlide 0.4s ease-out;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Message fadeInSlide animation */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Chatbox icon styling - Enhanced */
+df-messenger-button > button {
+  transform: scale(1.2) !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3) !important;
+  border: 4px solid rgba(255, 255, 255, 0.8) !important;
+  animation: float 3s ease-in-out infinite !important;
+}
+
+df-messenger-button > button:hover {
+  transform: scale(1.35) !important;
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4) !important;
+  border-color: #ffffff !important;
+  animation: pulse 2s infinite, float 3s ease-in-out infinite !important;
+}
+
+/* Enhanced floating animation */
+@keyframes float {
+  0% {
+    transform: scale(1.2) translateY(0px);
+  }
+  50% {
+    transform: scale(1.2) translateY(-10px);
+  }
+  100% {
+    transform: scale(1.2) translateY(0px);
+  }
+}
+
+/* Enhanced pulse animation */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+    border-color: rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(37, 99, 235, 0.5);
+    border-color: rgba(255, 255, 255, 1);
+  }
+  100% {
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+    border-color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* Maintain responsive design with enhanced animations */
+@media (max-width: 768px) {
+  df-messenger-button > button {
+    transform: scale(1.1) !important;
+    animation: floatMobile 3s ease-in-out infinite !important;
+  }
+  
+  @keyframes floatMobile {
+    0% {
+      transform: scale(1.1) translateY(0px);
+    }
+    50% {
+      transform: scale(1.1) translateY(-6px);
+    }
+    100% {
+      transform: scale(1.1) translateY(0px);
+    }
+  }
+}
+
+/* Mobile responsiveness */
+@media screen and (max-width: 480px) {
+  df-messenger-chat {
+    width: 320px !important;
+    height: 480px !important;
+  }
+  
+  df-messenger {
+    bottom: 10px;
+    right: 10px;
+  }
+}

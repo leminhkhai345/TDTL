@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../src/contexts/AuthContext';
 import { toast } from 'react-toastify';
-import { getReviewsBySeller, getSellerAverageRating } from '../src/API/api';
-//  getPublicUserProfile,
+import { getReviewsBySeller, getSellerAverageRating, getPublicUserProfile } from '../src/API/api';
 import ReviewList from '../Components/ReviewList';
 import ReviewDetailModal from '../Components/ReviewDetailModal';
 import StarRating from '../Components/StarRating';
@@ -35,32 +34,33 @@ const SellerProfilePage = () => {
         setLoading(true);
         setError(null);
 
-        // Lấy thông tin profile người bán
-        // const userData = await getPublicUserProfile(sellerId);
-        // setProfile({
-        //   fullName: userData.fullName || '',
-        //   phone: userData.phone || '',
-        //   address: userData.address || '',
-        //   birth: userData.birth ? new Date(userData.birth).toISOString().split('T')[0] : '',
-        //   email: userData.email || 'Anonymous'
-        // });
+        // Fetch seller public profile
+        const userData = await getPublicUserProfile(sellerId);
+        setProfile({
+          fullName: userData.fullName || '',
+          phone: userData.phone || '',
+          address: userData.address || '',
+          birth: userData.birth ? new Date(userData.birth).toISOString().split('T')[0] : '',
+          email: userData.email || 'Anonymous',
+          avatarUrl: userData.avatarUrl || '',
+          joinDate: userData.createdAt || userData.joinDate || '',
+        });
 
-        // Lấy điểm trung bình
+        // Fetch average rating
         try {
           const avgRating = await getSellerAverageRating(sellerId);
           setAverageRating(avgRating || 0);
-        } catch (err) {
-          console.log('No average rating found:', err.message);
+        } catch {
           setAverageRating(0);
         }
 
-        // Lấy danh sách đánh giá (mặc định 3 đánh giá)
+        // Fetch reviews (default 3)
         try {
           const reviewData = await getReviewsBySeller(sellerId, 1, 3);
-          setReviews(reviewData.items || []);
+          const reviewsArr = Array.isArray(reviewData) ? reviewData : (reviewData.items || []);
+          setReviews(reviewsArr);
           setTotalPages(reviewData.totalPages || 1);
-        } catch (err) {
-          console.log('No reviews found:', err.message);
+        } catch {
           setReviews([]);
         }
       } catch (err) {
@@ -78,9 +78,10 @@ const SellerProfilePage = () => {
     setShowAllReviews(true);
     try {
       const reviewData = await getReviewsBySeller(sellerId, currentPage, 5);
-      setReviews(reviewData.items || []);
+      const reviewsArr = Array.isArray(reviewData) ? reviewData : (reviewData.items || []);
+      setReviews(reviewsArr);
       setTotalPages(reviewData.totalPages || 1);
-    } catch (err) {
+    } catch {
       toast.error('Failed to load reviews');
     }
   };
@@ -89,9 +90,10 @@ const SellerProfilePage = () => {
     setCurrentPage(page);
     try {
       const reviewData = await getReviewsBySeller(sellerId, page, 5);
-      setReviews(reviewData.items || []);
+      const reviewsArr = Array.isArray(reviewData) ? reviewData : (reviewData.items || []);
+      setReviews(reviewsArr);
       setTotalPages(reviewData.totalPages || 1);
-    } catch (err) {
+    } catch {
       toast.error('Failed to load reviews');
     }
   };
@@ -101,71 +103,59 @@ const SellerProfilePage = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-12 text-gray-600 text-lg">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-gray-600 text-lg animate-pulse">Loading seller profile...</div>
+      </div>
+    );
   }
 
   if (error || !profile) {
     return (
-      <div className="text-center text-red-600 py-12 text-lg">
-        {error || 'Seller profile not found'}
-        <button
-          onClick={() => navigate('/')}
-          className="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
-        >
-          Return to Home
-        </button>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center text-red-600">
+          {error || 'Seller profile not found'}
+          <button
+            onClick={() => navigate('/')}
+            className="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+          >
+            Return to Home
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-8 text-blue-800">Seller Profile</h1>
-
-      <div className="grid grid-cols-3 gap-8">
-        {/* Seller Profile */}
-        <div className="col-span-1 bg-white rounded-xl shadow-lg p-8 border-r-2 border-blue-600 min-h-[500px]">
-          <h2 className="text-2xl font-semibold mb-6 text-blue-700">Seller Profile</h2>
-          <div className="flex justify-center mb-6">
-            <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-4xl font-semibold text-gray-600 border-4 border-gray-200">
-              {profile.email[0].toUpperCase()}
-            </div>
-          </div>
-          <div className="space-y-3">
-            <p className="text-gray-600">
-              <span className="font-medium text-gray-800">Name: </span>
-              {profile.fullName || profile.email}
-            </p>
-            <p className="text-gray-600">
-              <span className="font-medium text-gray-800">Email: </span>
-              {profile.email}
-            </p>
-            <p className="text-gray-600">
-              <span className="font-medium text-gray-800">Phone: </span>
-              {profile.phone || 'Not provided'}
-            </p>
-            <p className="text-gray-600">
-              <span className="font-medium text-gray-800">Address: </span>
-              {profile.address || 'Not provided'}
-            </p>
-            <p className="text-gray-600">
-              <span className="font-medium text-gray-800">Birthday: </span>
-              {profile.birth ? new Date(profile.birth).toLocaleDateString() : 'Not provided'}
-            </p>
-            {averageRating !== null && (
-              <p className="text-gray-600 flex items-center">
-                <span className="font-medium text-gray-800">Rating: </span>
-                <span className="ml-2 flex items-center">
-                  <StarRating rating={averageRating} />
-                  <span className="ml-1">({averageRating.toFixed(1)})</span>
-                </span>
-              </p>
+    <div className="min-h-screen bg-gradient-to-r from-blue-100 via-white to-blue-100">
+      <div className="max-w-6xl mx-auto px-4 pt-12 pb-0">
+        <div className="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center border border-blue-100 mb-10">
+          <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-4xl font-semibold text-gray-600 border-4 border-blue-200 overflow-hidden mb-4 shadow">
+            {profile.avatarUrl ? (
+              <img src={profile.avatarUrl} alt={profile.fullName || profile.email} className="w-full h-full object-cover" />
+            ) : (
+              profile.email[0].toUpperCase()
             )}
           </div>
+          <h2 className="text-3xl font-bold text-blue-800 mb-2">{profile.fullName || profile.email}</h2>
+          <div className="flex flex-wrap justify-center gap-4 mb-4">
+            <div className="text-gray-600"><span className="font-medium">Email:</span> {profile.email}</div>
+            <div className="text-gray-600"><span className="font-medium">Phone:</span> {profile.phone || 'Not provided'}</div>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4 mb-4">
+            <div className="text-gray-600"><span className="font-medium">Address:</span> {profile.address || 'Not provided'}</div>
+            <div className="text-gray-600"><span className="font-medium">Birthday:</span> {profile.birth ? new Date(profile.birth).toLocaleDateString() : 'Not provided'}</div>
+          </div>
+          <div className="text-gray-600 mb-2"><span className="font-medium">Joined:</span> {profile.joinDate ? new Date(profile.joinDate).toLocaleDateString() : 'Not provided'}</div>
+          {averageRating !== null && (
+            <div className="flex items-center mt-3">
+              <StarRating rating={averageRating} />
+              <span className="ml-2 text-blue-700 font-semibold">({averageRating.toFixed(1)})</span>
+            </div>
+          )}
         </div>
 
-        {/* Seller Reviews */}
-        <div className="col-span-2 bg-white rounded-xl shadow-lg p-8 min-h-[500px]">
+        <div className="bg-white rounded-2xl shadow-lg p-8">
           <h2 className="text-2xl font-semibold mb-6 text-blue-700">Seller Reviews</h2>
           {reviews.length === 0 ? (
             <p className="text-gray-600">No reviews yet for this seller.</p>
@@ -198,18 +188,17 @@ const SellerProfilePage = () => {
             </>
           )}
         </div>
+
+        {selectedReview && (
+          <ReviewDetailModal
+            review={selectedReview}
+            isOpen={!!selectedReview}
+            onClose={() => setSelectedReview(null)}
+          />
+        )}
+
+        <Footer />
       </div>
-
-      {/* Review Detail Modal */}
-      {selectedReview && (
-        <ReviewDetailModal
-          review={selectedReview}
-          isOpen={!!selectedReview}
-          onClose={() => setSelectedReview(null)}
-        />
-      )}
-
-      <Footer />
     </div>
   );
 };

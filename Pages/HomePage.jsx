@@ -6,48 +6,44 @@ import BenefitsSection from "../Components/Benefits";
 import Features from "../Components/Features";
 import FeaturedBooks from "../Components/FeaturedBooks";
 import Footer from "../Components/Footer";
+import UserStatisticsPage from "./UserStatisticsPage"; // Thêm dòng này
 
 const HomePage = () => {
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Navbar (giữ nguyên max-w-7xl từ component) */}
-      
 
-      {/* Hero Section (giữ nguyên từ component Hero) */}
-      <section aria-label="Hero Section">
-        <Hero />
+      {/* Hero Section */}
+      <section aria-label="Hero Section" className="bg-gradient-to-r from-blue-100 via-white to-blue-100">
+        <div className="max-w-6xl mx-auto px-4">
+          <Hero />
+        </div>
       </section>
-
-      {/* Banner Section (bóp 2 bên giống ProfilePage với max-w-6xl, bỏ padding top/bottom) */}
-      <section aria-label="Banner Section">
+      {/* Banner Section */}
+      <section aria-label="Banner Section" className="bg-gradient-to-r from-blue-100 via-white to-blue-100">
         <div className="max-w-6xl mx-auto px-4">
           <Banner />
         </div>
       </section>
-
-      {/* Benefits Section (bóp 2 bên giống ProfilePage với max-w-6xl, bỏ padding top/bottom) */}
-      <section aria-label="Benefits Section">
+      {/* Benefits Section */}
+      <section aria-label="Benefits Section" className="bg-gradient-to-r from-blue-100 via-white to-blue-100">
         <div className="max-w-6xl mx-auto px-4">
           <BenefitsSection />
         </div>
       </section>
-
-      {/* Features Section (bóp 2 bên giống ProfilePage với max-w-6xl, bỏ padding top/bottom) */}
-      <section aria-label="Features Section">
+      {/* Features Section */}
+      <section aria-label="Features Section" className="bg-gradient-to-r from-blue-100 via-white to-blue-100">
         <div className="max-w-6xl mx-auto px-4">
           <Features />
         </div>
       </section>
-
-      {/* Featured Books Section (bóp 2 bên giống ProfilePage với max-w-6xl, bỏ padding top/bottom) */}
-      <section aria-label="Featured Books Section">
+      {/* Featured Books Section */}
+      <section aria-label="Featured Books Section" className="bg-gradient-to-r from-blue-100 via-white to-blue-100">
         <div className="max-w-6xl mx-auto px-4">
           <FeaturedBooks />
         </div>
       </section>
-
-      {/* Footer Section (giữ nguyên max-w-7xl từ component) */}
-      <section aria-label="Footer Section">
+      {/* Footer Section */}
+      <section aria-label="Footer Section" className="bg-gradient-to-r from-blue-100 via-white to-blue-100">
         <Footer />
       </section>
     </div>

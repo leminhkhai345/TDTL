@@ -3,8 +3,9 @@ import { useAuth } from '../src/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSyncAlt, faPlus, faEdit, faTrash, faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { getAdminPaymentMethods, createPaymentMethod, togglePaymentMethod } from '../src/API/api';
+import { faSyncAlt, faPlus, faEdit, faTrash, faSpinner, faSearch,faMoneyBillWave , faFilter, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { getPublicPaymentMethods } from '../src/API/api'; // Add this import
+import { motion } from 'framer-motion';
 
 const AdminPaymentMethodsPage = () => {
   const { isLoggedIn, isAdmin } = useAuth();
@@ -36,11 +37,15 @@ const AdminPaymentMethodsPage = () => {
   const fetchPaymentMethods = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await getAdminPaymentMethods();
-      // Đảm bảo response là mảng và mỗi phần tử có Name
-      const validMethods = Array.isArray(response)
-        ? response.filter(method => method && typeof method.Name === 'string')
-        : [];
+      const response = await getPublicPaymentMethods();
+      
+      // Transform data to match expected format
+      const validMethods = Array.isArray(response) ? response.map(method => ({
+        PaymentMethodId: method.paymentMethodId,
+        Name: method.name,
+        IsEnabled: method.isEnabled
+      })) : [];
+      
       setPaymentMethods(validMethods);
     } catch (err) {
       toast.error(err.message || 'Không thể tải danh sách phương thức thanh toán');
@@ -81,15 +86,15 @@ const AdminPaymentMethodsPage = () => {
   const handleSavePaymentMethod = async () => {
     const trimmedName = formData.Name.trim();
     if (!trimmedName) {
-      toast.error('Tên phương thức thanh toán là bắt buộc');
+      toast.error('Payment method name is required');
       return;
     }
     if (trimmedName.length < 3 || trimmedName.length > 50) {
-      toast.error('Tên phương thức phải có từ 3 đến 50 ký tự');
+      toast.error('Name must be between 3 and 50 characters');
       return;
     }
     if (!/^[\w\s-]+$/.test(trimmedName)) {
-      toast.error('Tên phương thức chỉ được chứa chữ cái, số, khoảng trắng và dấu gạch ngang');
+      toast.error('Name can only contain letters, numbers, spaces and hyphens');
       return;
     }
     try {
@@ -97,10 +102,10 @@ const AdminPaymentMethodsPage = () => {
       if (selectedMethod) {
         // Không có API cập nhật, sử dụng toggle để thay đổi trạng thái
         await togglePaymentMethod(selectedMethod.PaymentMethodId, !selectedMethod.IsEnabled);
-        toast.success('Trạng thái phương thức thanh toán đã được cập nhật');
+        toast.success('Payment method status has been updated');
       } else {
         await createPaymentMethod({ Name: trimmedName, IsEnabled: true });
-        toast.success('Phương thức thanh toán đã được tạo');
+        toast.success('Payment method has been created');
       }
       await fetchPaymentMethods();
       closeModal();
@@ -177,253 +182,251 @@ const AdminPaymentMethodsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white px-4 py-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-blue-800 animate-fade-in mb-4 sm:mb-0">
-            Quản lý phương thức thanh toán
-          </h1>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={handleRefresh}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors shadow-md disabled:opacity-50"
-              disabled={isLoading}
-              title="Làm mới danh sách phương thức"
-            >
-              <FontAwesomeIcon icon={faSyncAlt} className={isLoading ? 'animate-spin' : ''} />
-              Làm mới
-            </button>
-            <button
-              type="button"
-              onClick={() => openModal()}
-              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors shadow-md ${
-                isAdmin()
-                  ? 'bg-green-600 text-white hover:bg-green-700'
-                  : 'bg-gray-400 text-gray-700 cursor-not-allowed'
-              }`}
-              disabled={!isAdmin() || isLoading}
-              title={isAdmin() ? 'Thêm phương thức mới' : 'Yêu cầu quyền admin'}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-              Thêm phương thức mới
-            </button>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-white to-purple-100 py-12">
+      <div className="max-w-6xl mx-auto bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+        <div className="p-8">
+          {/* Header Section */}
+          <div className="relative mb-8 pb-4 border-b border-gray-200">
+            <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 text-center">
+              Admin Dashboard
+            </h1>
+            <p className="text-gray-500 text-center mt-2">Payment Method Management System</p>
           </div>
-        </div>
 
-        {/* Search Bar */}
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Tìm kiếm theo tên phương thức..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="p-3 border border-gray-300 rounded-lg w-full max-w-md focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm hover:shadow-md transition-shadow"
-            disabled={isLoading}
-          />
-        </div>
-
-        {/* Loading State */}
-        {isLoading ? (
-          <div className="text-center py-6 text-gray-600 flex items-center justify-center">
-            <FontAwesomeIcon icon={faSpinner} className="animate-spin mr-2" />
-            Đang tải phương thức thanh toán...
-          </div>
-        ) : paginatedPaymentMethods.length === 0 ? (
-          <p className="text-center text-gray-600 py-6">
-            {search ? 'Không tìm thấy phương thức nào.' : 'Chưa có phương thức thanh toán.'}
-          </p>
-        ) : (
-          <>
-            {/* Desktop View - Table */}
-            <div className="hidden md:block bg-white rounded-lg shadow-lg overflow-x-auto">
-              <table className="min-w-full table-auto">
-                <thead className="bg-blue-50">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">ID</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Tên</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Kích hoạt</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Hành động</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedPaymentMethods.map((method) => (
-                    <tr key={method.PaymentMethodId} className="border-b hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm text-gray-900">{method.PaymentMethodId}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{method.Name}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{method.IsEnabled ? 'Có' : 'Không'}</td>
-                      <td className="px-6 py-4 text-sm">
-                        <button
-                          type="button"
-                          onClick={() => openModal(method)}
-                          className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 mr-2 transition-colors shadow-sm"
-                          disabled={isLoading || !isAdmin()}
-                          title="Cập nhật trạng thái phương thức"
-                        >
-                          <FontAwesomeIcon icon={faEdit} /> {method.IsEnabled ? 'Tắt' : 'Bật'}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(method.PaymentMethodId)}
-                          className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-sm"
-                          disabled={isLoading || !isAdmin()}
-                          title="Xóa phương thức này"
-                        >
-                          <FontAwesomeIcon icon={faTrash} /> Xóa
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile View - Cards */}
-            <div className="md:hidden space-y-4">
-              {paginatedPaymentMethods.map((method) => (
-                <div
-                  key={method.PaymentMethodId}
-                  className="bg-white rounded-lg shadow-md p-4 border border-gray-200 hover:shadow-lg transition-shadow"
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-800">
-                        ID: {method.PaymentMethodId}
-                      </p>
-                      <p className="text-lg font-medium text-gray-900">
-                        {method.Name}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Kích hoạt: {method.IsEnabled ? 'Có' : 'Không'}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => openModal(method)}
-                        className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm"
-                        disabled={isLoading || !isAdmin()}
-                        title="Cập nhật trạng thái phương thức"
-                      >
-                        <FontAwesomeIcon icon={faEdit} /> {method.IsEnabled ? 'Tắt' : 'Bật'}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(method.PaymentMethodId)}
-                        className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-sm"
-                        disabled={isLoading || !isAdmin()}
-                        title="Xóa phương thức này"
-                      >
-                        <FontAwesomeIcon icon={faTrash} /> Xóa
-                      </button>
-                    </div>
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            {isLoading ? (
+              <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              </div>
+            ) : (
+              <>
+                {/* Header with Title and Buttons */}
+                <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+                  <motion.h1 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-3xl font-bold text-blue-800 mb-4 sm:mb-0"
+                  >
+                    <FontAwesomeIcon icon={faMoneyBillWave} className="mr-3" />
+                    Payment Method Management
+                  </motion.h1>
+                  <div className="flex gap-3">
+                    <motion.button
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      onClick={handleRefresh}
+                      className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
+                      disabled={isLoading}
+                    >
+                      <FontAwesomeIcon icon={faSyncAlt} className={isLoading ? "animate-spin" : ""} />
+                      Refresh Data
+                    </motion.button>
+                    <motion.button
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      onClick={() => openModal()}
+                      className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
+                      disabled={isLoading}
+                    >
+                      <FontAwesomeIcon icon={faPlus} />
+                      Add Payment Method
+                    </motion.button>
                   </div>
                 </div>
-              ))}
-            </div>
-          </>
-        )}
 
-        {/* Pagination */}
-        <div className="mt-6 flex justify-between items-center">
-          <button
-            type="button"
-            onClick={() => setPage(page - 1)}
-            disabled={page === 1 || isLoading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-md"
-          >
-            Trước
-          </button>
-          <span className="text-gray-600">
-            Trang {page} / {Math.ceil(filteredPaymentMethods.length / limit)}
-          </span>
-          <button
-            type="button"
-            onClick={() => setPage(page + 1)}
-            disabled={paginatedPaymentMethods.length < limit || page * limit >= filteredPaymentMethods.length || isLoading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-md"
-          >
-            Sau
-          </button>
-        </div>
+                {/* Search Bar */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-xl shadow-md p-6 mb-8"
+                >
+                  <div className="flex flex-col md:flex-row gap-4 items-center">
+                    <div className="relative flex-1">
+                      <FontAwesomeIcon icon={faSearch} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Search by payment method name..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <FontAwesomeIcon icon={faFilter} />
+                      <span>Total Methods: <strong>{paymentMethods.length}</strong> (Filtered: <strong>{filteredPaymentMethods.length}</strong>)</span>
+                    </div>
+                  </div>
+                </motion.div>
 
-        {/* Add/Edit Modal */}
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-8 w-full max-w-lg shadow-2xl">
-              <h2 className="text-2xl font-bold mb-6 text-blue-800">
-                {selectedMethod ? 'Cập nhật phương thức thanh toán' : 'Thêm phương thức thanh toán'}
-              </h2>
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tên phương thức <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.Name}
-                    onChange={(e) => setFormData({ ...formData, Name: e.target.value })}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-shadow"
-                    placeholder="Nhập tên phương thức (3-50 ký tự)"
-                    disabled={isLoading}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Chỉ cho phép chữ cái, số, khoảng trắng và dấu gạch ngang.
-                  </p>
+                {/* Payment Methods Table */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-xl shadow-md overflow-hidden"
+                >
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {paginatedPaymentMethods.map((method) => (
+                          <tr key={method.PaymentMethodId} className="hover:bg-gray-50 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              #{method.PaymentMethodId}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {method.Name}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                method.IsEnabled ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              }`}>
+                                {method.IsEnabled ? 'Active' : 'Inactive'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                              <button
+                                onClick={() => openModal(method)}
+                                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                              >
+                                <FontAwesomeIcon icon={faEdit} className="mr-2" />
+                                Toggle Status
+                              </button>
+                              <button
+                                onClick={() => handleDelete(method.PaymentMethodId)}
+                                className="bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                              >
+                                <FontAwesomeIcon icon={faTrash} className="mr-2" />
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </motion.div>
+
+                {/* Pagination */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-6 flex justify-between items-center"
+                >
+                  <button
+                    onClick={() => setPage(page - 1)}
+                    disabled={page === 1}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <FontAwesomeIcon icon={faChevronLeft} />
+                    Previous
+                  </button>
+                  <span className="text-sm text-gray-700">
+                    Page <span className="font-medium">{page}</span> of{" "}
+                    <span className="font-medium">{Math.ceil(filteredPaymentMethods.length / limit) || 1}</span>
+                  </span>
+                  <button
+                    onClick={() => setPage(page + 1)}
+                    disabled={paginatedPaymentMethods.length < limit || page * limit >= filteredPaymentMethods.length}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                    <FontAwesomeIcon icon={faChevronRight} />
+                  </button>
+                </motion.div>
+              </>
+            )}
+          </div>
+
+          {/* Add/Edit Modal */}
+          {isModalOpen && (
+            <>
+              <div className="fixed inset-0 backdrop-blur-[6px] bg-black/30 z-40"></div>
+              <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-8 w-full max-w-lg shadow-2xl">
+                  <h2 className="text-2xl font-bold mb-6 text-blue-800">
+                    {selectedMethod ? 'Update Payment Method' : 'Add Payment Method'}
+                  </h2>
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Method Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.Name}
+                        onChange={(e) => setFormData({ ...formData, Name: e.target.value })}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-shadow"
+                        placeholder="Enter method name (3-50 characters)"
+                        disabled={isLoading}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Only letters, numbers, spaces and hyphens allowed.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-6 flex justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={closeModal}
+                      className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors shadow-sm disabled:opacity-50"
+                      disabled={isLoading}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSavePaymentMethod}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
+                      disabled={isLoading}
+                    >
+                      {isLoading && <FontAwesomeIcon icon={faSpinner} className="animate-spin" />}
+                      {isLoading ? 'Saving...' : 'Save'}
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="mt-6 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors shadow-sm disabled:opacity-50"
-                  disabled={isLoading}
-                >
-                  Hủy
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSavePaymentMethod}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
-                  disabled={isLoading}
-                >
-                  {isLoading && <FontAwesomeIcon icon={faSpinner} className="animate-spin" />}
-                  {isLoading ? 'Đang lưu...' : 'Lưu'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+            </>
+          )}
 
-        {/* Delete Confirmation Modal */}
-        {isDeleteModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-sm shadow-2xl">
-              <h2 className="text-xl font-bold mb-4 text-blue-700">Xác nhận xóa</h2>
-              <p className="mb-4 text-gray-700">Bạn có chắc muốn xóa phương thức thanh toán này?</p>
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={cancelDelete}
-                  className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 shadow-sm disabled:opacity-50"
-                  disabled={isLoading}
-                >
-                  Hủy
-                </button>
-                <button
-                  type="button"
-                  onClick={confirmDelete}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-sm disabled:opacity-50 flex items-center gap-2"
-                  disabled={isLoading}
-                >
-                  {isLoading && <FontAwesomeIcon icon={faSpinner} className="animate-spin" />}
-                  {isLoading ? 'Đang xóa...' : 'Xác nhận'}
-                </button>
+          {/* Delete Confirmation Modal */}
+          {isDeleteModalOpen && (
+            <>
+              <div className="fixed inset-0 backdrop-blur-[6px] bg-black/30 z-40"></div>
+              <div className="fixed inset-0 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-sm shadow-2xl">
+                  <h2 className="text-xl font-bold mb-4 text-blue-700">Confirm Delete</h2>
+                  <p className="mb-4 text-gray-700">Are you sure you want to delete this payment method?</p>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={cancelDelete}
+                      className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 shadow-sm disabled:opacity-50"
+                      disabled={isLoading}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={confirmDelete}
+                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-sm disabled:opacity-50 flex items-center gap-2"
+                      disabled={isLoading}
+                    >
+                      {isLoading && <FontAwesomeIcon icon={faSpinner} className="animate-spin" />}
+                      {isLoading ? 'Deleting...' : 'Confirm'}
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

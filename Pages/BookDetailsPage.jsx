@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../src/contexts/AuthContext';
 import { toast } from 'react-toastify';
 import { getListingById, getReviewsBySeller, getSellerAverageRating } from '../src/API/api';
 import ReviewList from '../Components/ReviewList';
 import ReviewDetailModal from '../Components/ReviewDetailModal';
 import StarRating from '../Components/StarRating';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 const BookDetailsPage = () => {
   const { listingId } = useParams();
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const location = useLocation();
+  const { isLoggedIn, user } = useAuth();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -52,7 +55,9 @@ const BookDetailsPage = () => {
       // Lấy danh sách đánh giá
       try {
         const reviewData = await getReviewsBySeller(listingData.ownerId, currentPage, 5);
-        setReviews(reviewData.items || []);
+        console.log('reviewData', reviewData);
+        const reviewsArr = Array.isArray(reviewData) ? reviewData : (reviewData.items || []);
+        setReviews(reviewsArr);
         setTotalPages(reviewData.totalPages || 1);
       } catch (err) {
         console.log('No reviews found:', err.message);
@@ -71,33 +76,23 @@ const BookDetailsPage = () => {
   };
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      toast.info('Please log in to view book details');
-      navigate('/login');
-      return;
-    }
+    // Bỏ check đăng nhập
     fetchListingDetails();
-  }, [listingId, isLoggedIn, navigate, currentPage]);
+  }, [listingId, navigate, currentPage]);
 
   const handleBuyNow = () => {
-    console.log('Handle Buy Now:', { listingId: listing.listingId, statusName: listing.statusName });
     if (!isLoggedIn) {
       toast.info('Please log in to purchase');
-      navigate('/login');
-      return;
-    }
-    if (listing.statusName !== 'Active') {
-      toast.error(`This book cannot be purchased because ${listing.statusName ? `its status is ${listing.statusName}` : 'status information is missing. Please contact admin.'}`);
-      return;
-    }
-    if (!listing.acceptedPaymentMethods || listing.acceptedPaymentMethods.length === 0) {
-      toast.error('No payment methods are available for this book.');
+      navigate('/login', { 
+        state: { from: location.pathname }
+      });
       return;
     }
     navigate('/order', { state: { listing } });
   };
 
   const handleViewProfile = () => {
+    // listing.ownerId là id của người bán
     navigate(`/seller/${listing.ownerId}`);
   };
 
@@ -198,17 +193,26 @@ const BookDetailsPage = () => {
 
             {/* Action Buttons */}
             <div className="mt-6 flex gap-4">
-              <button
-                onClick={handleBuyNow}
-                className={`w-full sm:w-auto px-8 py-3 rounded-lg text-white font-semibold transition-transform transform hover:scale-105 ${
-                  listing.statusName !== 'Active' || hasOrdered
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-green-600 hover:bg-green-700'
-                }`}
-                disabled={listing.statusName !== 'Active' || hasOrdered}
-              >
-                {hasOrdered ? 'Ordered' : 'Buy Now'}
-              </button>
+              {isLoggedIn ? (
+                <button
+                  onClick={handleBuyNow}
+                  className={`w-full sm:w-auto px-8 py-3 rounded-lg text-white font-semibold transition-transform transform hover:scale-105 ${
+                    listing.statusName !== 'Active' || hasOrdered
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-green-600 hover:bg-green-700'
+                  }`}
+                  disabled={listing.statusName !== 'Active' || hasOrdered}
+                >
+                  {hasOrdered ? 'Ordered' : 'Buy Now'}
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigate('/login')}
+                  className="w-full sm:w-auto px-8 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-transform transform hover:scale-105"
+                >
+                  Login to Buy
+                </button>
+              )}
               <button
                 onClick={handleViewProfile}
                 className="w-full sm:w-auto px-8 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-transform transform hover:scale-105"
@@ -226,7 +230,11 @@ const BookDetailsPage = () => {
             <p className="text-gray-600">No reviews yet for this seller.</p>
           ) : (
             <>
-              <ReviewList reviews={reviews} onViewReview={handleViewReview} isOwner={false} />
+              <ReviewList
+                reviews={reviews}
+                isOwner={user && listing && String(user.id) === String(listing.ownerId)}
+                user={user}
+              />
               <div className="mt-4 flex justify-center gap-2">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                   <button

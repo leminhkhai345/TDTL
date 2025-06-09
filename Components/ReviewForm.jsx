@@ -3,15 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faStar } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
-import { createReview, updateReview } from '../src/API/api';
+import { createReview, updateReview, getReviewsBySeller } from '../src/API/api';
+import { useAuth } from '../src/contexts/AuthContext';
 
-const ReviewForm = ({ isOpen, onClose, order, review, onSubmitSuccess }) => {
+const ReviewForm = ({ isOpen, onClose, order, review, onSubmitSuccess, listingData }) => {
+  const { user } = useAuth();
   const [rating, setRating] = useState(review?.rating || 0);
   const [comment, setComment] = useState(review?.comment || '');
   const [reviewType, setReviewType] = useState(review?.reviewType || 'Constructive');
   const [evidences, setEvidences] = useState([]);
   const [previews, setPreviews] = useState(review?.evidences?.map(e => e.fileUrl) || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     if (review) {
@@ -22,13 +27,31 @@ const ReviewForm = ({ isOpen, onClose, order, review, onSubmitSuccess }) => {
     }
   }, [review]);
 
+  // Chỉ fetch reviews khi có listingData
+  useEffect(() => {
+    if (listingData?.ownerId) {
+      const fetchReviews = async () => {
+        try {
+          const reviewData = await getReviewsBySeller(listingData.ownerId, currentPage, 5);
+          const reviewsArr = Array.isArray(reviewData) ? reviewData : (reviewData.items || []);
+          setReviews(reviewsArr);
+          setTotalPages(reviewData.totalPages || 1);
+        } catch (err) {
+          console.log('Failed to fetch reviews:', err.message); 
+          setReviews([]);
+        }
+      };
+      fetchReviews();
+    }
+  }, [listingData?.ownerId, currentPage]);
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     const validFiles = files.filter(file => {
       const isValidType = ['image/jpeg', 'image/png', 'video/mp4'].includes(file.type);
       const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB
-      if (!isValidType) toast.error(`${file.name} không phải ảnh hoặc video hợp lệ`);
-      if (!isValidSize) toast.error(`${file.name} vượt quá 10MB`);
+      if (!isValidType) toast.error(`${file.name} is not a valid image or video file`);
+      if (!isValidSize) toast.error(`${file.name} exceeds 10MB size limit`);
       return isValidType && isValidSize;
     });
 
@@ -44,28 +67,61 @@ const ReviewForm = ({ isOpen, onClose, order, review, onSubmitSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!rating) return toast.error('Vui lòng chọn điểm số');
-    if (!comment.trim()) return toast.error('Vui lòng nhập bình luận');
-    if (comment.length > 500) return toast.error('Bình luận không được vượt quá 500 ký tự');
-    if (reviewType === 'ReportViolation' && evidences.length === 0) {
-      return toast.error('Vui lòng tải lên bằng chứng cho báo cáo vi phạm');
+
+    if (!rating || rating < 1 || rating > 5) {
+      toast.error('Please select a rating between 1 and 5 stars');
+      return;
+    }
+    if (!comment.trim()) {
+      toast.error('Please enter your review comment.');
+      return;
     }
 
     setIsSubmitting(true);
     try {
-      const reviewData = { orderId: order.orderId, rating, comment, reviewType, evidences };
       let response;
       if (review) {
-        response = await updateReview(review.reviewId, reviewData);
+        // Update existing review
+        response = await updateReview(review.reviewId, {
+          rating,
+          comment,
+          reviewType,
+          evidences,
+          rowVersion: review.rowVersion
+        });
       } else {
-        response = await createReview(reviewData);
+        try {
+          // Create new review
+          response = await createReview({
+            orderId: order.orderId,
+            rating,
+            comment,
+            reviewType,
+            evidences
+          });
+        } catch (error) {
+          if (error.response?.status === 500 && 
+              (error.response?.data?.detail?.includes('duplicate key') ||
+               error.response?.data?.detail?.includes('IX_reviews_orderId'))) {
+            toast.error('This order has already been reviewed');
+            setIsSubmitting(false);
+            return;
+          }
+          throw error;
+        }
       }
-      toast.success(review ? 'Đánh giá đã được cập nhật!' : 'Đánh giá đã được gửi!');
       onSubmitSuccess(response);
-      onClose();
     } catch (error) {
-      console.error('Submit review error:', error);
-      toast.error(error.message || 'Không thể gửi đánh giá');
+      console.error('Review submission error:', error);
+      if (error.response?.status === 500 && 
+          (error.response?.data?.detail?.includes('duplicate key') ||
+           error.response?.data?.detail?.includes('IX_reviews_orderId'))) {
+        toast.error('This order has already been reviewed');
+      } else if (error.response?.data?.detail?.includes('Rating must be between 1 and 5')) {
+        toast.error('Please select a rating between 1 and 5 stars');
+      } else {
+        toast.error(error.message || 'Failed to submit review');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -74,50 +130,56 @@ const ReviewForm = ({ isOpen, onClose, order, review, onSubmitSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" role="dialog" aria-labelledby="review-modal-title">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl relative">
+    <div 
+      className="fixed inset-0 bg-white/30 backdrop-blur-[6px] flex items-center justify-center z-50" 
+      role="dialog" 
+      aria-labelledby="review-modal-title"
+    >
+      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-8 w-full max-w-md shadow-2xl relative">
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-          aria-label="Đóng modal đánh giá"
+          className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 transition-colors"
+          aria-label="Close review modal"
         >
           <FontAwesomeIcon icon={faTimes} />
         </button>
-        <h2 id="review-modal-title" className="text-xl font-bold mb-4 text-blue-700">
-          {review ? 'Chỉnh sửa đánh giá' : 'Viết đánh giá'}
+        <h2 id="review-modal-title" className="text-2xl font-bold mb-6 text-blue-700">
+          {review ? 'Edit Review' : 'Write a Review'}
         </h2>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-600">Điểm số</label>
-            <div className="flex gap-1 mt-1">
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700">Rating</label>
+            <div className="flex gap-2 mt-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <FontAwesomeIcon
                   key={star}
                   icon={faStar}
-                  className={`cursor-pointer text-2xl ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                  className={`cursor-pointer text-2xl transition-colors ${
+                    star <= rating ? 'text-yellow-400' : 'text-gray-300'
+                  }`}
                   onClick={() => setRating(star)}
-                  aria-label={`Chọn ${star} sao`}
+                  aria-label={`Rate ${star} stars`}
                 />
               ))}
             </div>
           </div>
-          <div className="mb-4">
-            <label htmlFor="comment" className="block text-sm font-medium text-gray-600">Bình luận</label>
+          <div className="mb-6">
+            <label htmlFor="comment" className="block text-sm font-medium text-gray-700">Comment</label>
             <textarea
               id="comment"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="w-full p-2 border rounded-lg focus:outline-none"
+              className="w-full p-4 mt-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow"
               rows="4"
-              placeholder="Nhập bình luận của bạn..."
+              placeholder="Write your review here..."
               maxLength={500}
               aria-required="true"
             />
-            <p className="text-xs text-gray-500 mt-1">{comment.length}/500 ký tự</p>
+            <p className="text-xs text-gray-500 mt-1">{comment.length}/500 characters</p>
           </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-600">Loại đánh giá</label>
-            <div className="flex gap-4 mt-1">
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700">Review Type</label>
+            <div className="flex gap-6 mt-2">
               <label className="flex items-center">
                 <input
                   type="radio"
@@ -126,7 +188,7 @@ const ReviewForm = ({ isOpen, onClose, order, review, onSubmitSuccess }) => {
                   onChange={() => setReviewType('Constructive')}
                   className="mr-2"
                 />
-                Phản hồi tích cực
+                Constructive Feedback
               </label>
               <label className="flex items-center">
                 <input
@@ -136,59 +198,59 @@ const ReviewForm = ({ isOpen, onClose, order, review, onSubmitSuccess }) => {
                   onChange={() => setReviewType('ReportViolation')}
                   className="mr-2"
                 />
-                Báo cáo vi phạm
+                Report Violation
               </label>
             </div>
           </div>
           {reviewType === 'ReportViolation' && (
-            <div className="mb-4">
-              <label htmlFor="evidences" className="block text-sm font-medium text-gray-600">Tải lên bằng chứng</label>
+            <div className="mb-6">
+              <label htmlFor="evidences" className="block text-sm font-medium text-gray-700">Upload Evidence</label>
               <input
                 id="evidences"
                 type="file"
                 accept="image/jpeg,image/png,video/mp4"
                 multiple
                 onChange={handleFileChange}
-                className="w-full p-2 border rounded-lg"
+                className="w-full p-4 mt-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div className="flex flex-wrap gap-3 mt-3">
                 {previews.map((preview, index) => (
-                  <div key={index} className="relative">
+                  <div key={index} className="relative group">
                     {preview.endsWith('.mp4') ? (
-                      <video src={preview} className="w-20 h-20 object-cover rounded" controls />
+                      <video src={preview} className="w-24 h-24 object-cover rounded-lg" controls />
                     ) : (
-                      <img src={preview} alt="Preview" className="w-20 h-20 object-cover rounded" />
+                      <img src={preview} alt="Evidence preview" className="w-24 h-24 object-cover rounded-lg" />
                     )}
                     <button
                       type="button"
                       onClick={() => removeEvidence(index)}
-                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
-                      aria-label="Xóa bằng chứng"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
+                      aria-label="Remove evidence"
                     >
-                      &times;
+                      ×
                     </button>
                   </div>
                 ))}
               </div>
             </div>
           )}
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               disabled={isSubmitting}
-              aria-label="Hủy"
+              aria-label="Cancel"
             >
-              Hủy
+              Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
               disabled={isSubmitting}
-              aria-label={review ? 'Cập nhật đánh giá' : 'Gửi đánh giá'}
+              aria-label={review ? 'Update review' : 'Submit review'}
             >
-              {isSubmitting ? 'Đang xử lý...' : review ? 'Cập nhật' : 'Gửi'}
+              {isSubmitting ? 'Processing...' : review ? 'Update' : 'Submit'}
             </button>
           </div>
         </form>
