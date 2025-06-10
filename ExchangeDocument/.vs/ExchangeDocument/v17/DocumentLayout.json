@@ -1,0 +1,395 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\presentationlayer\\controllers\\listingscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\presentationlayer\\controllers\\listingscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\presentationlayer\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\presentationlayer\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\presentationlayer\\controllers\\paymentmethodscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\presentationlayer\\controllers\\paymentmethodscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\businesslayer\\dtos\\adminlistingqueryparametersdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\dtos\\adminlistingqueryparametersdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\businesslayer\\dtos\\orderactiondto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\dtos\\orderactiondto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\businesslayer\\dtos\\orderactionreasondto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\dtos\\orderactionreasondto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\businesslayer\\dtos\\ordercanceldto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\dtos\\ordercanceldto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\businesslayer\\dtos\\ordercreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\dtos\\ordercreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\businesslayer\\dtos\\orderpaymentproofdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\dtos\\orderpaymentproofdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\businesslayer\\dtos\\orderqueryparametersdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\dtos\\orderqueryparametersdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\businesslayer\\dtos\\orderrejectdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\dtos\\orderrejectdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\businesslayer\\dtos\\orderresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\dtos\\orderresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\businesslayer\\enums\\orderenums.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\enums\\orderenums.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\businesslayer\\interfaces\\services\\iorderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\businesslayer\\interfaces\\services\\iorderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\dataaccesslayer\\entities\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\dataaccesslayer\\entities\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\dataaccesslayer\\entities\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\dataaccesslayer\\entities\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\dataaccesslayer\\interfaces\\repositories\\iorderrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\dataaccesslayer\\interfaces\\repositories\\iorderrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\dataaccesslayer\\repositories\\orderrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\dataaccesslayer\\repositories\\orderrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\dataaccesslayer\\entities\\paymentmethod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\dataaccesslayer\\entities\\paymentmethod.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\dataaccesslayer\\entities\\payment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\dataaccesslayer\\entities\\payment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\presentationlayer\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\presentationlayer\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\presentationlayer\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\presentationlayer\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|c:\\users\\lenovo\\documents\\it th\u0103ng 23t-dt3\\tailieu\\zal11_exchangedocument\\zal11_exchangedocument\\exchangedocument\\exchangedocument.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{6C1AB089-73F0-42BD-A92F-7B42214173C6}|ExchangeDocument\\ExchangeDocument.csproj|solutionrelative:exchangedocument\\exchangedocument.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ListingsController.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Controllers\\ListingsController.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\PresentationLayer\\Controllers\\ListingsController.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Controllers\\ListingsController.cs",
+              "RelativeToolTip": "ExchangeDocument\\PresentationLayer\\Controllers\\ListingsController.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAlwDYAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-08T14:37:54.321Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "OrderActionReasonDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderActionReasonDto.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderActionReasonDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderActionReasonDto.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderActionReasonDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:06:18.291Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "OrderCancelDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderCancelDto.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderCancelDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderCancelDto.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderCancelDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:06:10.795Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "OrdersController.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Controllers\\OrdersController.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\PresentationLayer\\Controllers\\OrdersController.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Controllers\\OrdersController.cs",
+              "RelativeToolTip": "ExchangeDocument\\PresentationLayer\\Controllers\\OrdersController.cs",
+              "ViewState": "AgIAAIAAAAAAAAAAAAAkwJ4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:00:50.645Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "OrderActionDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderActionDto.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderActionDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderActionDto.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderActionDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:06:23.876Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PaymentMethodsController.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Controllers\\PaymentMethodsController.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\PresentationLayer\\Controllers\\PaymentMethodsController.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Controllers\\PaymentMethodsController.cs",
+              "RelativeToolTip": "ExchangeDocument\\PresentationLayer\\Controllers\\PaymentMethodsController.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAApwCwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T20:05:52.11Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AdminListingQueryParametersDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\AdminListingQueryParametersDto.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\DTOs\\AdminListingQueryParametersDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\AdminListingQueryParametersDto.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\DTOs\\AdminListingQueryParametersDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:07:13.733Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "OrderCreateDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderCreateDto.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderCreateDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderCreateDto.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderCreateDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:05:58.914Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "OrderPaymentProofDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderPaymentProofDto.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderPaymentProofDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderPaymentProofDto.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderPaymentProofDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:05:50.571Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "OrderQueryParametersDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderQueryParametersDto.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderQueryParametersDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderQueryParametersDto.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderQueryParametersDto.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAYwC0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:05:44.091Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "OrderRejectDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderRejectDto.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderRejectDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderRejectDto.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderRejectDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:05:38.487Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "OrderResponseDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderResponseDto.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderResponseDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\DTOs\\OrderResponseDto.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\DTOs\\OrderResponseDto.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAIwBkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:05:31.241Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "OrderEnums.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\Enums\\OrderEnums.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\Enums\\OrderEnums.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\Enums\\OrderEnums.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\Enums\\OrderEnums.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAowCcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:05:04.58Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "IOrderService.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\Interfaces\\Services\\IOrderService.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\BusinessLayer\\Interfaces\\Services\\IOrderService.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\BusinessLayer\\Interfaces\\Services\\IOrderService.cs",
+              "RelativeToolTip": "ExchangeDocument\\BusinessLayer\\Interfaces\\Services\\IOrderService.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAUwBYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:04:54.932Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Order.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Entities\\Order.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\DataAccessLayer\\Entities\\Order.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Entities\\Order.cs",
+              "RelativeToolTip": "ExchangeDocument\\DataAccessLayer\\Entities\\Order.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAA8wDEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:01:37.181Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "OrderDetail.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Entities\\OrderDetail.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\DataAccessLayer\\Entities\\OrderDetail.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Entities\\OrderDetail.cs",
+              "RelativeToolTip": "ExchangeDocument\\DataAccessLayer\\Entities\\OrderDetail.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAmwB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:01:32.872Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "IOrderRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Interfaces\\Repositories\\IOrderRepository.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\DataAccessLayer\\Interfaces\\Repositories\\IOrderRepository.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Interfaces\\Repositories\\IOrderRepository.cs",
+              "RelativeToolTip": "ExchangeDocument\\DataAccessLayer\\Interfaces\\Repositories\\IOrderRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:01:23.665Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "OrderRepository.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Repositories\\OrderRepository.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\DataAccessLayer\\Repositories\\OrderRepository.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Repositories\\OrderRepository.cs",
+              "RelativeToolTip": "ExchangeDocument\\DataAccessLayer\\Repositories\\OrderRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T22:01:14.362Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "PaymentMethod.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Entities\\PaymentMethod.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\DataAccessLayer\\Entities\\PaymentMethod.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Entities\\PaymentMethod.cs",
+              "RelativeToolTip": "ExchangeDocument\\DataAccessLayer\\Entities\\PaymentMethod.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T20:26:22.574Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Payment.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Entities\\Payment.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\DataAccessLayer\\Entities\\Payment.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\DataAccessLayer\\Entities\\Payment.cs",
+              "RelativeToolTip": "ExchangeDocument\\DataAccessLayer\\Entities\\Payment.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAmwB0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-06T20:06:34.791Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "RelativeDocumentMoniker": "ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "RelativeToolTip": "ExchangeDocument\\PresentationLayer\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-04-25T03:29:38.387Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Program.cs",
+              "RelativeDocumentMoniker": "ExchangeDocument\\PresentationLayer\\Program.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\PresentationLayer\\Program.cs",
+              "RelativeToolTip": "ExchangeDocument\\PresentationLayer\\Program.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAxwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-25T03:25:02.287Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "ExchangeDocument.csproj",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
+              "RelativeDocumentMoniker": "ExchangeDocument\\ExchangeDocument.csproj",
+              "ToolTip": "C:\\Users\\Lenovo\\Documents\\IT Th\u0103ng 23T-DT3\\TaiLieu\\Zal11_ExchangeDocument\\Zal11_ExchangeDocument\\ExchangeDocument\\ExchangeDocument.csproj",
+              "RelativeToolTip": "ExchangeDocument\\ExchangeDocument.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-04-25T03:19:00.294Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
