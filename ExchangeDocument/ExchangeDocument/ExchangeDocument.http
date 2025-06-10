@@ -1,0 +1,6 @@
+@ExchangeDocument_HostAddress = http://localhost:5120
+
+GET {{ExchangeDocument_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
