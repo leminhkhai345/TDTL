@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overall Business Process Diagram</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .swimlane {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            border: 1px solid #000;
+            padding: 10px;
+            background-color: #fff;
+            margin-bottom: 20px;
+        }
+        .swimlane-header {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .process {
+            background-color: #e0e0ff;
+            border: 1px solid #000;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+            width: 200px;
+            text-align: center;
+        }
+        .start-end {
+            width: 30px;
+            height: 30px;
+            background-color: #000;
+            border-radius: 50%;
+            margin: 10px 0;
+        }
+        .decision {
+            width: 50px;
+            height: 50px;
+            background-color: #ffcccc;
+            transform: rotate(45deg);
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .decision-text {
+            transform: rotate(-45deg);
+            font-size: 12px;
+        }
+        .arrow {
+            width: 2px;
+            height: 30px;
+            background-color: #000;
+            margin: 5px 0;
+            position: relative;
+        }
+        .arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: -5px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #000;
+        }
+        .arrow-label {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+        }
+        .parallel {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Overall Business Process Diagram</h2>
+        
+        <!-- Swimlane Admin -->
+        <div class="swimlane">
+            <div class="swimlane-header">Admin</div>
+            <div class="start-end"></div>
+            <div class="arrow"></div>
+            <div class="process">Login</div>
+            <div class="arrow"></div>
+            <div class="decision">
+                <div class="decision-text">Success?</div>
+            </div>
+            <div class="arrow" style="position: relative;">
+                <div class="arrow-label">No</div>
+            </div>
+            <div class="process">Show Error</div>
+            <div class="arrow" style="position: absolute; top: 220px; left: -100px; height: 150px;"></div>
+            <div style="position: relative; left: 100px; top: -150px;">
+                <div class="arrow" style="position: relative;">
+                    <div class="arrow-label">Yes</div>
+                </div>
+                <div class="process">View Dashboard</div>
+                <div class="arrow"></div>
+                <div class="parallel">
+                    <div>
+                        <div class="process">Manage Users</div>
+                        <div class="arrow"></div>
+                        <div class="process">Add/Edit/Delete User</div>
+                    </div>
+                    <div>
+                        <div class="process">Manage Books</div>
+                        <div class="arrow"></div>
+                        <div class="process">Add/Edit/Delete Book</div>
+                    </div>
+                    <div>
+                        <div class="process">Borrow/Return Books</div>
+                        <div class="arrow"></div>
+                        <div class="process">Borrow or Return Book</div>
+                    </div>
+                </div>
+                <div class="arrow"></div>
+                <div class="process">Logout</div>
+                <div class="arrow"></div>
+                <div class="start-end"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
